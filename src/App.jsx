@@ -1,44 +1,53 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomePage from "./pages/public/HomePage";
+import RoomsPage from "./pages/public/RoomsPage";
+import LoginPage from "./pages/admin/LoginPage";
+import SchedulesPage from "./pages/admin/BookingsPage";
+import NotFoundPage from "./pages/public/NotFoundPage";
+import AdminRoomsPage from "./pages/admin/AdminRoomsPage";
+import DetailPage from "./pages/public/DetailPage";
+import FacilitesPage from "./pages/admin/FacilitiesPage";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <>
-      <div>
-        <a
-          href="https://vite.dev"
-          target="_blank"
-        >
-          <img
-            src={viteLogo}
-            className="logo"
-            alt="Vite logo"
-          />
-        </a>
-        <a
-          href="https://react.dev"
-          target="_blank"
-        >
-          <img
-            src={reactLogo}
-            className="logo react"
-            alt="React logo"
-          />
-        </a>
-      </div>
-      <h1 className="text-red-300">Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* Public */}
+        <Route
+          path="/"
+          element={<HomePage />}
+        />
+        <Route
+          path="/*"
+          element={<NotFoundPage />}
+        />
+        <Route
+          path="/rooms"
+          element={<RoomsPage />}
+        />
+        <Route
+          path="/rooms/:id"
+          element={<DetailPage />}
+        />
+        {/* Admin */}
+        <Route
+          path="/admin/login"
+          element={<LoginPage />}
+        />
+        <Route
+          path="/admin/schedules"
+          element={<SchedulesPage />}
+        />
+        <Route
+          path="/admin/rooms"
+          element={<AdminRoomsPage />}
+        />
+        <Route
+          path="/admin/facilities"
+          element={<FacilitesPage />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
