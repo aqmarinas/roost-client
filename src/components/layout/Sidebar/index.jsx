@@ -1,8 +1,11 @@
-import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/16/solid";
 import { CalendarIcon, BuildingOfficeIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import useLogout from "../../../hooks/useLogout";
+import useAuth from "../../../hooks/useAuth";
+import { jwtDecode } from "jwt-decode";
+import Avatar from "../../../assets/avatar.jpg";
 
 const navigation = [
   { name: "Schedules", href: "/admin/schedules", icon: CalendarIcon },
@@ -15,7 +18,19 @@ function classNames(...classes) {
 }
 
 export default function Sidebar({ isCollapsed, isMobile, toggleCollapse }) {
+  const { auth } = useAuth();
+  const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : null;
+
   const location = useLocation();
+  const logout = useLogout();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/admin/login", {
+      replace: true,
+    });
+  };
 
   return (
     <>
@@ -29,9 +44,7 @@ export default function Sidebar({ isCollapsed, isMobile, toggleCollapse }) {
 
       <div
         className={`
-          fixed z-50 h-screen flex flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 transition-all duration-300
-          ${isCollapsed ? "w-20" : "w-64"}
-          ${isMobile ? "left-0" : "left-0"}
+          fixed z-50 h-screen flex flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 transition-all left-0 duration-300 ${isMobile && !isCollapsed ? "w-full" : isCollapsed ? "w-20" : "w-64"}
         `}
       >
         {/* Toggle Button */}
@@ -90,35 +103,25 @@ export default function Sidebar({ isCollapsed, isMobile, toggleCollapse }) {
                 <MenuButton className="flex items-center gap-x-2 p-2 w-full rounded-md hover:bg-gray-50 focus:outline-none">
                   <img
                     alt="User profile"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src={Avatar}
                     className="size-8 rounded-full"
                   />
                   {!isCollapsed && (
                     <div className="text-left overflow-hidden">
-                      <p className="text-sm font-medium text-gray-900 truncate">John Doe</p>
-                      <p className="text-xs text-gray-500 truncate">Admin</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">{decoded?.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{decoded?.role}</p>
                     </div>
                   )}
                 </MenuButton>
                 <MenuItems className={classNames("absolute z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none", isCollapsed ? "left-full ml-2" : "left-0 bottom-full mb-2")}>
                   <MenuItem>
                     {({ focus }) => (
-                      <a
-                        href="#"
-                        className={classNames(focus ? "bg-gray-100" : "", "block px-4 py-2 text-sm text-gray-700")}
-                      >
-                        Your Profile
-                      </a>
-                    )}
-                  </MenuItem>
-                  <MenuItem>
-                    {({ focus }) => (
-                      <a
-                        href="#"
-                        className={classNames(focus ? "bg-gray-100" : "", "block px-4 py-2 text-sm text-gray-700")}
+                      <div
+                        onClick={handleLogout}
+                        className={classNames(focus ? "bg-gray-100" : "", "block px-4 py-2 text-sm text-red-500")}
                       >
                         Log out
-                      </a>
+                      </div>
                     )}
                   </MenuItem>
                 </MenuItems>

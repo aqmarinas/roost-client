@@ -1,6 +1,6 @@
 "use client";
 import { toast } from "react-hot-toast";
-import ModalDialog from "../../../components/ui/ModalDialog";
+import ModalDialog from "../../../../components/ui/ModalDialog";
 
 export default function ApproveModal({ open, onClose, bookingId, onSuccess }) {
   const handleApprove = async () => {

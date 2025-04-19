@@ -1,6 +1,6 @@
 "use client";
 import { toast } from "react-hot-toast";
-import ModalDialog from "../../../components/ui/ModalDialog";
+import ModalDialog from "../../../../components/ui/ModalDialog";
 
 export default function RejectModal({ open, onClose, bookingId, onSuccess }) {
   const handleReject = async () => {

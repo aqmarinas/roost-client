@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import Input from "../../../components/atom/Input/index.jsx";
-import Button from "../../../components/atom/Button/index.jsx";
+import Input from "../../../../components/atom/Input/index.jsx";
+import Button from "../../../../components/atom/Button/index.jsx";
 import { useForm } from "react-hook-form";
-import Modal from "../../../components/ui/Modal/index.jsx";
+import Modal from "../../../../components/ui/Modal/index.jsx";
 import { toast } from "react-hot-toast";
-import useFetch from "../../../hooks/useFetch.js";
+import useFetch from "../../../../hooks/useFetch.js";
 import { ChevronDownIcon } from "lucide-react";
 
 export default function UpdateModal({ open, onClose, booking, onSuccess }) {

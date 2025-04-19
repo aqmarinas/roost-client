@@ -4,10 +4,10 @@ import useFetch from "../../../hooks/useFetch";
 import { format, parseISO } from "date-fns";
 import toast, { Toaster } from "react-hot-toast";
 import { useState, useEffect } from "react";
-import UpdateModal from "./UpdateModal";
-import DeleteModal from "./DeleteModal";
-import ApproveModal from "./ApproveModal";
-import RejectModal from "./RejectModal";
+import UpdateModal from "./modals/UpdateModal";
+import DeleteModal from "./modals/DeleteModal";
+import ApproveModal from "./modals/ApproveModal";
+import RejectModal from "./modals/RejectModal";
 import Pagination from "../../../components/ui/Pagination";
 
 export default function BookingsTable() {

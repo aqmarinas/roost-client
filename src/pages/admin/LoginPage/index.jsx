@@ -1,11 +1,23 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../../components/atom/Button";
 import Input from "../../../components/atom/Input";
 import { useForm } from "react-hook-form";
-import toast, { Toaster } from "react-hot-toast";
+import useAuth from "../../../hooks/useAuth";
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
-  const navigateTo = useNavigate();
+  const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/admin/schedules";
+  const [error, setError] = useState(location.state?.error);
+
+  // useEffect(() => {
+  //   if (auth?.accessToken) {
+  //     navigate(from, { replace: true });
+  //   }
+  // }, [auth, navigate, location]);
+
   const {
     register,
     handleSubmit,
@@ -30,11 +42,17 @@ export default function LoginPage() {
         throw new Error(result.message || "Failed to login");
       }
 
-      navigateTo("/admin/schedules");
+      setAuth({
+        email: result.data?.email,
+        name: result.data?.name,
+        role: result.data?.role,
+        accessToken: result.data?.accessToken,
+      });
+
+      navigate(from, { replace: true });
       reset();
     } catch (error) {
-      console.error("Error:", error);
-      toast.error(error.message || "Failed to login");
+      setError(error.message);
     }
   };
 
@@ -47,6 +65,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          {error && <div className="bg-red-50 p-4 text-red-600 rounded-xl text-sm">{error}</div>}
           <form onSubmit={handleSubmit(onSubmit)}>
             <Input
               id="email"
@@ -55,7 +74,8 @@ export default function LoginPage() {
               label="Email"
               placeholder="Enter your email"
               {...register("email", { required: "Email is required" })}
-              // error={errors.email?.message}
+              required
+              error={errors.email?.message}
             />
 
             <Input
@@ -65,7 +85,8 @@ export default function LoginPage() {
               label="Password"
               placeholder="Enter your password"
               {...register("password", { required: "Password is required" })}
-              // error={errors.password?.message}
+              required
+              error={errors.password?.message}
             />
 
             <Button
@@ -75,11 +96,6 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
-
-      <Toaster
-        position="top-center"
-        toastOptions={{ className: "text-sm" }}
-      />
     </>
   );
 }
