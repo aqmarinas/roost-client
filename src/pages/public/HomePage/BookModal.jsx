@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 import Input from "../../../components/atom/Input";
-import Button from "../../../components/atom/Button";
 import OTPModal from "./OTPModal";
 import Modal from "../../../components/ui/Modal";
 import { ChevronDownIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 export default function BookModal({ isOpen, onClose, onCreate }) {
   // for select
@@ -207,9 +207,11 @@ export default function BookModal({ isOpen, onClose, onCreate }) {
           </div>
 
           <Button
-            type="submit"
+            variant="default"
+            size="sm"
+            fullWidth
+            className="mt-4"
             disabled={isSubmitting}
-            className="w-full justify-center mt-4"
           >
             {isSubmitting ? "Booking..." : "Book Room"}
           </Button>

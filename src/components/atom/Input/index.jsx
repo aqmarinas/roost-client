@@ -1,5 +1,3 @@
-import { ExclamationCircleIcon } from "@heroicons/react/16/solid";
-
 export default function Input({ id, name, type, placeholder, label, required = false, autofocus = false, register, error, ...props }) {
   return (
     <>

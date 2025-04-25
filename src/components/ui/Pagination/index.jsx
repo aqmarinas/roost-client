@@ -36,7 +36,9 @@ function Pagination({ table }) {
                 {pageSizeOptions.map((size) => (
                   <MenuItem key={size}>
                     <button
-                      onClick={() => table.setPageSize(size)}
+                      onClick={() => {
+                        table.setPageSize(size);
+                      }}
                       className={`hover:bg-gray-100 block w-full text-left px-4 py-2 text-sm`}
                     >
                       {size}

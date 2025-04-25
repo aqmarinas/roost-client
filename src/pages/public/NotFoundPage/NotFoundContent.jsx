@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import NotFoundImage from "../../../assets/404.svg";
+import { Button } from "@/components/ui/button";
 
 export default function NotFoundContent() {
   const navigate = useNavigate();
@@ -20,12 +21,14 @@ export default function NotFoundContent() {
         <h1 className="text-6xl font-bold text-gray-900">404</h1>
         <p className="mt-4 text-xl ">Page Not Found</p>
         <p className="mt-2 text-sm text-gray-500">The page you're looking for doesn't exist or has been moved.</p>
-        <button
+        <Button
+          variant="default"
           onClick={handleGoHome}
-          className="mt-6 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors duration-300 text-sm"
+          size="lg"
+          className="mt-4"
         >
           Go to Homepage
-        </button>
+        </Button>
       </div>
     </>
   );

@@ -3,10 +3,10 @@ import useFetch from "../../hooks/useFetch";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Input from "../atom/Input";
-import Button from "../atom/Button";
 import { ChevronDownIcon } from "lucide-react";
 import OTPModal from "../../pages/public/HomePage/OTPModal";
 import { useParams } from "react-router-dom";
+import { Button } from "../ui/button";
 
 export default function BookForm() {
   const [isModalOTPOpen, setIsModalOTPOpen] = useState(false);
@@ -197,9 +197,10 @@ export default function BookForm() {
         </div>
 
         <Button
-          type="submit"
+          variant="default"
+          size="sm"
+          fullWidth
           disabled={isSubmitting}
-          className="w-full justify-center mt-4"
         >
           {isSubmitting ? "Booking..." : "Book Room"}
         </Button>

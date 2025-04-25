@@ -1,5 +1,6 @@
-import { Button } from "@headlessui/react";
 import { Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button.jsx";
+
 import React, { useState } from "react";
 import BookModal from "./BookModal.jsx";
 
@@ -19,16 +20,17 @@ export default function Hero() {
                 Simplify your workday with our intuitive meeting room booking system. Find and reserve the perfect space in seconds. Save time and make your meetings more productive.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <button
+                <Button
+                  variant="default"
+                  size="lg"
                   onClick={() => setIsModalOpen(true)}
-                  className="rounded-md bg-indigo-600 px-3.5 py-2.5 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                   Book a Room
-                </button>
+                </Button>
               </div>
 
               <BookModal
-                open={isModalOpen}
+                isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
               />
             </div>

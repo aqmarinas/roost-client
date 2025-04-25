@@ -4,6 +4,13 @@ import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
+export const statusOptions = [
+  { value: "Pending", label: "Pending" },
+  { value: "Approved", label: "Approved" },
+  { value: "Rejected", label: "Rejected" },
+  { value: "Canceled", label: "Canceled" },
+];
+
 export function BookingsTableColumn(onAction) {
   return [
     {
@@ -24,6 +31,7 @@ export function BookingsTableColumn(onAction) {
       ),
       enableSorting: false,
       enableHiding: false,
+      enableResizing: false,
     },
     {
       accessorKey: "created_at",
@@ -35,7 +43,7 @@ export function BookingsTableColumn(onAction) {
         </div>
       ),
       enableSorting: true,
-      enableHiding: false,
+      enableHiding: true,
       sortingFn: (rowA, rowB, columnId) => {
         const a = new Date(rowA.original.date).getTime();
         const b = new Date(rowB.original.date).getTime();
@@ -47,13 +55,16 @@ export function BookingsTableColumn(onAction) {
       accessorKey: "eventTitle",
       cell: (row) => <span className="font-semibold text-gray-900">{row.getValue()}</span>,
       enableSorting: true,
-      enableHiding: false,
+      enableHiding: true,
+      enableResizing: true,
     },
     {
       header: "Room",
       accessorKey: "room.name",
-      cell: (row) => <span className="text-gray-500">{row.getValue()}</span>,
+      cell: (row) => <span className="text-gray-500">{row.getValue() ?? "bug undefined pls refresh"}</span>, //"named" in deeply nested key "room.name" returned undefined while reject/accepte
       enableSorting: true,
+      enableHiding: true,
+      enableResizing: true,
     },
     {
       header: "Date & Time",
@@ -67,6 +78,8 @@ export function BookingsTableColumn(onAction) {
         </div>
       ),
       enableSorting: true,
+      enableHiding: true,
+      enableResizing: false,
       sortingFn: (rowA, rowB, columnId) => {
         const a = new Date(rowA.original.startTime).getTime();
         const b = new Date(rowB.original.startTime).getTime();
@@ -83,7 +96,8 @@ export function BookingsTableColumn(onAction) {
         </div>
       ),
       enableSorting: false,
-      enableHiding: false,
+      enableHiding: true,
+      enableResizing: false,
     },
     {
       header: "Status",
@@ -100,6 +114,11 @@ export function BookingsTableColumn(onAction) {
         return <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}>{status}</span>;
       },
       enableSorting: false,
+      enableHiding: true,
+      enableResizing: false,
+      filterFn: (row, columnId, filterValue) => {
+        return filterValue.length === 0 || filterValue.includes(row.getValue(columnId));
+      },
     },
     {
       id: "actions",
@@ -112,6 +131,7 @@ export function BookingsTableColumn(onAction) {
       ),
       enableSorting: false,
       enableHiding: false,
+      enableResizing: false,
     },
   ];
 }

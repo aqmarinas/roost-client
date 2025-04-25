@@ -2,6 +2,7 @@ import React from "react";
 import Card from "../../../components/ui/Card";
 import useFetch from "../../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button.jsx";
 
 export default function Rooms() {
   const navigate = useNavigate();
@@ -37,15 +38,16 @@ export default function Rooms() {
           </div>
           {rooms.length > 3 && (
             <div className="flex justify-center mt-8">
-              <button
-                type="button"
+              <Button
+                variant="default"
+                size="lg"
+                className="mt-4"
                 onClick={() => {
                   navigate("/rooms", { replace: true });
                 }}
-                className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Explore More Rooms
-              </button>
+              </Button>
             </div>
           )}
         </>

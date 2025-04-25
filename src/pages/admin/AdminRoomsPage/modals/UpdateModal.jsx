@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Input from "../../../../components/atom/Input/index.jsx";
-import Button from "../../../../components/atom/Button/index.jsx";
+import { Button } from "@/components/ui/button.jsx";
 import FacilitySelect from "../FacilitySelect.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
@@ -149,6 +149,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
               <div className="px-3 py-1.5 rounded-md bg-indigo-50 text-indigo-700 text-sm font-semibold">Browse</div>
             </div>
           </div>
+          <p className="text-sm text-gray-500 mt-1">Supported formats: JPG, PNG. Max size: 2MB.</p>
           {errors?.image && <p className="mt-1 text-sm text-red-600 flex items-center">{errors?.image.message}</p>}
 
           {imagePreview && (
@@ -172,10 +173,14 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
         </div>
 
         <Button
-          text={isSubmitting ? "Updating..." : "Update"}
-          type="submit"
+          variant="default"
+          size="sm"
+          fullWidth
+          className="mt-4"
           disabled={isSubmitting}
-        />
+        >
+          {isSubmitting ? "Updating..." : "Update"}
+        </Button>
       </form>
     </Modal>
   );

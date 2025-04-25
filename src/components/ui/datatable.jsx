@@ -3,11 +3,13 @@ import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Pagination from "@/components/ui/Pagination";
+import Search from "../atom/Search";
+import Filter from "./Filter";
+import { DatePicker } from "./datepicker";
 
-export function DataTable({ columns, data, globalFilterKey = "", enableGlobalFilter = false, onAction, customFilters, datePicker }) {
+export function DataTable({ columns, data, onAction, enableSearch = false, enableFilter = false, enableDatePicker = false, searchKey = "", filterData, filterType }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -20,6 +22,13 @@ export function DataTable({ columns, data, globalFilterKey = "", enableGlobalFil
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+      pagination,
+    },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -29,35 +38,38 @@ export function DataTable({ columns, data, globalFilterKey = "", enableGlobalFil
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      pagination,
-    },
   });
 
   return (
     <div className="w-full">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-4">
         <div className="flex flex-col md:flex-row md:items-center gap-4 flex-wrap">
-          {enableGlobalFilter && (
-            <Input
+          {/* filters */}
+          {enableSearch && (
+            <Search
               placeholder="Search..."
-              value={table.getColumn(globalFilterKey)?.getFilterValue() ?? ""}
-              onChange={(event) => table.getColumn(globalFilterKey)?.setFilterValue(event.target.value)}
-              className="w-full md:w-64"
+              value={table.getColumn(searchKey)?.getFilterValue() ?? ""}
+              onChange={(event) => table.getColumn(searchKey)?.setFilterValue(event.target.value)}
+            />
+          )}
+          {enableFilter && (
+            <Filter
+              columnFilters={columnFilters}
+              setColumnFilters={setColumnFilters}
+              filterData={filterData}
+              filterType={filterType}
             />
           )}
 
-          {/* Optional custom filters */}
-          {customFilters}
-
-          {/* Optional date picker */}
-          {datePicker}
+          {/* {enableDatePicker && (
+            <DatePicker
+              columnFilters={columnFilters}
+              setColumnFilters={setColumnFilters}
+            />
+          )} */}
         </div>
 
+        {/* column visibility */}
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -101,6 +113,7 @@ export function DataTable({ columns, data, globalFilterKey = "", enableGlobalFil
         </div>
       </div>
 
+      {/* table */}
       <div className="rounded-md">
         <Table>
           <TableHeader>
@@ -162,6 +175,7 @@ export function DataTable({ columns, data, globalFilterKey = "", enableGlobalFil
         </Table>
       </div>
 
+      {/* pagination */}
       <div className="border-t border-gray-200 py-3">
         <Pagination table={table} />
       </div>

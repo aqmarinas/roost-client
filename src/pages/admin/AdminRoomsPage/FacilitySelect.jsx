@@ -66,13 +66,12 @@ export default function FacilitySelect({ setValue, watch, error, register, requi
               className="flex items-center bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm"
             >
               {facility.name}
-              <button
-                type="button"
+              <div
                 onClick={() => handleRemoveFacility(facility.id)}
                 className="ml-2 focus:outline-none"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </div>
             </div>
           ))}
         </div>

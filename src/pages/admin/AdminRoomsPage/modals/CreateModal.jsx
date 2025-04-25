@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import Input from "../../../../components/atom/Input/index.jsx";
-import Button from "../../../../components/atom/Button/index.jsx";
 import FacilitySelect from "../FacilitySelect.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
 import { TrashIcon } from "lucide-react";
+import { Button } from "@/components/ui/button.jsx";
 
 export default function CreateModal({ isOpen, onClose, onCreate }) {
   const [imageFile, setImageFile] = useState(null);
@@ -151,6 +151,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
               <div className="px-3 py-1.5 rounded-md bg-indigo-50 text-indigo-700 text-sm font-semibold">Browse</div>
             </div>
           </div>
+          <p className="text-sm text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG. Max size: 2MB.</p>
           {errors?.image && <p className="mt-1 text-sm text-red-600 flex items-center">{errors?.image.message}</p>}
 
           {imagePreview && (
@@ -162,22 +163,26 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
                   className="h-48 rounded-lg object-cover"
                 />
               </div>
-              <button
+              <div
                 type="button"
                 onClick={handleRemoveImage}
                 className="absolute top-4 right-4 p-1 bg-white rounded-full shadow-sm hover:bg-gray-100"
               >
                 <TrashIcon className="size-5 text-gray-500 hover:text-red-500" />
-              </button>
+              </div>
             </div>
           )}
         </div>
 
         <Button
-          text={isSubmitting ? "Creating..." : "Create"}
-          type="submit"
+          variant="default"
+          size="sm"
+          fullWidth
+          className="mt-4"
           disabled={isSubmitting}
-        />
+        >
+          {isSubmitting ? "Creating..." : "Create"}
+        </Button>
       </form>
     </Modal>
   );

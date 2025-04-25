@@ -10,14 +10,21 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
 
-export function DatePicker({ className, onChange }) {
+export function DatePicker({ columnFilters, setColumnFilters, className }) {
   const [date, setDate] = useState({ from: null, to: null });
 
   const handleSelect = (range) => {
     setDate(range);
-    if (onChange) {
-      onChange(range);
-    }
+
+    setColumnFilters((prev) => {
+      const existingDateFilter = prev.find((filter) => filter.id === "date");
+      const newFilter = {
+        id: "date",
+        value: range,
+      };
+
+      return existingDateFilter ? prev.map((filter) => (filter.id === "date" ? newFilter : filter)) : [...prev, newFilter];
+    });
   };
 
   return (

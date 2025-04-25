@@ -1,21 +1,22 @@
 import { PlusIcon } from "@heroicons/react/24/solid";
+import { Button } from "@/components/ui/button";
 
 export default function FacilitiesHeader({ onAdd }) {
   return (
-    <div className="space-y-4 px-4 md:p-0">
+    <div className="space-y-4 md:p-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
+        <div className="px-2 md:px-0">
           <h1 className="text-2xl font-bold text-gray-900">Facilities</h1>
           <p className="text-sm text-gray-500">Manage facilities available in meeting rooms.</p>
         </div>
-
-        <button
+        <Button
+          variant="default"
+          size="sm"
           onClick={onAdd}
-          className="flex items-center justify-center gap-2 rounded-md bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:w-auto w-full"
         >
           <PlusIcon className="size-5" />
           Add Facility
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import Input from "../../../../components/atom/Input/index.jsx";
-import Button from "../../../../components/atom/Button/index.jsx";
+import { Button } from "@/components/ui/button.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
 import { ChevronDownIcon } from "lucide-react";
@@ -226,11 +226,13 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
         </div>
 
         <Button
-          type="submit"
+          variant="default"
+          size="sm"
+          fullWidth
+          className="mt-4"
           disabled={isSubmitting}
-          className="w-full justify-center mt-4"
         >
-          {isSubmitting ? "Booking..." : "Book Room"}
+          {isSubmitting ? "Updating..." : "Update"}
         </Button>
       </form>
     </Modal>

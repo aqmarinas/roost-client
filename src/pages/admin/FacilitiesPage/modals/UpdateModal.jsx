@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import Input from "../../../../components/atom/Input/";
-import Button from "../../../../components/atom/Button/index.jsx";
+import { Button } from "@/components/ui/button.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
 
@@ -45,12 +45,16 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
           error={errors.name?.message}
           required
         />
-
+        import {Button} from "@/components/ui/button.jsx";
         <Button
-          text={isSubmitting ? "Updating..." : "Update"}
-          type="submit"
+          variant="default"
+          size="sm"
+          fullWidth
+          className="mt-4"
           disabled={isSubmitting}
-        />
+        >
+          {isSubmitting ? "Updating..." : "Update"}
+        </Button>
       </form>
     </Modal>
   );
