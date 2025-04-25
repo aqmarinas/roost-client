@@ -1,18 +1,25 @@
-"use client";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
 import Input from "../../../components/atom/Input";
 import Button from "../../../components/atom/Button";
 import OTPModal from "./OTPModal";
 import Modal from "../../../components/ui/Modal";
-import useFetch from "../../../hooks/useFetch";
 import { ChevronDownIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
-export default function BookModal({ open, onClose, onSuccess }) {
-  // const [isModalOTPOpen, setIsModalOTPOpen] = useState(false);
-  const { data: response, loading: roomsLoading, error: roomsError } = useFetch(`/rooms`);
-  const rooms = response?.data || [];
+export default function BookModal({ isOpen, onClose, onCreate }) {
+  // for select
+  const {
+    data: rooms = [],
+    isLoading: roomsLoading,
+    error: roomsError,
+  } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: () =>
+      fetch(`${import.meta.env.VITE_LOCAL_API}/rooms
+      `)
+        .then((res) => res.json())
+        .then((res) => res.data || []),
+  });
 
   const {
     register,
@@ -22,29 +29,7 @@ export default function BookModal({ open, onClose, onSuccess }) {
   } = useForm();
 
   const onSubmit = async (data) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to book room");
-      }
-
-      toast.success("Room booked successfully!");
-      // setIsModalOTPOpen(true);
-      // onSuccess?.();
-      reset();
-    } catch (error) {
-      console.error("Booking error:", error);
-      toast.error(error.message || "Failed to book room");
-    }
+    onCreate(data), reset(), onClose(); // di public harusnya ga langsung close
   };
 
   const handleModalClose = () => {
@@ -55,7 +40,7 @@ export default function BookModal({ open, onClose, onSuccess }) {
   return (
     <>
       <Modal
-        open={open}
+        isOpen={isOpen}
         onClose={handleModalClose}
         title="Book a Room"
       >
@@ -232,7 +217,7 @@ export default function BookModal({ open, onClose, onSuccess }) {
       </Modal>
 
       {/* <OTPModal
-          open={isModalOTPOpen}
+          isOpen={isModalOTPOpen}
           onClose={() => {
             setIsModalOTPOpen(false);
             handleModalClose();

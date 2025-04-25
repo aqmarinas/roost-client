@@ -3,7 +3,7 @@
 import { ExclamationTriangleIcon, CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import Modal from "../Modal";
 
-export default function ModalDialog({ open, onClose, title = "Confirm", message = "Are you sure you want to proceed? This action cannot be undone.", confirmText = "Confirm", cancelText = "Cancel", onConfirm, type = "danger" }) {
+export default function ModalDialog({ isOpen, onClose, title = "Confirm", message = "Are you sure you want to proceed? This action cannot be undone.", confirmText = "Confirm", cancelText = "Cancel", onConfirm, type = "danger" }) {
   // Color configurations based on type
   const colorConfig = {
     danger: {
@@ -32,7 +32,7 @@ export default function ModalDialog({ open, onClose, title = "Confirm", message 
 
   return (
     <Modal
-      open={open}
+      isOpen={isOpen}
       onClose={onClose}
       showCloseButton={false}
     >

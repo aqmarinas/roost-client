@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/public/HomePage";
 import RoomsPage from "./pages/public/RoomsPage";
 import LoginPage from "./pages/admin/LoginPage";
-import SchedulesPage from "./pages/admin/BookingsPage";
+import BookingsPage from "./pages/admin/BookingsPage";
 import NotFoundPage from "./pages/public/NotFoundPage";
 import AdminRoomsPage from "./pages/admin/AdminRoomsPage";
 import DetailPage from "./pages/public/DetailPage";
@@ -39,8 +39,8 @@ function App() {
           <Route element={<PersistLogin />}>
             <Route element={<ProtectedRoutes />}>
               <Route
-                path="/admin/schedules"
-                element={<SchedulesPage />}
+                path="/admin/bookings"
+                element={<BookingsPage />}
               />
               <Route
                 path="/admin/rooms"

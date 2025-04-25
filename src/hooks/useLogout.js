@@ -14,6 +14,7 @@ export default function useLogout() {
       console.error("Logout failed", err);
     } finally {
       setAuth({});
+      navigate("/login", { replace: true });
     }
   };
 

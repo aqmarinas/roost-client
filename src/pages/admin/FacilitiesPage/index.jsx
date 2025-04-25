@@ -1,14 +1,11 @@
-import React from "react";
 import AdminLayout from "../../../components/layout/AdminLayout";
-import FacilitiesHeader from "./FacilitiesHeader";
-import FacilitiesTable from "./FacilitiesTable";
+import Facilities from "./Facilities";
 
 export default function FacilitesPage() {
   return (
     <>
       <AdminLayout>
-        <FacilitiesHeader />
-        <FacilitiesTable />
+        <Facilities />
       </AdminLayout>
     </>
   );

@@ -9,7 +9,7 @@ export default function LoginPage() {
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/admin/schedules";
+  const from = location.state?.from?.pathname || "/admin/bookings";
   const [error, setError] = useState(location.state?.error);
 
   // useEffect(() => {

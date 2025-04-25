@@ -1,17 +1,25 @@
-"use client";
-
-import { useEffect } from "react";
 import Input from "../../../../components/atom/Input/index.jsx";
 import Button from "../../../../components/atom/Button/index.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
-import { toast } from "react-hot-toast";
-import useFetch from "../../../../hooks/useFetch.js";
 import { ChevronDownIcon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
-export default function UpdateModal({ open, onClose, booking, onSuccess }) {
-  const { data: response, loading: roomsLoading, error: roomsError } = useFetch(`/rooms`);
-  const rooms = response?.data || [];
+export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
+  // for select
+  const {
+    data: rooms = [],
+    isLoading: roomsLoading,
+    error: roomsError,
+  } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: () =>
+      fetch(`${import.meta.env.VITE_LOCAL_API}/rooms
+      `)
+        .then((res) => res.json())
+        .then((res) => res.data || []),
+  });
 
   const {
     register,
@@ -22,7 +30,7 @@ export default function UpdateModal({ open, onClose, booking, onSuccess }) {
   } = useForm();
 
   useEffect(() => {
-    if (booking && open) {
+    if (booking && isOpen) {
       const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toISOString().split("T")[0]; // YYYY-MM-DD
@@ -42,32 +50,10 @@ export default function UpdateModal({ open, onClose, booking, onSuccess }) {
       setValue("bookerEmail", booking.bookerEmail);
       setValue("bookerPhone", booking.bookerPhone);
     }
-  }, [booking, open, setValue]);
+  }, [booking, isOpen, setValue]);
 
   const onSubmit = async (data) => {
-    console.log(data);
-    try {
-      const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings/${booking.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to update booking");
-      }
-
-      toast.success("Successfully updated booking");
-      onSuccess();
-      onClose();
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error(error.message);
-    }
+    onSuccess(data), reset(), onClose();
   };
 
   const handleClose = () => {
@@ -77,7 +63,7 @@ export default function UpdateModal({ open, onClose, booking, onSuccess }) {
 
   return (
     <Modal
-      open={open}
+      isOpen={isOpen}
       onClose={handleClose}
       title="Update Booking"
     >

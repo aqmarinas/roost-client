@@ -40,7 +40,7 @@ export default function AdminLayout({ children }) {
         ${isMobile && !isCollapsed ? "blur-sm pointer-events-none" : ""}
       `}
       >
-        <div className="px-2 py-6 lg:p-8 bg-gray-100 min-h-screen">{children}</div>
+        <div className="px-2 md:px-6 py-6 lg:p-8 bg-gray-100 min-h-screen">{children}</div>
       </div>
     </div>
   );

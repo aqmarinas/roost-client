@@ -5,9 +5,9 @@ export default function DeleteModal({ isOpen, onClose, onSuccess }) {
     <ModalDialog
       isOpen={isOpen}
       onClose={onClose}
-      onConfirm={onSuccess}
+      onConfirm={onSuccess} // trigger mutation
       title="Confirm Delete"
-      message="Are you sure you want to delete this booking? This action can't be undone."
+      message="Are you sure you want to delete this facility?"
     />
   );
 }

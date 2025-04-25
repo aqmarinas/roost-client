@@ -1,15 +1,11 @@
-import React from "react";
-import RoomsCard from "./RoomsTable";
 import AdminLayout from "../../../components/layout/AdminLayout";
-import Header from "./RoomsHeader";
-import RoomsTable from "./RoomsTable";
+import AdminRooms from "./AdminRooms";
 
 export default function AdminRoomsPage() {
   return (
     <>
       <AdminLayout>
-        <Header />
-        <RoomsTable />
+        <AdminRooms />
       </AdminLayout>
     </>
   );

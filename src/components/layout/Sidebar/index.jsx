@@ -8,7 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import Avatar from "../../../assets/avatar.jpg";
 
 const navigation = [
-  { name: "Schedules", href: "/admin/schedules", icon: CalendarIcon },
+  { name: "Bookings", href: "/admin/bookings", icon: CalendarIcon },
   { name: "Rooms", href: "/admin/rooms", icon: BuildingOfficeIcon },
   { name: "Facilities", href: "/admin/facilities", icon: Cog6ToothIcon },
 ];

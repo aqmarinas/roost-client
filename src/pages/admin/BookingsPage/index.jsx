@@ -1,14 +1,12 @@
-import React from "react";
 import AdminLayout from "../../../components/layout/AdminLayout";
-import SchedulesTable from "./BookingsTable";
-import Header from "./BookingsHeader";
+import Bookings from "./Bookings";
 
-export default function SchedulesPage() {
+export default function BookingsPage() {
   return (
     <div>
       <AdminLayout>
-        <Header />
-        <SchedulesTable />
+        <Bookings />
+        {/* <DataTableDemo /> */}
       </AdminLayout>
     </div>
   );

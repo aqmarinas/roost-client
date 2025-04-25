@@ -13,13 +13,14 @@ const modalSizes = {
   full: "sm:max-w-full",
 };
 
-export default function Modal({ open, onClose, title, children, size = "lg", showCloseButton = true }) {
+export default function Modal({ isOpen, onClose, title, children, size = "lg", showCloseButton = true }) {
   const sizeClass = modalSizes[size] || modalSizes.lg;
 
   return (
     <Dialog
-      open={open}
+      open={isOpen}
       onClose={() => {}}
+      // onClose={onClose}
       className="relative z-50"
     >
       <DialogBackdrop
@@ -53,7 +54,7 @@ export default function Modal({ open, onClose, title, children, size = "lg", sho
             </div>
           )}
 
-          <div className="max-h-[80vh] overflow-y-auto">{children}</div>
+          <div className="max-h-[80vh] overflow-y-auto px-1">{children}</div>
         </DialogPanel>
       </div>
     </Dialog>
