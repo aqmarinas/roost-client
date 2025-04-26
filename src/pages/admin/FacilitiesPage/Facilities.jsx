@@ -55,7 +55,7 @@ export default function Facilities() {
           <CreateModal
             isOpen={openCreate}
             onClose={() => setOpenCreate(false)}
-            onCreate={(data) => createFacility.mutate(data)}
+            onCreate={(data) => createFacility.mutateAsync(data).then(() => setOpenCreate(false))}
           />
         )}
         {openUpdate && (
@@ -63,7 +63,7 @@ export default function Facilities() {
             facility={selectedFacility}
             isOpen={openUpdate}
             onClose={() => setOpenUpdate(false)}
-            onSuccess={(data) => updateFacility.mutate({ id: selectedFacility?.id, updatedData: data })}
+            onSuccess={(data) => updateFacility.mutateAsync({ id: selectedFacility?.id, updatedData: data }).then(() => setOpenUpdate(false))}
           />
         )}
         {openDelete && (
@@ -71,7 +71,7 @@ export default function Facilities() {
             isOpen={openDelete}
             onClose={() => setOpenDelete(false)}
             onSuccess={() => {
-              deleteFacility.mutate(Array.isArray(selectedFacility) ? selectedFacility : [selectedFacility?.id]);
+              deleteFacility.mutateAsync(Array.isArray(selectedFacility) ? selectedFacility : [selectedFacility?.id]).then(() => setOpenDelete(false));
             }}
           />
         )}

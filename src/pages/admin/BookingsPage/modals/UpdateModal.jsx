@@ -53,7 +53,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
   }, [booking, isOpen, setValue]);
 
   const onSubmit = async (data) => {
-    onSuccess(data), reset(), onClose();
+    onSuccess(data), reset();
   };
 
   const handleClose = () => {

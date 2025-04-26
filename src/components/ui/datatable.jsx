@@ -73,10 +73,7 @@ export function DataTable({ columns, data, onAction, enableSearch = false, enabl
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-              >
+              <Button variant="outline">
                 Columns <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

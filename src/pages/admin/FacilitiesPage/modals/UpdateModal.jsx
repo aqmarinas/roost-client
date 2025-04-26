@@ -20,7 +20,7 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
   }, [facility, isOpen, setValue]);
 
   const onSubmit = async (data) => {
-    onSuccess(data), reset(), onClose();
+    onSuccess(data), reset();
   };
 
   const handleClose = () => {
@@ -45,7 +45,6 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
           error={errors.name?.message}
           required
         />
-        import {Button} from "@/components/ui/button.jsx";
         <Button
           variant="default"
           size="sm"

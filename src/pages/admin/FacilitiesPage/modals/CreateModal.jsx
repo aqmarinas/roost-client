@@ -12,7 +12,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
   } = useForm();
 
   const onSubmit = async (data) => {
-    onCreate(data), reset(), onClose();
+    onCreate(data), reset();
   };
 
   const handleClose = () => {

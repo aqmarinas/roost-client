@@ -84,7 +84,7 @@ export default function Bookings() {
           <CreateModal
             isOpen={openCreate}
             onClose={() => setOpenCreate(false)}
-            onCreate={(data) => createBooking.mutate(data)}
+            onCreate={(data) => createBooking.mutateAsync(data).then(() => setOpenCreate(false))}
           />
         )}
         {openUpdate && (
@@ -92,7 +92,7 @@ export default function Bookings() {
             isOpen={openUpdate}
             booking={selectedBooking}
             onClose={() => setOpenUpdate(false)}
-            onSuccess={(data) => updateBooking.mutate({ id: selectedBooking?.id, updatedData: data })}
+            onSuccess={(data) => updateBooking.mutateAsync({ id: selectedBooking?.id, updatedData: data }).then(() => setOpenUpdate(false))}
           />
         )}
         {openDelete && (
@@ -101,7 +101,7 @@ export default function Bookings() {
             onClose={() => setOpenDelete(false)}
             onSuccess={() => {
               // deleteBooking.mutate(selectedBooking.length > 1 ? selectedBooking : [selectedBooking?.id]);
-              deleteBooking.mutate(Array.isArray(selectedBooking) ? selectedBooking : [selectedBooking?.id]);
+              deleteBooking.mutateAsync(Array.isArray(selectedBooking) ? selectedBooking : [selectedBooking?.id]).then(() => setOpenDelete(false));
             }}
           />
         )}
@@ -109,14 +109,14 @@ export default function Bookings() {
           <ApproveModal
             isOpen={openApprove}
             onClose={() => setOpenApprove(false)}
-            onSuccess={() => approveBooking.mutate({ id: selectedBooking?.id })}
+            onSuccess={() => approveBooking.mutateAsync({ id: selectedBooking?.id }).then(() => setOpenApprove(false))}
           />
         )}
         {openReject && (
           <RejectModal
             isOpen={openReject}
             onClose={() => setOpenReject(false)}
-            onSuccess={() => rejectBooking.mutate({ id: selectedBooking?.id })}
+            onSuccess={() => rejectBooking.mutateAsync({ id: selectedBooking?.id }).then(() => setOpenReject(false))}
           />
         )}
       </Suspense>

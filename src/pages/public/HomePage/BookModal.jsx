@@ -29,7 +29,7 @@ export default function BookModal({ isOpen, onClose, onCreate }) {
   } = useForm();
 
   const onSubmit = async (data) => {
-    onCreate(data), reset(), onClose(); // di public harusnya ga langsung close
+    onCreate(data), reset(); // di public harusnya ga langsung close (otp dulu)
   };
 
   const handleModalClose = () => {

@@ -12,7 +12,6 @@ export default function BookingsHeader({ onAdd }) {
           </div>
           <Button
             variant="default"
-            size="sm"
             onClick={onAdd}
           >
             <PlusIcon className="size-5" />

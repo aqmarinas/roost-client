@@ -1,5 +1,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { MinusSmallIcon, PlusSmallIcon } from "@heroicons/react/24/outline";
+// import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const faqs = [
   {
@@ -21,7 +22,22 @@ const faqs = [
 
 export default function FAQ() {
   return (
-    <div className="">
+    <>
+      {/* react v19 blm support */}
+      {/* <Accordion
+        type="single"
+        collapsible
+      >
+        {faqs.map((faq) => (
+          <>
+            <AccordionItem value="item-1">
+              <AccordionTrigger>{faq.question}</AccordionTrigger>
+              <AccordionContent>{faq.answer}</AccordionContent>
+            </AccordionItem>
+          </>
+        ))}
+      </Accordion> */}
+
       <div className="mx-auto max-w-7xl py-24 lg:px-8 ">
         <div className="mx-auto max-w-4xl">
           <h2 className="text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Frequently Asked Questions (FAQ)</h2>
@@ -58,6 +74,6 @@ export default function FAQ() {
           </dl>
         </div>
       </div>
-    </div>
+    </>
   );
 }
