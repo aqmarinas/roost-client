@@ -4,6 +4,7 @@ import Button from "../../../components/atom/Button";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Modal from "../../../components/ui/Modal";
+import { API_URL } from "@/config/config";
 
 export default function OTPModal({ open, onClose, bookingData }) {
   const {
@@ -15,7 +16,7 @@ export default function OTPModal({ open, onClose, bookingData }) {
 
   const onSubmit = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings`, {
+      const response = await fetch(`${API_URL}/bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

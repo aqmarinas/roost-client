@@ -1,7 +1,6 @@
-"use client";
-
-import { ExclamationTriangleIcon, CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import Modal from "../Modal";
+import { Button } from "../button";
 
 export default function ModalDialog({ isOpen, onClose, title = "Confirm", message = "Are you sure you want to proceed? This action cannot be undone.", confirmText = "Confirm", cancelText = "Cancel", onConfirm, type = "danger" }) {
   // Color configurations based on type
@@ -51,23 +50,19 @@ export default function ModalDialog({ isOpen, onClose, title = "Confirm", messag
         </div>
 
         <div className="mt-4 flex justify-end space-x-3">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={onClose}
-            className="rounded-md bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           >
             {cancelText}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              onConfirm?.();
-              onClose();
-            }}
-            className={`rounded-md px-3 py-2 text-sm font-medium text-white shadow-sm hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 ${button}`}
+          </Button>
+          <Button
+            className={`${button}`}
+            autoFocus
+            onClick={onConfirm}
           >
             {confirmText}
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>

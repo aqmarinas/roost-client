@@ -5,8 +5,10 @@ import Modal from "../../../components/ui/Modal";
 import { ChevronDownIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { API_URL } from "@/config/config";
+import { useEffect } from "react";
 
-export default function BookModal({ isOpen, onClose, onCreate }) {
+export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
   // for select
   const {
     data: rooms = [],
@@ -15,7 +17,7 @@ export default function BookModal({ isOpen, onClose, onCreate }) {
   } = useQuery({
     queryKey: ["rooms"],
     queryFn: () =>
-      fetch(`${import.meta.env.VITE_LOCAL_API}/rooms
+      fetch(`${API_URL}/rooms
       `)
         .then((res) => res.json())
         .then((res) => res.data || []),
@@ -25,17 +27,64 @@ export default function BookModal({ isOpen, onClose, onCreate }) {
     register,
     handleSubmit,
     reset,
+    setError,
+    clearErrors,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm();
 
+  const date = watch("date");
+  const startTime = watch("startTime");
+
   const onSubmit = async (data) => {
-    onCreate(data), reset(); // di public harusnya ga langsung close (otp dulu)
+    await onCreate(data);
+    reset();
+    onClose(); // di public harusnya ga langsung close (otp dulu)
   };
 
   const handleModalClose = () => {
     reset();
     onClose();
   };
+
+  const handlePhoneNumberChange = (e) => {
+    const phoneValue = e.target.value;
+    const phoneRegex = /^(628|08)[0-9]{8,13}$/;
+
+    if (!phoneRegex.test(phoneValue)) {
+      setError("bookerPhone", {
+        type: "manual",
+        message: "Phone number must start with '628' or '08' and contain 8 to 15 digits",
+      });
+    } else {
+      clearErrors("bookerPhone");
+    }
+  };
+
+  const handleDateAndTimeChange = () => {
+    if (date && startTime) {
+      const selectedDateTime = new Date(`${date}T${startTime}`);
+      const conflict = existBooking.some((booking) => {
+        const existingStart = new Date(`${booking.date}T${booking.startTime}`);
+        const existingEnd = new Date(`${booking.date}T${booking.endTime}`);
+
+        return (selectedDateTime >= existingStart && selectedDateTime < existingEnd) || (new Date(`${date}T${startTime}`) < existingEnd && new Date(`${date}T${startTime}`) >= existingStart);
+      });
+
+      if (conflict) {
+        setError("date", {
+          type: "manual",
+          message: "The selected date and time overlap with an existing booking.",
+        });
+      } else {
+        clearErrors("date");
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleDateAndTimeChange();
+  }, [date, startTime]);
 
   return (
     <>
@@ -54,6 +103,7 @@ export default function BookModal({ isOpen, onClose, onCreate }) {
             })}
             error={errors.eventTitle?.message}
             required
+            autofocus
           />
 
           <Input
@@ -92,15 +142,15 @@ export default function BookModal({ isOpen, onClose, onCreate }) {
           <Input
             id="bookerPhone"
             label="Phone Number"
-            placeholder="62812345678"
+            placeholder="0812345678910"
+            type="tel"
+            minLength={8}
+            maxLength={15}
             {...register("bookerPhone", {
               required: "Phone number is required",
-              pattern: {
-                value: /^62[0-9]{8,13}$/,
-                message: "Invalid phone number format",
-              },
             })}
             error={errors.bookerPhone?.message}
+            onChange={handlePhoneNumberChange}
             required
           />
 
@@ -208,7 +258,6 @@ export default function BookModal({ isOpen, onClose, onCreate }) {
 
           <Button
             variant="default"
-            size="sm"
             fullWidth
             className="mt-4"
             disabled={isSubmitting}

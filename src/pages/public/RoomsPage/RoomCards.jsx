@@ -1,6 +1,7 @@
 import React from "react";
 import useFetch from "../../../hooks/useFetch";
 import Card from "../../../components/ui/Card";
+import { API_URL } from "@/config/config";
 
 export default function RoomCards() {
   const { data: response, loading, error } = useFetch(`/rooms`);
@@ -21,7 +22,7 @@ export default function RoomCards() {
               capacity={room.capacity}
               location={room.location}
               link={`/rooms/${room.id}`}
-              imgSrc={`http://localhost:3000/${room.image}`}
+              imgSrc={`${API_URL}/${room.image}`}
             />
           ))}
         </div>

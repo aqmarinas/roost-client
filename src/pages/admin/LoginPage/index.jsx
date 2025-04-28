@@ -1,9 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import Button from "../../../components/atom/Button";
 import Input from "../../../components/atom/Input";
 import { useForm } from "react-hook-form";
 import useAuth from "../../../hooks/useAuth";
 import { useEffect, useState } from "react";
+import { API_URL } from "@/config/config";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const { auth, setAuth } = useAuth();
@@ -27,7 +28,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/auth/login`, {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,6 +76,7 @@ export default function LoginPage() {
               placeholder="Enter your email"
               {...register("email", { required: "Email is required" })}
               required
+              autofocus
               error={errors.email?.message}
             />
 
@@ -90,9 +92,13 @@ export default function LoginPage() {
             />
 
             <Button
-              text="Login"
-              type="submit"
-            />
+              variant="default"
+              size="lg"
+              fullWidth
+              className="mt-4"
+            >
+              Login
+            </Button>
           </form>
         </div>
       </div>

@@ -12,7 +12,9 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
   } = useForm();
 
   const onSubmit = async (data) => {
-    onCreate(data), reset();
+    await onCreate(data);
+    reset();
+    onClose();
   };
 
   const handleClose = () => {
@@ -34,15 +36,14 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
             type="text"
             placeholder="Name"
             label="Name"
+            autofocus
             {...register("name", { required: "Name is required" })}
             error={errors.name?.message}
             required
-            autofocus
           />
 
           <Button
             variant="default"
-            size="sm"
             fullWidth
             className="mt-4"
             disabled={isSubmitting}

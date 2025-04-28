@@ -1,15 +1,12 @@
 import { Suspense, lazy, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
-import useAuth from "../../../hooks/useAuth";
-import BookingsTable from "./BookingsTable";
+import { toast } from "react-hot-toast";
+import useAuth from "@/hooks/useAuth";
 import BookingsHeader from "./BookingsHeader";
-import { API_URL } from "../../../config/config";
-import { BookingsTable2 } from "./BookingsTable2";
-import { useBookingMutations } from "@/hooks/useBookingMutations";
+import BookingsTable from "./BookingsTable";
 import DataTableSkeleton from "@/components/ui/datatableskeleton";
+import { useBookings } from "@/hooks/useBookings";
 
-const CreateModal = lazy(() => import("../../public/HomePage/BookModal"));
+const CreateModal = lazy(() => import("@/pages/public/HomePage/BookModal"));
 const UpdateModal = lazy(() => import("./modals/UpdateModal"));
 const DeleteModal = lazy(() => import("./modals/DeleteModal"));
 const ApproveModal = lazy(() => import("./modals/ApproveModal"));
@@ -22,22 +19,9 @@ export default function Bookings() {
   const [openApprove, setOpenApprove] = useState(false);
   const [openReject, setOpenReject] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+
   const { auth } = useAuth();
-  const { createBooking, updateBooking, deleteBooking, approveBooking, rejectBooking } = useBookingMutations(auth);
-
-  // const endpoint = `/bookings?page=${currentPage}&limit=${itemsPerPage}`;
-
-  const {
-    data: bookings = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["bookings"],
-    queryFn: () =>
-      fetch(`${API_URL}/bookings`)
-        .then((res) => res.json())
-        .then((res) => res.data),
-  });
+  const { data: bookings = [], isLoading, error, createBookingMutation, updateBookingMutation, deleteBookingMutation, approveBookingMutation, rejectBookingMutation } = useBookings(auth);
 
   const handleActionClick = (booking, actionType) => {
     setSelectedBooking(booking);
@@ -61,30 +45,29 @@ export default function Bookings() {
 
   return (
     <>
-      <BookingsHeader onAdd={() => setOpenCreate(true)} />
+      <BookingsHeader
+        isLoading={isLoading}
+        onAdd={() => setOpenCreate(true)}
+      />
 
-      {isLoading && <DataTableSkeleton columnCount={3} />}
-      {error && <p className="px-4 text-red-500">Error: Cannot get bookings data</p>}
-
-      {!isLoading && !error && (
-        <>
-          {/* <BookingsTable
+      {isLoading ? (
+        <DataTableSkeleton columnCount={3} />
+      ) : error ? (
+        <p className="py-4 text-red-500 text-sm">Error: Cannot get bookings data</p>
+      ) : (
+        <BookingsTable
           data={bookings}
           onAction={handleActionClick}
-        /> */}
-          <BookingsTable2
-            data={bookings}
-            onAction={handleActionClick}
-          />
-        </>
+        />
       )}
 
-      <Suspense fallback={<p>Loading modal...</p>}>
+      <Suspense fallback={<p>Load modal...</p>}>
         {openCreate && (
           <CreateModal
+            existBooking={bookings}
             isOpen={openCreate}
             onClose={() => setOpenCreate(false)}
-            onCreate={(data) => createBooking.mutateAsync(data).then(() => setOpenCreate(false))}
+            onCreate={(data) => createBookingMutation.mutateAsync(data).then(() => setOpenCreate(false))}
           />
         )}
         {openUpdate && (
@@ -92,7 +75,7 @@ export default function Bookings() {
             isOpen={openUpdate}
             booking={selectedBooking}
             onClose={() => setOpenUpdate(false)}
-            onSuccess={(data) => updateBooking.mutateAsync({ id: selectedBooking?.id, updatedData: data }).then(() => setOpenUpdate(false))}
+            onSuccess={(data) => updateBookingMutation.mutateAsync({ id: selectedBooking?.id, updatedData: data })}
           />
         )}
         {openDelete && (
@@ -100,8 +83,7 @@ export default function Bookings() {
             isOpen={openDelete}
             onClose={() => setOpenDelete(false)}
             onSuccess={() => {
-              // deleteBooking.mutate(selectedBooking.length > 1 ? selectedBooking : [selectedBooking?.id]);
-              deleteBooking.mutateAsync(Array.isArray(selectedBooking) ? selectedBooking : [selectedBooking?.id]).then(() => setOpenDelete(false));
+              deleteBookingMutation.mutateAsync(Array.isArray(selectedBooking) ? selectedBooking : [selectedBooking?.id]);
             }}
           />
         )}
@@ -109,22 +91,17 @@ export default function Bookings() {
           <ApproveModal
             isOpen={openApprove}
             onClose={() => setOpenApprove(false)}
-            onSuccess={() => approveBooking.mutateAsync({ id: selectedBooking?.id }).then(() => setOpenApprove(false))}
+            onSuccess={() => approveBookingMutation.mutateAsync({ id: selectedBooking?.id })}
           />
         )}
         {openReject && (
           <RejectModal
             isOpen={openReject}
             onClose={() => setOpenReject(false)}
-            onSuccess={() => rejectBooking.mutateAsync({ id: selectedBooking?.id }).then(() => setOpenReject(false))}
+            onSuccess={() => rejectBookingMutation.mutateAsync({ id: selectedBooking?.id })}
           />
         )}
       </Suspense>
-
-      <Toaster
-        position="top-center"
-        toastOptions={{ className: "text-sm" }}
-      />
     </>
   );
 }

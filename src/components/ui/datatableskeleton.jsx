@@ -18,7 +18,7 @@ const DataTableSkeleton = ({ columnCount = 5 }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {Array.from({ length: 5 }).map((_, rowIndex) => (
+          {Array.from({ length: 10 }).map((_, rowIndex) => (
             <TableRow key={rowIndex}>
               {Array.from({ length: columnCount }).map((_, colIndex) => (
                 <TableCell

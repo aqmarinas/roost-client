@@ -11,7 +11,7 @@ export const statusOptions = [
   { value: "Canceled", label: "Canceled" },
 ];
 
-export function BookingsTableColumn(onAction) {
+export function BookingsTableColumnDef(onAction) {
   return [
     {
       id: "select",
@@ -72,7 +72,7 @@ export function BookingsTableColumn(onAction) {
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
           <span className="text-gray-900">{format(parseISO(row.original.date), "MMMM dd, yyyy")}</span>
-          <span>
+          <span className="text-gray-500">
             {format(parseISO(row.original.startTime), "HH:mm")} - {format(parseISO(row.original.endTime), "HH:mm")}
           </span>
         </div>
@@ -92,6 +92,7 @@ export function BookingsTableColumn(onAction) {
       cell: ({ row }) => (
         <div className="flex flex-col gap-1">
           <span className="text-gray-900">{row.original.bookerName}</span>
+          <span className="text-gray-500">{row.original.bookerPhone}</span>
           <span className="text-gray-500">{row.original.bookerEmail}</span>
         </div>
       ),

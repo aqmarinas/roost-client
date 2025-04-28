@@ -3,6 +3,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import BookModal from "../../../pages/public/HomePage/BookModal";
+import { Button } from "@/components/ui/button";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -58,12 +59,13 @@ export default function Navbar() {
           })}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <button
+          <Button
+            variant="default"
+            size="lg"
             onClick={() => setIsModalOpen(true)}
-            className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Book a Room
-          </button>
+          </Button>
         </div>
         {isModalOpen && (
           <BookModal

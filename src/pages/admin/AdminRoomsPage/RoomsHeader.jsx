@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 
-export default function RoomsHeader({ onAdd }) {
+export default function RoomsHeader({ onAdd, isLoading }) {
   return (
     <>
       <div className="space-y-4 md:p-0">
@@ -11,14 +11,15 @@ export default function RoomsHeader({ onAdd }) {
             <p className="text-sm text-gray-500">Manage all meeting rooms in your company.</p>
           </div>
 
-          <Button
-            variant="default"
-            size="sm"
-            onClick={onAdd}
-          >
-            <PlusIcon className="size-5" />
-            Add Room
-          </Button>
+          {!isLoading && (
+            <Button
+              variant="default"
+              onClick={onAdd}
+            >
+              <PlusIcon className="size-5" />
+              Add Room
+            </Button>
+          )}
         </div>
       </div>
     </>

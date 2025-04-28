@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@heroicons/react/24/solid";
 
-export default function BookingsHeader({ onAdd }) {
+export default function BookingsHeader({ onAdd, isLoading }) {
   return (
     <>
       <div className="space-y-4 md:p-0">
@@ -10,13 +10,15 @@ export default function BookingsHeader({ onAdd }) {
             <h1 className="text-2xl font-bold text-gray-900 ">Bookings</h1>
             <p className="text-sm text-gray-500">Manage all meeting room bookings.</p>
           </div>
-          <Button
-            variant="default"
-            onClick={onAdd}
-          >
-            <PlusIcon className="size-5" />
-            Add Booking
-          </Button>
+          {!isLoading && (
+            <Button
+              variant="default"
+              onClick={onAdd}
+            >
+              <PlusIcon className="size-5" />
+              Add Booking
+            </Button>
+          )}
         </div>
       </div>
     </>

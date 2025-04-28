@@ -1,12 +1,25 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_URL } from "@/config/config";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
-export function useBookingMutations(auth) {
+export function useBookings(auth) {
   const queryClient = useQueryClient();
 
-  const createBooking = useMutation({
+  const getAllBookingsQuery = useQuery({
+    queryKey: ["bookings"],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/bookings`);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to fetch bookings");
+      }
+      return data.data;
+    },
+  });
+
+  const createBookingMutation = useMutation({
     mutationFn: async (newBooking) => {
-      const res = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings`, {
+      const res = await fetch(`${API_URL}/bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,9 +38,9 @@ export function useBookingMutations(auth) {
     onError: (err) => toast.error(err.message),
   });
 
-  const updateBooking = useMutation({
-    mutationFn: async ({ id, updatedData }) => {
-      const res = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings/${id}`, {
+  const updateBookingMutation = useMutation({
+    mutationFn: async ({ id, MutationupdatedData }) => {
+      const res = await fetch(`${API_URL}/bookings/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -46,10 +59,10 @@ export function useBookingMutations(auth) {
     onError: (err) => toast.error(err.message),
   });
 
-  const deleteBooking = useMutation({
+  const deleteBookingMutation = useMutation({
     mutationFn: async (ids) => {
-      const res = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings`, {
-        method: "PATCH",
+      const res = await fetch(`${API_URL}/bookings`, {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${auth.accessToken}`,
@@ -57,19 +70,19 @@ export function useBookingMutations(auth) {
         body: JSON.stringify({ ids }),
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to delete bookings");
+      if (!res.ok) throw new Error(result.message || "Failed to delete booking");
       return result;
     },
     onSuccess: () => {
-      toast.success("Bookings deleted");
+      toast.success("Booking deleted");
       queryClient.invalidateQueries(["bookings"]);
     },
     onError: (err) => toast.error(err.message),
   });
 
-  const approveBooking = useMutation({
+  const approveBookingMutation = useMutation({
     mutationFn: async ({ id }) => {
-      const res = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings/${id}/approve`, {
+      const res = await fetch(`${API_URL}/bookings/${id}/approve`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -87,9 +100,9 @@ export function useBookingMutations(auth) {
     onError: (err) => toast.error(err.message),
   });
 
-  const rejectBooking = useMutation({
+  const rejectBookingMutation = useMutation({
     mutationFn: async ({ id }) => {
-      const res = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings/${id}/reject`, {
+      const res = await fetch(`${API_URL}/bookings/${id}/reject`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -108,10 +121,11 @@ export function useBookingMutations(auth) {
   });
 
   return {
-    createBooking,
-    updateBooking,
-    deleteBooking,
-    approveBooking,
-    rejectBooking,
+    ...getAllBookingsQuery,
+    createBookingMutation,
+    updateBookingMutation,
+    deleteBookingMutation,
+    approveBookingMutation,
+    rejectBookingMutation,
   };
 }

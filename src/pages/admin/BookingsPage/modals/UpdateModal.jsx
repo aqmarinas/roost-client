@@ -5,6 +5,7 @@ import Modal from "../../../../components/ui/Modal/index.jsx";
 import { ChevronDownIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { API_URL } from "@/config/config.js";
 
 export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
   // for select
@@ -15,7 +16,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
   } = useQuery({
     queryKey: ["rooms"],
     queryFn: () =>
-      fetch(`${import.meta.env.VITE_LOCAL_API}/rooms
+      fetch(`${API_URL}/rooms
       `)
         .then((res) => res.json())
         .then((res) => res.data || []),
@@ -53,7 +54,9 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
   }, [booking, isOpen, setValue]);
 
   const onSubmit = async (data) => {
-    onSuccess(data), reset();
+    await onSuccess(data);
+    reset();
+    onClose();
   };
 
   const handleClose = () => {
@@ -72,6 +75,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
           id="eventTitle"
           label="Title"
           type="text"
+          autofocus
           placeholder="Weekly Meeting (Project X)"
           {...register("eventTitle", {
             required: "Title is required",
@@ -227,7 +231,6 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
 
         <Button
           variant="default"
-          size="sm"
           fullWidth
           className="mt-4"
           disabled={isSubmitting}

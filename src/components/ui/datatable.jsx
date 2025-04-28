@@ -40,6 +40,8 @@ export function DataTable({ columns, data, onAction, enableSearch = false, enabl
     getFilteredRowModel: getFilteredRowModel(),
   });
 
+  const canHideColumns = table.getAllColumns().filter((column) => column.getCanHide());
+
   return (
     <div className="w-full">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 py-4">
@@ -71,33 +73,33 @@ export function DataTable({ columns, data, onAction, enableSearch = false, enabl
 
         {/* column visibility */}
         <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Columns <ChevronDown className="ml-1 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
+          {canHideColumns.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  Columns <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           {Object.keys(rowSelection).length > 0 && onAction && (
             <Button
               variant="destructive"
-              size="sm"
               onClick={() => {
                 const selectedIds = table.getSelectedRowModel().rows.map((row) => row.original.id);
                 onAction(selectedIds, "delete");
@@ -162,7 +164,7 @@ export function DataTable({ columns, data, onAction, enableSearch = false, enabl
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-24 text-center text-gray-500"
                 >
                   No results.
                 </TableCell>

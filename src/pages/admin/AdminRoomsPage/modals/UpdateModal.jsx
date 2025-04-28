@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import Input from "../../../../components/atom/Input/index.jsx";
 import { Button } from "@/components/ui/button.jsx";
-import FacilitySelect from "../FacilitySelect.jsx";
+import { FacilitySelect } from "../FacilitySelect.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
 import { TrashIcon } from "lucide-react";
+import { API_URL } from "@/config/config.js";
 
 export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
   const [imageFile, setImageFile] = useState(null);
+  const [imageName, setImageName] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -16,6 +18,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
     handleSubmit,
     reset,
     setValue,
+    setError,
     watch,
     formState: { errors, isSubmitting },
   } = useForm();
@@ -30,21 +33,36 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
         room.facilities.map((facility) => facility.id)
       );
       setValue("image", room.image);
-      setImagePreview(`${import.meta.env.VITE_LOCAL_API}/${room.image}`);
-      setImageFile({ name: room.image.split("\\").pop() });
+      setImagePreview(`${API_URL}/${room.image}`);
+      setImageName(room.image.split("\\").pop());
+      setImageFile(null);
     }
   }, [room, isOpen, setValue]);
+
+  const validateImage = (file) => {
+    const maxSize = 5 * 1024 * 1024;
+    if (file && file.size > maxSize) {
+      setError("image", {
+        type: "manual",
+        message: "File size exceeds 5MB. Please select a smaller image.",
+      });
+      return false;
+    }
+    return true;
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
-      setValue("image", file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const isValid = validateImage(file);
+      if (isValid) {
+        setImageFile(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -67,10 +85,13 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
         formData.append(`facilities[${index}]`, facilityId);
       });
     }
+
     if (imageFile) {
       formData.append("image", imageFile);
     }
-    onSuccess(data);
+
+    await onSuccess(formData);
+    reset();
     onClose();
   };
 
@@ -105,7 +126,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
           id="location"
           name="location"
           type="text"
-          placeholder="Location"
+          placeholder="37th Floor"
           label="Location"
           {...register("location", { required: "Location is required" })}
           error={errors.location?.message}
@@ -115,7 +136,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
           id="capacity"
           name="capacity"
           type="number"
-          placeholder="Capacity"
+          placeholder="10"
           label="Capacity"
           {...register("capacity", {
             required: "Capacity is required",
@@ -145,7 +166,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
               className={`block w-full text-sm text-gray-500 opacity-0 absolute inset-0 z-20 cursor-pointer ${errors?.image ? "bg-red-50" : ""}`}
             />
             <div className={`flex items-center justify-between p-2 ${errors?.image ? "bg-red-50" : ""}`}>
-              <span className={`text-sm ${imageFile ? "text-indigo-700 font-medium" : errors?.image ? "text-red-600" : "text-gray-500"}`}>{imageFile ? imageFile.name : "Choose an image..."}</span>
+              <span className={`text-sm ${imageFile ? "text-indigo-700 font-medium" : errors?.image ? "text-red-600" : "text-gray-500"}`}>{imageFile ? imageFile.name : imageName || "Choose an image..."}</span>
               <div className="px-3 py-1.5 rounded-md bg-indigo-50 text-indigo-700 text-sm font-semibold">Browse</div>
             </div>
           </div>
@@ -174,7 +195,6 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
 
         <Button
           variant="default"
-          size="sm"
           fullWidth
           className="mt-4"
           disabled={isSubmitting}

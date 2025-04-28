@@ -198,7 +198,6 @@ export default function BookForm() {
 
         <Button
           variant="default"
-          size="sm"
           fullWidth
           disabled={isSubmitting}
         >

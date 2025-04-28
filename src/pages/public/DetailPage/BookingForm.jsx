@@ -6,6 +6,7 @@ import OTPModal from "../HomePage/OTPModal.jsx";
 import useFetch from "../../../hooks/useFetch.js";
 import { ChevronDownIcon } from "lucide-react";
 import toast from "react-hot-toast";
+import { API_URL } from "@/config/config.js";
 
 export default function BookingForm() {
   // const [isModalOTPOpen, setIsModalOTPOpen] = useState(false);
@@ -24,7 +25,7 @@ export default function BookingForm() {
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/bookings`, {
+      const response = await fetch(`${API_URL}/bookings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

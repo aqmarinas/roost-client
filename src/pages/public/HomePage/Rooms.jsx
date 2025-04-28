@@ -3,6 +3,7 @@ import Card from "../../../components/ui/Card";
 import useFetch from "../../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button.jsx";
+import { API_URL } from "@/config/config";
 
 export default function Rooms() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function Rooms() {
                 capacity={room.capacity}
                 location={room.location}
                 link={`/rooms/${room.id}`}
-                imgSrc={`http://localhost:3000/${room.image}`}
+                imgSrc={`${API_URL}/${room.image}`}
               />
             ))}
           </div>

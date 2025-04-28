@@ -1,12 +1,25 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { API_URL } from "@/config/config";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
-export function useFacilityMutations(auth) {
+export function useFacilities(auth) {
   const queryClient = useQueryClient();
 
-  const createFacility = useMutation({
+  const getAllFacilitiesQuery = useQuery({
+    queryKey: ["facilities"],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/facilities`);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to fetch facilities");
+      }
+      return data.data;
+    },
+  });
+
+  const createFacilityMutation = useMutation({
     mutationFn: async (newFacility) => {
-      const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/facilities`, {
+      const response = await fetch(`${API_URL}/facilities`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${auth.accessToken}` },
         body: JSON.stringify(newFacility),
@@ -27,9 +40,9 @@ export function useFacilityMutations(auth) {
     },
   });
 
-  const updateFacility = useMutation({
+  const updateFacilityMutation = useMutation({
     mutationFn: async ({ id, updatedData }) => {
-      const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/facilities/${id}`, {
+      const response = await fetch(`${API_URL}/facilities/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -53,10 +66,10 @@ export function useFacilityMutations(auth) {
     },
   });
 
-  const deleteFacility = useMutation({
+  const deleteFacilityMutation = useMutation({
     mutationFn: async (ids) => {
       // delete many
-      const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/facilities`, {
+      const response = await fetch(`${API_URL}/facilities`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -78,8 +91,9 @@ export function useFacilityMutations(auth) {
   });
 
   return {
-    createFacility,
-    updateFacility,
-    deleteFacility,
+    ...getAllFacilitiesQuery,
+    createFacilityMutation,
+    updateFacilityMutation,
+    deleteFacilityMutation,
   };
 }

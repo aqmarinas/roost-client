@@ -1,10 +1,9 @@
 import { Suspense, lazy, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
-import useAuth from "../../../hooks/useAuth";
+import useAuth from "@/hooks/useAuth";
 import FacilitiesTable from "./FacilitiesTable";
 import FacilitiesHeader from "./FacilitiesHeader";
-import { useFacilityMutations } from "@/hooks/useFacilityMutations";
+import { useFacilities } from "@/hooks/useFacilities";
+import DataTableSkeleton from "@/components/ui/datatableskeleton";
 
 const CreateModal = lazy(() => import("./modals/CreateModal"));
 const UpdateModal = lazy(() => import("./modals/UpdateModal"));
@@ -15,21 +14,9 @@ export default function Facilities() {
   const [openUpdate, setOpenUpdate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedFacility, setSelectedFacility] = useState(null);
-  const { auth } = useAuth();
-  const { createFacility, updateFacility, deleteFacility } = useFacilityMutations(auth);
 
-  const {
-    data: facilities = [],
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["facilities"],
-    queryFn: () =>
-      fetch(`${import.meta.env.VITE_LOCAL_API}/facilities
-      `)
-        .then((res) => res.json())
-        .then((res) => res.data),
-  });
+  const { auth } = useAuth();
+  const { data: facilities = [], isLoading, error, createFacilityMutation, updateFacilityMutation, deleteFacilityMutation } = useFacilities(auth);
 
   const handleActionClick = (facility, actionType) => {
     setSelectedFacility(facility);
@@ -38,12 +25,16 @@ export default function Facilities() {
 
   return (
     <>
-      <FacilitiesHeader onAdd={() => setOpenCreate(true)} />
+      <FacilitiesHeader
+        isLoading={isLoading}
+        onAdd={() => setOpenCreate(true)}
+      />
 
-      {isLoading && <p className="px-4 text-gray-500">Load facilities data...</p>}
-      {error && <p className="px-4 text-red-500">Error: Cannot get facilities data</p>}
-
-      {!isLoading && !error && (
+      {isLoading ? (
+        <DataTableSkeleton columnCount={2} />
+      ) : error ? (
+        <p className="py-4 text-red-500 text-sm">Error: Cannot get facilities data</p>
+      ) : (
         <FacilitiesTable
           data={facilities}
           onAction={handleActionClick}
@@ -55,7 +46,7 @@ export default function Facilities() {
           <CreateModal
             isOpen={openCreate}
             onClose={() => setOpenCreate(false)}
-            onCreate={(data) => createFacility.mutateAsync(data).then(() => setOpenCreate(false))}
+            onCreate={(data) => createFacilityMutation.mutateAsync(data)}
           />
         )}
         {openUpdate && (
@@ -63,7 +54,7 @@ export default function Facilities() {
             facility={selectedFacility}
             isOpen={openUpdate}
             onClose={() => setOpenUpdate(false)}
-            onSuccess={(data) => updateFacility.mutateAsync({ id: selectedFacility?.id, updatedData: data }).then(() => setOpenUpdate(false))}
+            onSuccess={(data) => updateFacilityMutation.mutateAsync({ id: selectedFacility?.id, updatedData: data })}
           />
         )}
         {openDelete && (
@@ -71,16 +62,11 @@ export default function Facilities() {
             isOpen={openDelete}
             onClose={() => setOpenDelete(false)}
             onSuccess={() => {
-              deleteFacility.mutateAsync(Array.isArray(selectedFacility) ? selectedFacility : [selectedFacility?.id]).then(() => setOpenDelete(false));
+              deleteFacilityMutation.mutateAsync(Array.isArray(selectedFacility) ? selectedFacility : [selectedFacility?.id]);
             }}
           />
         )}
       </Suspense>
-
-      <Toaster
-        position="top-center"
-        toastOptions={{ className: "text-sm" }}
-      />
     </>
   );
 }

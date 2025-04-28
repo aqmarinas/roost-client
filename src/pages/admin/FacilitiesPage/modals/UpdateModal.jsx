@@ -20,7 +20,9 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
   }, [facility, isOpen, setValue]);
 
   const onSubmit = async (data) => {
-    onSuccess(data), reset();
+    onSuccess(data);
+    reset();
+    onClose();
   };
 
   const handleClose = () => {
@@ -44,10 +46,10 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
           {...register("name", { required: "Name is required" })}
           error={errors.name?.message}
           required
+          autofocus
         />
         <Button
           variant="default"
-          size="sm"
           fullWidth
           className="mt-4"
           disabled={isSubmitting}

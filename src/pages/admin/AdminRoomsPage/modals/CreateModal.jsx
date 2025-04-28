@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import Input from "../../../../components/atom/Input/index.jsx";
-import FacilitySelect from "../FacilitySelect.jsx";
+import { FacilitySelect } from "../FacilitySelect.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
 import { TrashIcon } from "lucide-react";
@@ -16,6 +16,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     handleSubmit,
     reset,
     setValue,
+    setError,
     watch,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -25,15 +26,30 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     },
   });
 
+  const validateImage = (file) => {
+    const maxSize = 5 * 1024 * 1024;
+    if (file && file.size > maxSize) {
+      setError("image", {
+        type: "manual",
+        message: "File size exceeds 5MB. Please select a smaller image.",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const isValid = validateImage(file);
+      if (isValid) {
+        setImageFile(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
@@ -43,6 +59,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+    setError("image", { message: null });
   };
 
   const onSubmit = async (data) => {
@@ -57,7 +74,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     }
     formData.append("image", imageFile);
 
-    onCreate(formData);
+    await onCreate(formData);
     reset();
     setImageFile(null);
     setImagePreview(null);
@@ -89,6 +106,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
           label="Name"
           {...register("name", { required: "Name is required" })}
           error={errors.name?.message}
+          autofocus
           required
         />
 
@@ -96,7 +114,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
           id="location"
           name="location"
           type="text"
-          placeholder="Location"
+          placeholder="37th Floor"
           label="Location"
           {...register("location", { required: "Location is required" })}
           error={errors.location?.message}
@@ -107,7 +125,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
           id="capacity"
           name="capacity"
           type="number"
-          placeholder="Capacity"
+          placeholder="10"
           label="Capacity"
           {...register("capacity", {
             required: "Capacity is required",
@@ -151,7 +169,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
               <div className="px-3 py-1.5 rounded-md bg-indigo-50 text-indigo-700 text-sm font-semibold">Browse</div>
             </div>
           </div>
-          <p className="text-sm text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG. Max size: 2MB.</p>
+          <p className="text-sm text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG. Max size: 5MB.</p>
           {errors?.image && <p className="mt-1 text-sm text-red-600 flex items-center">{errors?.image.message}</p>}
 
           {imagePreview && (
@@ -176,7 +194,6 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
 
         <Button
           variant="default"
-          size="sm"
           fullWidth
           className="mt-4"
           disabled={isSubmitting}

@@ -3,13 +3,13 @@ import { useParams } from "react-router-dom";
 import React from "react";
 import useFetch from "../../../hooks/useFetch";
 import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { API_URL } from "@/config/config";
 
 export default function Overview() {
   const { id } = useParams();
 
   const { data: response, loading, error } = useFetch(`/rooms/${id}`);
   const room = response?.data || [];
-  console.log(room);
 
   if (loading) return <p>Loading fetch detail room...</p>;
 
@@ -20,7 +20,7 @@ export default function Overview() {
       <div className="block max-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
         <img
           className="rounded-lg w-full object-cover aspect-3/2"
-          src={`http://localhost:3000/${room.image}`}
+          src={`${API_URL}/${room.image}`}
           alt={room.name}
         />
       </div>
