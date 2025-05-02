@@ -14,8 +14,8 @@ export default function BookingsTable({ data, onAction }) {
       enableFilter
       enableDatePicker
       searchKey="eventTitle"
-      filterType="status"
-      filterData={statusOptions}
+      id="status"
+      options={statusOptions}
     />
   );
 }

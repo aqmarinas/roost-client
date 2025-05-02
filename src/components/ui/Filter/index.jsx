@@ -1,73 +1,87 @@
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, X } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useMemo, useState, useEffect } from "react";
+import { ChevronDownIcon } from "lucide-react";
 
-export default function Filter({ columnFilters, setColumnFilters, filterType, filterData }) {
-  const filterValues = columnFilters.find((filter) => filter.id === filterType)?.value || [];
+export default function Filter({ id, options = [], columnFilters = [], setColumnFilters = () => {} }) {
+  const currentValue = useMemo(() => {
+    const found = columnFilters.find((f) => f.id === id);
+    return Array.isArray(found?.value) ? found.value : [];
+  }, [columnFilters, id]);
 
-  const handleClearFilter = () => {
-    setColumnFilters((prev) => prev.filter((f) => f.id !== filterType));
+  const [selected, setSelected] = useState(currentValue);
+
+  useEffect(() => {
+    setSelected(currentValue);
+  }, [currentValue]);
+
+  const toggleValue = (val) => {
+    setSelected((prev) => (prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]));
   };
 
-  const handleFilterChange = (value) => {
-    setColumnFilters((prev) => {
-      const filter = prev.find((f) => f.id === filterType);
-      const selected = filter?.value || [];
-      const newSelected = selected.includes(value) ? selected.filter((item) => item !== value) : [...selected, value];
+  // const handleApply = () => {
+  //   setColumnFilters((prev) => [...prev.filter((f) => f.id !== id), { id, value: selected }]);
+  // };
 
-      return prev
-        .filter((f) => f.id !== filterType)
-        .concat({
-          id: filterType,
-          value: newSelected,
-        });
-    });
+  const handleApply = () => {
+    if (selected.length === 0) {
+      setColumnFilters((prev) => prev.filter((f) => f.id !== id));
+    } else {
+      setColumnFilters((prev) => [...prev.filter((f) => f.id !== id), { id, value: selected }]);
+    }
   };
+
+  const handleReset = () => {
+    setSelected([]);
+    setColumnFilters((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const activeCount = currentValue.length;
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="capitalize space-x-1.5"
+          className="w-full md:w-32 flex justify-between items-center"
         >
-          {filterType}
-          {filterValues.length > 0 && <span className="ml-1.5 rounded-sm bg-gray-200 px-1.5 py-0.5 text-xs font-semibold text-gray-700 tabular-nums">{filterValues.length}</span>}
-          <ChevronDown className="ml-1 h-4 w-4" />
+          <span className="capitalize">{id}</span>
+          {activeCount > 0 ? <span className="text-xs bg-gray-200 text-gray-900 rounded-sm px-2 py-0.5">{activeCount}</span> : <ChevronDownIcon />}
         </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent
-        align="end"
-        className="w-56"
-      >
-        <div className="px-3 py-2 text-sm font-semibold">Filter</div>
-        <div className="max-h-56 overflow-auto">
-          {filterData?.map((item) => (
-            <DropdownMenuCheckboxItem
-              key={item.value}
-              className="capitalize"
-              checked={filterValues.includes(item.value)}
-              onCheckedChange={() => handleFilterChange(item.value)}
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-4 space-y-2">
+        <div className="max-h-48 overflow-auto space-y-2">
+          {options.map((opt) => (
+            <label
+              key={opt.value}
+              className="flex items-center gap-2 text-sm cursor-pointer"
             >
-              {item.label}
-            </DropdownMenuCheckboxItem>
+              <Checkbox
+                checked={selected.includes(opt.value)}
+                onCheckedChange={() => toggleValue(opt.value)}
+              />
+              {opt.label}
+            </label>
           ))}
         </div>
-
-        {filterValues.length > 0 && (
-          <>
-            <div className="border-t" />
-            <DropdownMenuItem
-              onClick={handleClearFilter}
-              className=" hover:bg-red-50 cursor-pointer mt-1"
-            >
-              <X className="text-red-600" />
-              <span className="text-red-600">Reset</span>
-            </DropdownMenuItem>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+        <div className="flex justify-between pt-3 border-t border-gray-200">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleReset}
+          >
+            Reset
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handleApply}
+          >
+            Apply
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

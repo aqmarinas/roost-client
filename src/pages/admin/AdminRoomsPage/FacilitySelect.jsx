@@ -1,18 +1,17 @@
-import { API_URL } from "@/config/config";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 
-export function FacilitySelect({ setValue, watch, error, register, required }) {
+export default function FacilitySelect({ setValue, watch, error, register, required }) {
+  const watchedFacilities = watch("facilities") || [];
+
   const { data: facilities = [], isLoading } = useQuery({
     queryKey: ["facilities"],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/facilities`);
+      const res = await fetch("http://localhost:3000/facilities");
       const json = await res.json();
       return json.data || [];
     },
   });
-
-  const watchedFacilities = watch("facilities") || [];
 
   const selectedFacilities = facilities.filter((f) => watchedFacilities.includes(f.id));
 

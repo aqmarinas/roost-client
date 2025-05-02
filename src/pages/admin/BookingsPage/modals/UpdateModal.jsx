@@ -1,33 +1,25 @@
-import Input from "../../../../components/atom/Input/index.jsx";
+import Input from "@/components/atom/Input/index.jsx";
 import { Button } from "@/components/ui/button.jsx";
-import { useForm } from "react-hook-form";
-import Modal from "../../../../components/ui/Modal/index.jsx";
-import { ChevronDownIcon } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { API_URL } from "@/config/config.js";
+import { Controller, useForm } from "react-hook-form";
+import Modal from "@/components/ui/Modal/index.jsx";
+import { useCallback, useEffect } from "react";
+import Select from "@/components/atom/Select/selectnew";
+import { useRooms } from "@/hooks/useRooms";
 
-export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
+export default function UpdateModal({ isOpen, onClose, booking, onSuccess, existBooking }) {
   // for select
-  const {
-    data: rooms = [],
-    isLoading: roomsLoading,
-    error: roomsError,
-  } = useQuery({
-    queryKey: ["rooms"],
-    queryFn: () =>
-      fetch(`${API_URL}/rooms
-      `)
-        .then((res) => res.json())
-        .then((res) => res.data || []),
-  });
+  const { data: rooms, error: roomsError } = useRooms();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    setError,
     setValue,
+    clearErrors,
+    watch,
+    control,
+    formState: { errors, isSubmitting },
   } = useForm();
 
   useEffect(() => {
@@ -53,6 +45,60 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
     }
   }, [booking, isOpen, setValue]);
 
+  const room = watch("room");
+  const date = watch("date");
+  const startTime = watch("startTime");
+  const endTime = watch("endTime");
+
+  const checkConflict = useCallback(() => {
+    if (!room || !date || !startTime || !endTime || !existBooking || !Array.isArray(existBooking)) {
+      clearErrors("startTime");
+      return;
+    }
+
+    const newStart = new Date(`${date}T${startTime}:00`);
+    const newEnd = new Date(`${date}T${endTime}:00`);
+
+    const hasConflict = existBooking.some((b) => {
+      if (b.id === booking?.id) return false;
+      if (b.room_id !== room) return false;
+
+      const inputDateUTC = new Date(date);
+      const bookingDateUTC = new Date(b.date);
+      if (inputDateUTC.toISOString().split("T")[0] !== bookingDateUTC.toISOString().split("T")[0]) return false;
+
+      const existingStart = new Date(b.startTime);
+      const existingEnd = new Date(b.endTime);
+
+      return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+    });
+
+    if (hasConflict) {
+      setError("startTime", {
+        type: "manual",
+        message: "Room already booked.",
+      });
+    } else {
+      clearErrors("startTime");
+    }
+  }, [room, date, startTime, endTime, existBooking, setError, clearErrors]);
+
+  useEffect(() => {
+    console.log("fields changed");
+    if (startTime && endTime && endTime <= startTime) {
+      setError("endTime", {
+        type: "manual",
+        message: "End time must be after start time",
+      });
+    } else {
+      clearErrors("endTime");
+    }
+
+    if (room && date && startTime && endTime && startTime !== "" && endTime !== "") {
+      checkConflict();
+    }
+  }, [room, date, startTime, endTime, checkConflict, setError, clearErrors]);
+
   const onSubmit = async (data) => {
     await onSuccess(data);
     reset();
@@ -63,6 +109,52 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
     reset();
     onClose();
   };
+
+  const handlePhoneChange = (e) => {
+    const phoneValue = e.target.value;
+    const phoneRegex = /^(628|08)[0-9]{8,13}$/;
+
+    if (!phoneRegex.test(phoneValue)) {
+      setError("bookerPhone", {
+        type: "manual",
+        message: "Phone number must start with '628' or '08' and contain 10 to 15 digits",
+      });
+    } else {
+      clearErrors("bookerPhone");
+    }
+  };
+
+  const handleDateChange = (e) => {
+    const selectedDate = new Date(e.target.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // set today's date to midnight for comparison
+
+    // trigger changed value
+    setValue("date", e.target.value);
+
+    if (selectedDate < today) {
+      setError("date", {
+        type: "manual",
+        message: "Date cannot be in the past",
+      });
+    } else {
+      clearErrors("date");
+    }
+  };
+
+  // const handleEndTimeChange = (e) => {
+  //   const endTime = e.target.value;
+  //   const startTime = watch("startTime");
+
+  //   if (startTime && endTime && endTime <= startTime) {
+  //     setError("endTime", {
+  //       type: "manual",
+  //       message: "End time must be after start time",
+  //     });
+  //   } else {
+  //     clearErrors("endTime");
+  //   }
+  // };
 
   return (
     <Modal
@@ -119,71 +211,36 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
         <Input
           id="bookerPhone"
           label="Phone Number"
-          placeholder="62812345678"
+          placeholder="0812345678910"
+          type="tel"
+          minLength={8}
+          maxLength={15}
           {...register("bookerPhone", {
             required: "Phone number is required",
-            pattern: {
-              value: /^62[0-9]{8,13}$/,
-              message: "Invalid phone number format",
-            },
           })}
           error={errors.bookerPhone?.message}
+          onChange={handlePhoneChange}
         />
 
-        {/* Room Select */}
-        <div>
-          <label
-            htmlFor="room"
-            className="block text-sm/6 font-semibold text-gray-900 mt-3"
-          >
-            Room
-          </label>
-          <div className="mt-2 grid grid-cols-1">
-            <select
-              id="room"
-              name="room"
-              defaultValue=""
-              {...register("room", {
-                required: "Room selection is required",
-              })}
-              disabled={roomsLoading || roomsError}
-              className={`col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 ${
-                errors.room ? "outline-red-500" : "outline-gray-300"
-              }  focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6`}
-            >
-              <option
-                value=""
-                disabled
-                className="text-gray-500"
-              >
-                {roomsLoading ? "Loading rooms..." : roomsError ? "Error loading rooms" : "Select a room"}
-              </option>
-              {rooms?.length > 0 ? (
-                rooms?.map((room) => (
-                  <option
-                    key={room.id}
-                    value={room.id}
-                  >
-                    {room.name}
-                  </option>
-                ))
-              ) : (
-                <option
-                  value=""
-                  disabled
-                >
-                  No rooms available
-                </option>
-              )}
-            </select>
-            {errors.room && <p className="text-red-500 text-sm">{errors.room.message}</p>}
-            {roomsError && <p className="text-red-500 text-sm">Failed to load rooms</p>}
-            <ChevronDownIcon
-              aria-hidden="true"
-              className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+        <Controller
+          name="room"
+          control={control}
+          defaultValue={null}
+          rules={{ required: "Room is required" }}
+          render={({ field }) => (
+            <Select
+              label="Room"
+              options={rooms}
+              selected={field.value}
+              onChange={field.onChange}
+              error={errors.room}
+              fetchError={roomsError}
+              displayKey="name"
+              valueKey="id"
+              required
             />
-          </div>
-        </div>
+          )}
+        />
 
         <Input
           id="date"
@@ -193,14 +250,9 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
           max="2099-12-31"
           {...register("date", {
             required: "Date is required",
-            validate: (value) => {
-              const selectedDate = new Date(value);
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
-              return selectedDate >= today || "Date cannot be in the past";
-            },
           })}
           error={errors.date?.message}
+          onChange={handleDateChange}
         />
 
         <div className="grid grid-cols-2 gap-4">
@@ -222,7 +274,6 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
               type="time"
               {...register("endTime", {
                 required: "End time is required",
-                validate: (value, { startTime }) => value > startTime || "End time must be after start time",
               })}
               error={errors.endTime?.message}
             />
@@ -230,7 +281,6 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess }) {
         </div>
 
         <Button
-          variant="default"
           fullWidth
           className="mt-4"
           disabled={isSubmitting}

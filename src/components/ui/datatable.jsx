@@ -1,15 +1,15 @@
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Pagination from "@/components/ui/Pagination";
 import Search from "../atom/Search";
 import Filter from "./Filter";
-import { DatePicker } from "./datepicker";
+const DateRangePicker = lazy(() => import("./daterangepicker"));
 
-export function DataTable({ columns, data, onAction, enableSearch = false, enableFilter = false, enableDatePicker = false, searchKey = "", filterData, filterType }) {
+export function DataTable({ columns, data, onAction, enableSearch = false, enableFilter = false, enableDatePicker = false, searchKey = "", id, options }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -18,6 +18,14 @@ export function DataTable({ columns, data, onAction, enableSearch = false, enabl
     pageIndex: 0,
     pageSize: 10,
   });
+  const [openDatePicker, setOpenDatePicker] = useState(false);
+  const [state, setState] = useState([
+    {
+      startDate: new Date(),
+      endDate: null,
+      key: "selection",
+    },
+  ]);
 
   const table = useReactTable({
     data,
@@ -56,19 +64,33 @@ export function DataTable({ columns, data, onAction, enableSearch = false, enabl
           )}
           {enableFilter && (
             <Filter
+              id={id}
+              options={options}
               columnFilters={columnFilters}
               setColumnFilters={setColumnFilters}
-              filterData={filterData}
-              filterType={filterType}
             />
           )}
 
-          {/* {enableDatePicker && (
-            <DatePicker
-              columnFilters={columnFilters}
-              setColumnFilters={setColumnFilters}
+          {enableDatePicker && (
+            <DateRangePicker
+              value={state}
+              onChange={(selection) => {
+                setState([{ ...selection, key: "selection" }]);
+                table.getColumn("date")?.setFilterValue([selection]);
+              }}
+              onReset={() => {
+                const resetRange = [
+                  {
+                    startDate: new Date(),
+                    endDate: null,
+                    key: "selection",
+                  },
+                ];
+                setState(resetRange);
+                table.getColumn("date")?.setFilterValue(undefined);
+              }}
             />
-          )} */}
+          )}
         </div>
 
         {/* column visibility */}
@@ -91,7 +113,7 @@ export function DataTable({ columns, data, onAction, enableSearch = false, enabl
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) => column.toggleVisibility(!!value)}
                     >
-                      {column.id}
+                      {column.columnDef.header}
                     </DropdownMenuCheckboxItem>
                   ))}
               </DropdownMenuContent>

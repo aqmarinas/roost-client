@@ -1,12 +1,16 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "../../../../components/atom/Input/index.jsx";
-import { FacilitySelect } from "../FacilitySelect.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
 import { TrashIcon } from "lucide-react";
-import { Button } from "@/components/ui/button.jsx";
+import { useFacilities } from "@/hooks/useFacilities.js";
+import { Button } from "@/components/ui/button";
+import MultiSelect from "@/components/ui/MultiSelect/index.jsx";
 
 export default function CreateModal({ isOpen, onClose, onCreate }) {
+  const { data: facilities, isLoading: facilitiesLoading } = useFacilities();
+
+  const [selectedItems, setSelectedItems] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -15,9 +19,9 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     register,
     handleSubmit,
     reset,
-    setValue,
     setError,
-    watch,
+    setValue,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -36,6 +40,25 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
       return false;
     }
     return true;
+  };
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("location", data.location);
+    formData.append("capacity", data.capacity);
+    if (Array.isArray(data.facilities)) {
+      data.facilities.forEach((facilityId, index) => {
+        formData.append(`facilities[${index}]`, facilityId);
+      });
+    }
+    formData.append("image", imageFile);
+
+    await onCreate(formData);
+    reset();
+    setImageFile(null);
+    setImagePreview(null);
+    onClose();
   };
 
   const handleImageChange = (e) => {
@@ -62,30 +85,17 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     setError("image", { message: null });
   };
 
-  const onSubmit = async (data) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("location", data.location);
-    formData.append("capacity", data.capacity);
-    if (Array.isArray(data.facilities)) {
-      data.facilities.forEach((facilityId, index) => {
-        formData.append(`facilities[${index}]`, facilityId);
-      });
-    }
-    formData.append("image", imageFile);
-
-    await onCreate(formData);
+  const handleClose = () => {
     reset();
     setImageFile(null);
     setImagePreview(null);
     onClose();
   };
 
-  const handleClose = () => {
-    reset();
-    setImageFile(null);
-    setImagePreview(null);
-    onClose();
+  const handleSelectChange = (newSelected) => {
+    setSelectedItems(newSelected);
+    setValue("facilities", newSelected);
+    clearErrors("facilities");
   };
 
   return (
@@ -135,14 +145,19 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
           required
         />
 
-        <FacilitySelect
-          setValue={setValue}
-          watch={watch}
-          {...register("facilities", {
-            validate: (value) => value.length > 0 || "Facilities is required",
-          })}
-          error={errors.facilities?.message}
+        <MultiSelect
+          items={facilities}
+          isLoading={facilitiesLoading}
+          label="Facilities"
+          id="facilities"
           required
+          error={errors.facilities?.message}
+          selectedItems={selectedItems}
+          onChange={handleSelectChange}
+        />
+        <input
+          type="hidden"
+          {...register("facilities", { required: "Facilities is required" })}
         />
 
         {/* Image */}

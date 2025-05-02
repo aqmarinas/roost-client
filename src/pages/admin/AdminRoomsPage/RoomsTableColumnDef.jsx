@@ -4,6 +4,8 @@ import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserGroupIcon } from "@heroicons/react/24/solid";
 import { API_URL } from "@/config/config";
+import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function RoomsTableColumnDef(onAction) {
   return [
@@ -31,16 +33,27 @@ export function RoomsTableColumnDef(onAction) {
       header: "Room",
       enableSorting: true,
       enableHiding: false,
-      cell: ({ row }) => (
-        <div className="flex items-center gap-3 min-w-[200px]">
-          <img
-            className="rounded-lg object-cover aspect-3/2 w-24 lg:w-48"
-            src={`${API_URL}/${row.original.image}`}
-            alt={row.original.name}
-          />
-          <p className="text-sm font-semibold line-clamp-2">{row.original.name}</p>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const [loading, setLoading] = useState(true);
+        const imageSrc = `${API_URL}/${row.original.image}`;
+        const roomName = row.original.name;
+
+        return (
+          <div className="flex items-center gap-3 min-w-[200px]">
+            <div className="relative w-24 lg:w-48 aspect-[3/2]">
+              {loading && <Skeleton className="absolute inset-0 w-full h-full rounded-lg bg-gray-300" />}
+              <img
+                src={imageSrc}
+                alt={roomName}
+                onLoad={() => setLoading(false)}
+                onError={() => setLoading(false)}
+                className="rounded-lg object-cover w-full h-full transition-opacity duration-300"
+              />
+            </div>
+            <p className="text-sm font-semibold line-clamp-2">{roomName}</p>
+          </div>
+        );
+      },
     },
     {
       accessorKey: "capacity",
@@ -72,6 +85,7 @@ export function RoomsTableColumnDef(onAction) {
       header: "Facilities",
       enableSorting: false,
       enableHiding: false,
+      enableFilter: true,
       cell: ({ row }) => (
         <div className="flex flex-wrap gap-2">
           {row.original.facilities?.map((facility) => (
@@ -84,10 +98,10 @@ export function RoomsTableColumnDef(onAction) {
           ))}
         </div>
       ),
-      filterFn: (row, columnId, filterValue) => {
-        const facilities = row.getValue(columnId) || [];
-        const facilityNames = facilities.map((facility) => facility.name);
-        return filterValue.length === 0 || facilityNames.some((name) => filterValue.includes(name));
+      filterFn: (row, columnId, filterValues) => {
+        const facilities = row.getValue(columnId) || []; //  facilities object
+        const facilityIds = facilities.map((f) => f.id);
+        return filterValues.some((val) => facilityIds.includes(val));
       },
     },
     {

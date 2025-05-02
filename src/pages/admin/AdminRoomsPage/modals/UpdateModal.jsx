@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import Input from "../../../../components/atom/Input/index.jsx";
 import { Button } from "@/components/ui/button.jsx";
-import { FacilitySelect } from "../FacilitySelect.jsx";
 import { useForm } from "react-hook-form";
 import Modal from "../../../../components/ui/Modal/index.jsx";
 import { TrashIcon } from "lucide-react";
 import { API_URL } from "@/config/config.js";
+import MultiSelect from "@/components/ui/MultiSelect/index.jsx";
+import { useFacilities } from "@/hooks/useFacilities.js";
 
 export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
+  const { data: facilities, isLoading: facilitiesLoading } = useFacilities();
+
+  const [selectedItems, setSelectedItems] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [imageName, setImageName] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
@@ -19,20 +23,20 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
     reset,
     setValue,
     setError,
-    watch,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm();
 
   useEffect(() => {
     if (room && isOpen) {
+      const facilityIds = room.facilities.map((facility) => facility.id);
+
       setValue("name", room.name);
       setValue("location", room.location);
       setValue("capacity", room.capacity);
-      setValue(
-        "facilities",
-        room.facilities.map((facility) => facility.id)
-      );
+      setValue("facilities", facilityIds);
       setValue("image", room.image);
+      setSelectedItems(facilityIds);
       setImagePreview(`${API_URL}/${room.image}`);
       setImageName(room.image.split("\\").pop());
       setImageFile(null);
@@ -102,6 +106,12 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
     onClose();
   };
 
+  const handleSelectChange = (newSelected) => {
+    setSelectedItems(newSelected);
+    setValue("facilities", newSelected);
+    clearErrors("facilities");
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -145,10 +155,19 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
           error={errors.capacity?.message}
         />
 
-        <FacilitySelect
-          setValue={setValue}
-          watch={watch}
+        <MultiSelect
+          items={facilities}
+          isLoading={facilitiesLoading}
+          label="Facilities"
+          id="facilities"
+          required
           error={errors.facilities?.message}
+          selectedItems={selectedItems}
+          onChange={handleSelectChange}
+        />
+        <input
+          type="hidden"
+          {...register("facilities", { required: "Facilities is required" })}
         />
 
         {/* Image */}

@@ -8,7 +8,7 @@ function Pagination({ table }) {
 
   return (
     <div className="bottom-0 left-0 right-0 py-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <p className="text-sm text-gray-500">
             Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}

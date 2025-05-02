@@ -39,7 +39,7 @@ export function useBookings(auth) {
   });
 
   const updateBookingMutation = useMutation({
-    mutationFn: async ({ id, MutationupdatedData }) => {
+    mutationFn: async ({ id, updatedData }) => {
       const res = await fetch(`${API_URL}/bookings/${id}`, {
         method: "PATCH",
         headers: {

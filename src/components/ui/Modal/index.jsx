@@ -30,6 +30,7 @@ export default function Modal({ isOpen, onClose, title, children, size = "lg", s
 
       <div className="fixed inset-0 flex items-center justify-center p-4 pointer-events-none">
         <DialogPanel
+          static
           className={`w-full rounded-xl bg-white p-6 shadow-2xl ${sizeClass} pointer-events-auto`}
           onClose={(e) => e.preventDefault()}
         >

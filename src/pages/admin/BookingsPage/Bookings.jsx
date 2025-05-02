@@ -72,6 +72,7 @@ export default function Bookings() {
         )}
         {openUpdate && (
           <UpdateModal
+            existBooking={bookings}
             isOpen={openUpdate}
             booking={selectedBooking}
             onClose={() => setOpenUpdate(false)}

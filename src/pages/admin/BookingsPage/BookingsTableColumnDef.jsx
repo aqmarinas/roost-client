@@ -1,4 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { format, parseISO } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,6 @@ export function BookingsTableColumnDef(onAction) {
       ),
       enableSorting: false,
       enableHiding: false,
-      enableResizing: false,
     },
     {
       accessorKey: "created_at",
@@ -56,15 +56,13 @@ export function BookingsTableColumnDef(onAction) {
       cell: (row) => <span className="font-semibold text-gray-900">{row.getValue()}</span>,
       enableSorting: true,
       enableHiding: true,
-      enableResizing: true,
     },
     {
       header: "Room",
       accessorKey: "room.name",
-      cell: (row) => <span className="text-gray-500">{row.getValue() ?? "bug undefined pls refresh"}</span>, //"named" in deeply nested key "room.name" returned undefined while reject/accepte
+      cell: (row) => <span className="text-gray-900 font-semibold">{row.getValue() ?? "bug undefined pls refresh"}</span>, //"named" in deeply nested key "room.name" returned undefined while reject/accepte
       enableSorting: true,
       enableHiding: true,
-      enableResizing: true,
     },
     {
       header: "Date & Time",
@@ -79,11 +77,23 @@ export function BookingsTableColumnDef(onAction) {
       ),
       enableSorting: true,
       enableHiding: true,
-      enableResizing: false,
+      enableFilter: true,
       sortingFn: (rowA, rowB, columnId) => {
         const a = new Date(rowA.original.startTime).getTime();
         const b = new Date(rowB.original.startTime).getTime();
         return a - b;
+      },
+      filterFn: (row, columnId, filterValue) => {
+        const rowDate = new Date(row.original[columnId]);
+        const { startDate, endDate } = filterValue?.[0] || {};
+
+        if (!startDate || !endDate) return true;
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+
+        return rowDate >= start && rowDate <= end;
       },
     },
     {
@@ -98,25 +108,16 @@ export function BookingsTableColumnDef(onAction) {
       ),
       enableSorting: false,
       enableHiding: true,
-      enableResizing: false,
     },
     {
       header: "Status",
       accessorKey: "status",
       cell: ({ row }) => {
         const status = row.original.status;
-        const statusColor =
-          {
-            Pending: "bg-yellow-100 text-yellow-800",
-            Approved: "bg-green-100 text-green-800",
-            Rejected: "bg-red-100 text-red-800",
-          }[status] || "";
-
-        return <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColor}`}>{status}</span>;
+        return <Badge variant={status}>{status}</Badge>;
       },
       enableSorting: false,
       enableHiding: true,
-      enableResizing: false,
       filterFn: (row, columnId, filterValue) => {
         return filterValue.length === 0 || filterValue.includes(row.getValue(columnId));
       },
@@ -132,7 +133,6 @@ export function BookingsTableColumnDef(onAction) {
       ),
       enableSorting: false,
       enableHiding: false,
-      enableResizing: false,
     },
   ];
 }

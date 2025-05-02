@@ -5,6 +5,7 @@ import useAuth from "../../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/config/config";
 import { Button } from "@/components/ui/button";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const { auth, setAuth } = useAuth();
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/admin/bookings";
   const [error, setError] = useState(location.state?.error);
+  const [showPassword, setShowPassword] = useState(false);
 
   // useEffect(() => {
   //   if (auth?.accessToken) {
@@ -80,16 +82,27 @@ export default function LoginPage() {
               error={errors.email?.message}
             />
 
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              label="Password"
-              placeholder="Enter your password"
-              {...register("password", { required: "Password is required" })}
-              required
-              error={errors.password?.message}
-            />
+            <div className="relative">
+              <Input
+                label="Password"
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                {...register("password", { required: "Password is required" })}
+                required
+                error={errors.password?.message}
+              />
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center mt-8">
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
 
             <Button
               variant="default"
