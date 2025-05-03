@@ -1,4 +1,4 @@
-import AdminLayout from "../../../components/layout/AdminLayout";
+import AdminLayout from "@/components/layout/AdminLayout";
 import Bookings from "./Bookings";
 
 export default function BookingsPage() {

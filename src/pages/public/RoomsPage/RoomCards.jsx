@@ -1,4 +1,3 @@
-import React from "react";
 import useFetch from "../../../hooks/useFetch";
 import Card from "../../../components/ui/Card";
 import { API_URL } from "@/config/config";

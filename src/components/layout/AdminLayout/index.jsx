@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import Sidebar from "../../layout/Sidebar";
+import { useState, useEffect } from "react";
+import Sidebar from "../Sidebar";
 import { Toaster } from "react-hot-toast";
 
 export default function AdminLayout({ children }) {
@@ -37,17 +37,18 @@ export default function AdminLayout({ children }) {
 
       <div
         className={`flex-1 transition-all duration-300 min-w-0 
-        ${isCollapsed ? "ml-20" : "ml-64"}
+        ${isCollapsed ? "ml-16" : "ml-64"}
         ${isMobile && !isCollapsed ? "blur-sm pointer-events-none" : ""}
       `}
       >
-        <div className="px-2 md:px-6 py-6 lg:p-8 bg-gray-100 min-h-screen">
+        {/* Main */}
+        <main className="px-2 md:px-6 py-6 lg:p-8 bg-gray-100 min-h-screen">
           {children}
           <Toaster
             position="top-center"
             toastOptions={{ className: "text-sm" }}
           />
-        </div>
+        </main>
       </div>
     </div>
   );

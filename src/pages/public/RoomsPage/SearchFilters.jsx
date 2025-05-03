@@ -1,5 +1,4 @@
-import React from "react";
-import Input from "../../../components/atom/Input";
+import Input from "@/components/form/input";
 
 export default function SearchFilters() {
   return (

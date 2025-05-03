@@ -1,13 +1,13 @@
 import { Suspense, lazy, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import RoomsHeader from "./RoomsHeader";
-import RoomsTable from "./RoomsTable";
+import RoomsTable from "./table/RoomsTable";
 import { useRooms } from "@/hooks/useRooms";
-import DataTableSkeleton from "@/components/ui/datatableskeleton";
+import DataTableSkeleton from "@/components/data-table/data-table-skeleton";
 
-const CreateModal = lazy(() => import("./modals/CreateModal"));
-const UpdateModal = lazy(() => import("./modals/UpdateModal"));
-const DeleteModal = lazy(() => import("./modals/DeleteModal"));
+const CreateModal = lazy(() => import("./modals/CreateRoom"));
+const UpdateModal = lazy(() => import("./modals/UpdateRoom"));
+const DeleteModal = lazy(() => import("./modals/DeleteRoom"));
 
 export default function AdminRooms() {
   const [openCreate, setOpenCreate] = useState(false);

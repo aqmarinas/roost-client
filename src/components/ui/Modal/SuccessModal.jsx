@@ -1,5 +1,4 @@
-import React from "react";
-import Button from "../../atom/Button";
+// import Button from "../../atom/Button";
 import Modal from ".";
 
 export default function SuccessModal({ open, onClose }) {
@@ -28,10 +27,10 @@ export default function SuccessModal({ open, onClose }) {
             <span className="font-bold">Room: </span>Tokyo
           </p>
         </div>
-        <Button
+        {/* <Button
           text="Back to Home"
           type="button"
-        />
+        /> */}
       </Modal>
     </>
   );

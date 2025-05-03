@@ -1,10 +1,10 @@
 import { Controller, useForm } from "react-hook-form";
-import Input from "@/components/atom/Input";
+import Input from "@/components/form/input";
 import OTPModal from "./OTPModal";
 import Modal from "@/components/ui/Modal";
 import { Button } from "@/components/ui/button";
 import { useCallback, useEffect } from "react";
-import Select from "@/components/atom/Select/selectnew";
+import Select from "@/components/form/select";
 import { useRooms } from "@/hooks/useRooms";
 
 export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
@@ -15,19 +15,19 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
     handleSubmit,
     reset,
     setError,
-    setValue,
     clearErrors,
     watch,
     control,
     formState: { errors, isSubmitting },
   } = useForm({
+    mode: "onChange",
     defaultValues: {
-      startTime: "",
-      endTime: "",
-      // test
+      // date: "2025-05-03",
+      startTime: "00:00",
+      endTime: "01:00",
+      // todo: testing only
       room: "7a73c005-8cc7-4de0-8991-8a4edcf20eac",
-      date: "2025-05-01",
-      eventTitle: "test",
+      eventTitle: "ibadah amba",
       bookerName: "amba",
       bookerEmail: "amba@gmail.com",
       bookerPhone: "081234567890",
@@ -89,6 +89,9 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
   }, [room, date, startTime, endTime, checkConflict, setError, clearErrors]);
 
   const onSubmit = async (data) => {
+    // modal input otp
+
+    // otp valid:
     await onCreate(data);
     reset();
     onClose(); // di public harusnya ga langsung close (otp dulu)
@@ -99,44 +102,12 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
     onClose();
   };
 
-  const handlePhoneChange = (e) => {
-    const phoneValue = e.target.value;
-    const phoneRegex = /^(628|08)[0-9]{8,13}$/;
-
-    if (!phoneRegex.test(phoneValue)) {
-      setError("bookerPhone", {
-        type: "manual",
-        message: "Phone number must start with '628' or '08' and contain 10 to 15 digits",
-      });
-    } else {
-      clearErrors("bookerPhone");
-    }
-  };
-
-  const handleDateChange = (e) => {
-    const selectedDate = new Date(e.target.value);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // set today's date to midnight for comparison
-
-    // trigger changed value
-    setValue("date", e.target.value);
-
-    if (selectedDate < today) {
-      setError("date", {
-        type: "manual",
-        message: "Date cannot be in the past",
-      });
-    } else {
-      clearErrors("date");
-    }
-  };
-
   return (
     <>
       <Modal
         isOpen={isOpen}
         onClose={handleModalClose}
-        title="Book a Room"
+        // title="Book a Room"
       >
         <form onSubmit={handleSubmit(onSubmit)}>
           <Input
@@ -145,6 +116,14 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
             placeholder="Weekly Meeting (Project X)"
             {...register("eventTitle", {
               required: "Title is required",
+              minLength: {
+                value: 5,
+                message: "Title must be at least 5 characters",
+              },
+              pattern: {
+                value: /^[A-Za-z0-9À-ÿ.,()\-_'"/# ]+$/,
+                message: "Title contains invalid characters",
+              },
             })}
             error={errors.eventTitle?.message}
             required
@@ -157,6 +136,14 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
             placeholder="John Doe"
             {...register("bookerName", {
               required: "Name is required",
+              minLength: {
+                value: 3,
+                message: "Name must be at least 3 characters",
+              },
+              pattern: {
+                value: /^[A-Za-zÀ-ÿ.'\-() ]+$/,
+                message: "Name contains invalid characters",
+              },
             })}
             error={errors.bookerName?.message}
             required
@@ -173,12 +160,11 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                 message: "Invalid email address",
               },
-              // validate: (value) => value.endsWith("@xyz.co.id") || "Must use company email (@xyz.co.id)",
             })}
             error={errors.bookerEmail?.message}
             required
           />
-          <p className="text-sm text-gray-500 ">Use your company email (@xyz.co.id)</p>
+          <p className="px-1 text-sm text-gray-500 ">Use your company email (@xyz.co.id)</p>
 
           <Input
             id="bookerPhone"
@@ -189,9 +175,12 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
             maxLength={15}
             {...register("bookerPhone", {
               required: "Phone number is required",
+              pattern: {
+                value: /^(628|08)[0-9]{8,13}$/,
+                message: "Phone number must start with '628' or '08' and contain 10 to 15 digits",
+              },
             })}
             error={errors.bookerPhone?.message}
-            onChange={handlePhoneChange}
             required
           />
 
@@ -223,10 +212,15 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
             max="2099-12-31"
             {...register("date", {
               required: "Date is required",
+              validate: (value) => {
+                const selected = new Date(value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return selected >= today || "Date cannot be in the past";
+              },
             })}
             error={errors.date?.message}
             required
-            onChange={handleDateChange}
           />
 
           <div className="grid grid-cols-2 gap-4">
@@ -265,14 +259,6 @@ export default function BookModal({ isOpen, onClose, onCreate, existBooking }) {
           </Button>
         </form>
       </Modal>
-
-      {/* <OTPModal
-          isOpen={isModalOTPOpen}
-          onClose={() => {
-            setIsModalOTPOpen(false);
-            handleModalClose();
-          }}
-        /> */}
     </>
   );
 }

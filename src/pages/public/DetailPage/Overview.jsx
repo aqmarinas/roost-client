@@ -1,7 +1,6 @@
 import { MapPinIcon } from "lucide-react";
 import { useParams } from "react-router-dom";
-import React from "react";
-import useFetch from "../../../hooks/useFetch";
+import useFetch from "@/hooks/useFetch";
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { API_URL } from "@/config/config";
 

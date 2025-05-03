@@ -1,71 +1,59 @@
-import React, { useState } from "react";
-import Input from "../../../components/atom/Input";
-import Button from "../../../components/atom/Button";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import Modal from "../../../components/ui/Modal";
-import { API_URL } from "@/config/config";
+import Input from "@/components/form/input";
+import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
-export default function OTPModal({ open, onClose, bookingData }) {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+export default function OTPModal({ onSubmit, onBack, onResend }) {
+  const [otp, setOtp] = useState("");
+  const [countdown, setCountdown] = useState(60);
 
-  const onSubmit = async () => {
-    try {
-      const response = await fetch(`${API_URL}/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bookingData),
-      });
+  useEffect(() => {
+    if (countdown === 0) return;
 
-      const result = await response.json();
+    const timer = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
 
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to book room");
-      }
+    return () => clearInterval(timer);
+  }, [countdown]);
 
-      toast.success("Room booked successfully!");
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error(error.message || "Failed to book room");
+  const handleResend = () => {
+    if (countdown === 0) {
+      // onResend?.();
+      setCountdown(60);
     }
-    onClose();
-  };
-
-  const handleClose = () => {
-    reset();
-    onClose();
   };
 
   return (
-    <>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        title="Verify OTP"
-      >
-        <p className="text-sm text-gray-500">Please enter the verification code sent to your email:</p>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Input
-            id="otp"
-            name="otp"
-            type="text"
-            placeholder="Enter verification code"
-            {...register("otp", { required: "OTP is required" })}
-            error={errors.otp?.message}
-          />
-          <Button
-            text="Book Room"
-            type="submit"
-          />
-        </form>
-      </Modal>
-    </>
+    <div>
+      <Input
+        id="otp"
+        label="Enter OTP"
+        value={otp}
+        maxLength={6}
+        onChange={(e) => setOtp(e.target.value)}
+      />
+      <div className="mt-4 text-sm text-gray-500">
+        Didn't receive the OTP?{" "}
+        {countdown === 0 ? (
+          <span
+            onClick={handleResend}
+            className="text-indigo-700 underline cursor-pointer font-medium underline-offset-2"
+          >
+            Resend
+          </span>
+        ) : (
+          <span className="text-gray-500">Resend in {countdown} seconds</span>
+        )}
+      </div>
+      <div className="flex justify-between mt-4">
+        <Button
+          variant="outline"
+          onClick={onBack}
+        >
+          Back
+        </Button>
+        <Button onClick={() => onSubmit(otp)}>Verify & Book</Button>
+      </div>
+    </div>
   );
 }

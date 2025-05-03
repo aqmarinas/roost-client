@@ -1,8 +1,7 @@
-import React from "react";
 import Card from "../../../components/ui/Card";
 import useFetch from "../../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button.jsx";
+import { Button } from "@/components/ui/button";
 import { API_URL } from "@/config/config";
 
 export default function Rooms() {

@@ -2,7 +2,7 @@ import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import BookModal from "../../../pages/public/HomePage/BookModal";
+import BookModal from "@/pages/public/HomePage/BookModal";
 import { Button } from "@/components/ui/button";
 
 const navigation = [
@@ -18,10 +18,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky bg-white shadow-sm inset-x-0 top-0 z-40 ">
-      <nav
-        aria-label="Global"
-        className="flex items-center justify-between p-6 lg:px-8"
-      >
+      <nav className="flex items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1">
           <a
             href="#"
@@ -32,17 +29,16 @@ export default function Navbar() {
           </a>
         </div>
         <div className="flex lg:hidden">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
+            className="hover:bg-transparant"
             onClick={() => setMobileMenuOpen(true)}
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
           >
             <span className="sr-only">Open main menu</span>
-            <Bars3Icon
-              aria-hidden="true"
-              className="size-6"
-            />
-          </button>
+            <Bars3Icon className="size-6" />
+          </Button>
         </div>
         <div className="hidden lg:flex lg:gap-x-12">
           {navigation.map((item) => {
@@ -89,17 +85,16 @@ export default function Navbar() {
               <span className="sr-only">Roost</span>
               Roost
             </a>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
+              className="hover:bg-transparant"
               onClick={() => setMobileMenuOpen(false)}
-              className="-m-2.5 rounded-md p-2.5 text-gray-700"
             >
               <span className="sr-only">Close menu</span>
-              <XMarkIcon
-                aria-hidden="true"
-                className="size-6"
-              />
-            </button>
+              <XMarkIcon className="size-6" />
+            </Button>
           </div>
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">

@@ -1,6 +1,5 @@
-import React from "react";
 import Navbar from "../Navbar";
-import Container from "../../layout/Container";
+import Container from "@/components/layout/Container";
 import Footer from "../Footer";
 
 export default function PublicLayout({ children }) {

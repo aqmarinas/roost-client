@@ -1,5 +1,4 @@
-import React from "react";
-import PublicLayout from "../../../components/layout/PublicLayout";
+import PublicLayout from "@/components/layout/PublicLayout";
 import Hero from "./Hero";
 import Rooms from "./Rooms";
 import Calendar from "./Calendar";

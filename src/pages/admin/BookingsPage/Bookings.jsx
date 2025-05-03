@@ -2,15 +2,15 @@ import { Suspense, lazy, useState } from "react";
 import { toast } from "react-hot-toast";
 import useAuth from "@/hooks/useAuth";
 import BookingsHeader from "./BookingsHeader";
-import BookingsTable from "./BookingsTable";
-import DataTableSkeleton from "@/components/ui/datatableskeleton";
+import BookingsTable from "./table/BookingsTable";
+import DataTableSkeleton from "@/components/data-table/data-table-skeleton";
 import { useBookings } from "@/hooks/useBookings";
 
 const CreateModal = lazy(() => import("@/pages/public/HomePage/BookModal"));
-const UpdateModal = lazy(() => import("./modals/UpdateModal"));
-const DeleteModal = lazy(() => import("./modals/DeleteModal"));
-const ApproveModal = lazy(() => import("./modals/ApproveModal"));
-const RejectModal = lazy(() => import("./modals/RejectModal"));
+const UpdateModal = lazy(() => import("./modals/UpdateBooking"));
+const DeleteModal = lazy(() => import("./modals/DeleteBooking"));
+const ApproveModal = lazy(() => import("./modals/ApproveBooking"));
+const RejectModal = lazy(() => import("./modals/RejectBooking"));
 
 export default function Bookings() {
   const [openCreate, setOpenCreate] = useState(false);

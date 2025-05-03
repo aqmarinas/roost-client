@@ -44,12 +44,12 @@ export default function ModalDialog({ isOpen, onClose, title = "Confirm", messag
           </div>
 
           <div>
-            <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+            <h3 className="text-lg font-   text-gray-900">{title}</h3>
             <p className="mt-1 text-sm text-gray-500">{message}</p>
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end space-x-3">
+        <div className="my-4 mx-2 flex justify-end space-x-3">
           <Button
             variant="outline"
             onClick={onClose}

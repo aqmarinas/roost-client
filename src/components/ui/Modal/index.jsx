@@ -2,6 +2,7 @@
 
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Button } from "../button";
 
 const modalSizes = {
   sm: "sm:max-w-sm",
@@ -34,28 +35,45 @@ export default function Modal({ isOpen, onClose, title, children, size = "lg", s
           className={`w-full rounded-xl bg-white p-6 shadow-2xl ${sizeClass} pointer-events-auto`}
           onClose={(e) => e.preventDefault()}
         >
-          {title && (
-            <div className="mb-4 flex items-center justify-between">
-              <DialogTitle
-                as="h3"
-                className="text-lg font-semibold text-gray-900"
-              >
-                {title}
-              </DialogTitle>
-
-              {showCloseButton && (
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="text-gray-400 hover:text-gray-500"
+          <div className="flex items-center justify-between">
+            {title ? (
+              <>
+                <DialogTitle
+                  as="h3"
+                  className="text-lg font-semibold text-gray-900"
                 >
-                  <XMarkIcon className="h-6 w-6" />
-                </button>
-              )}
-            </div>
-          )}
+                  {title}
+                </DialogTitle>
+                {showCloseButton && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={onClose}
+                    className="text-gray-900 hover:bg-gray-50"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </Button>
+                )}
+              </>
+            ) : (
+              showCloseButton && (
+                <div className="ml-auto">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={onClose}
+                    className="text-gray-900 hover:bg-gray-50"
+                  >
+                    <XMarkIcon className="h-6 w-6" />
+                  </Button>
+                </div>
+              )
+            )}
+          </div>
 
-          <div className="max-h-[80vh] overflow-y-auto px-1">{children}</div>
+          <div className="max-h-[80vh] overflow-y-auto">{children}</div>
         </DialogPanel>
       </div>
     </Dialog>

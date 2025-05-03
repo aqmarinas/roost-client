@@ -1,13 +1,13 @@
 import { Suspense, lazy, useState } from "react";
 import useAuth from "@/hooks/useAuth";
-import FacilitiesTable from "./FacilitiesTable";
+import FacilitiesTable from "./table/FacilitiesTable";
 import FacilitiesHeader from "./FacilitiesHeader";
 import { useFacilities } from "@/hooks/useFacilities";
-import DataTableSkeleton from "@/components/ui/datatableskeleton";
+import DataTableSkeleton from "@/components/data-table/data-table-skeleton";
 
-const CreateModal = lazy(() => import("./modals/CreateModal"));
-const UpdateModal = lazy(() => import("./modals/UpdateModal"));
-const DeleteModal = lazy(() => import("./modals/DeleteModal"));
+const CreateModal = lazy(() => import("./modals/CreateFacility"));
+const UpdateModal = lazy(() => import("./modals/UpdateFacility"));
+const DeleteModal = lazy(() => import("./modals/DeleteFacility"));
 
 export default function Facilities() {
   const [openCreate, setOpenCreate] = useState(false);

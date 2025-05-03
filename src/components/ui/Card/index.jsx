@@ -1,6 +1,5 @@
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { MapPinIcon } from "lucide-react";
-import React from "react";
 
 export default function Card({ name, capacity, location, link = "#", imgSrc = "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png?20210521171500" }) {
   return (

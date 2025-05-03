@@ -1,8 +1,8 @@
 import { Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button.jsx";
+import { Button } from "@/components/ui/button";
 
-import React, { useState } from "react";
-import BookModal from "./BookModal.jsx";
+import { useState } from "react";
+import BookModal from "./BookModal";
 
 export default function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);

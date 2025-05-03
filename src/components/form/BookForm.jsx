@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import useFetch from "../../hooks/useFetch";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import Input from "../atom/Input";
+import Input from "./input";
 import { ChevronDownIcon } from "lucide-react";
 import OTPModal from "../../pages/public/HomePage/OTPModal";
 import { useParams } from "react-router-dom";
@@ -142,10 +142,7 @@ export default function BookForm() {
             </select>
             {errors.room && <p className="text-red-500 text-sm">{errors.room.message}</p>}
             {roomsError && <p className="text-red-500 text-sm">Failed to load rooms</p>}
-            <ChevronDownIcon
-              aria-hidden="true"
-              className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-            />
+            <ChevronDownIcon className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" />
           </div>
         </div>
 

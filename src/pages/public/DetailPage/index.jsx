@@ -1,8 +1,7 @@
-import React from "react";
-import PublicLayout from "../../../components/layout/PublicLayout";
-import Overview from "./Overview.jsx";
+import PublicLayout from "@/components/layout/PublicLayout";
+import Overview from "./Overview";
 import { Toaster } from "react-hot-toast";
-import BookForm from "../../../components/form/BookForm.jsx";
+import BookForm from "@/components/form/BookForm";
 
 export default function DetailPage() {
   return (

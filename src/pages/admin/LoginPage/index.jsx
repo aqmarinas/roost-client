@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import Input from "../../../components/atom/Input";
+import Input from "@/components/form/input";
 import { useForm } from "react-hook-form";
-import useAuth from "../../../hooks/useAuth";
+import useAuth from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { API_URL } from "@/config/config";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,12 @@ export default function LoginPage() {
   const [error, setError] = useState(location.state?.error);
   const [showPassword, setShowPassword] = useState(false);
 
-  // useEffect(() => {
-  //   if (auth?.accessToken) {
-  //     navigate(from, { replace: true });
-  //   }
-  // }, [auth, navigate, location]);
+  console.log(auth);
+  useEffect(() => {
+    if (auth?.accessToken) {
+      navigate(from, { replace: true });
+    }
+  }, [auth, from, location]);
 
   const {
     register,

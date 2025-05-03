@@ -1,4 +1,4 @@
-import AdminLayout from "../../../components/layout/AdminLayout";
+import AdminLayout from "@/components/layout/AdminLayout";
 import Facilities from "./Facilities";
 
 export default function FacilitesPage() {
