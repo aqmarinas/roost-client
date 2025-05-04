@@ -8,8 +8,8 @@ import AdminRoomsPage from "./pages/admin/AdminRoomsPage";
 import DetailPage from "./pages/public/DetailPage";
 import FacilitesPage from "./pages/admin/FacilitiesPage";
 import { AuthProvider } from "./context/AuthProvider";
-import ProtectedRoutes from "./pages/admin/LoginPage/ProtectedRoutes.jsx";
-import PersistLogin from "./pages/admin/LoginPage/PersistLogin.jsx";
+import ProtectedRoutes from "./components/auth/ProtectedRoutes.jsx";
+import PersistLogin from "./components/auth/PersistLogin.jsx";
 
 function App() {
   return (

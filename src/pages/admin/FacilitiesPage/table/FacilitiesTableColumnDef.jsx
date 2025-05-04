@@ -40,6 +40,9 @@ export function FacilitiesTableColumnDef(onAction) {
       ),
       enableSorting: false,
       enableHiding: false,
+      meta: {
+        className: "text-center",
+      },
     },
   ];
 }

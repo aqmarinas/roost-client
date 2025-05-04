@@ -128,6 +128,9 @@ export function BookingsTableColumnDef(onAction) {
       ),
       enableSorting: false,
       enableHiding: false,
+      meta: {
+        className: "text-center",
+      },
     },
   ];
 }

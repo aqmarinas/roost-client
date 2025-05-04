@@ -1,16 +1,14 @@
 import Card from "../../../components/ui/Card";
-import useFetch from "../../../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { API_URL } from "@/config/config";
+import { useRooms } from "@/hooks/useRooms";
 
 export default function Rooms() {
   const navigate = useNavigate();
+  const { data: rooms = [], isLoading, error } = useRooms();
 
-  const { data: response, loading, error } = useFetch(`/rooms`);
-  const rooms = response?.data || [];
-
-  if (loading) return <p>Loading fetch rooms...</p>;
+  if (isLoading) return <p>Loading fetch rooms...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
