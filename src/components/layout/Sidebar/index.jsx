@@ -23,15 +23,7 @@ export default function Sidebar({ isCollapsed, isMobile, toggleCollapse }) {
   const decoded = auth?.accessToken ? jwtDecode(auth.accessToken) : null;
 
   const location = useLocation();
-  const logout = useLogout();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/admin/login", {
-      replace: true,
-    });
-  };
+  const logoutMutation = useLogout();
 
   return (
     <>
@@ -131,8 +123,8 @@ export default function Sidebar({ isCollapsed, isMobile, toggleCollapse }) {
                     <MenuItem>
                       {({ focus }) => (
                         <div
-                          onClick={handleLogout}
-                          className={classNames(focus ? "bg-gray-100 cursor-pointer" : "", "block px-4 py-2 text-sm text-red-500")}
+                          onClick={() => logoutMutation.mutateAsync()}
+                          className={classNames(focus ? "bg-gray-100 cursor-pointer" : "", "block py-1 px-3 mx-2 my-1 text-sm text-red-500 hover:rounded-sm")}
                         >
                           Log out
                         </div>

@@ -44,7 +44,7 @@ export default function MultiSelect({ items = [], selectedItems = [], onChange =
               {isLoading ? (
                 <span className="flex items-center gap-2">
                   <Loader2 className="animate-spin w-4 h-4" />
-                  Loading...
+                  Loading options...
                 </span>
               ) : selectedItems.length > 0 ? (
                 `${selectedItems.length} selected`

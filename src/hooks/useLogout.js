@@ -1,22 +1,28 @@
+import { useMutation } from "@tanstack/react-query";
 import useAuth from "./useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function useLogout() {
   const { setAuth } = useAuth();
+  const navigate = useNavigate();
 
-  const logout = async () => {
-    try {
-      await fetch(`${import.meta.env.VITE_LOCAL_API}/auth/logout`, {
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${import.meta.env.VITE_LOCAL_API}/auth/logout`, {
         method: "GET",
         credentials: "include",
       });
-      console.log("Logout successful");
-    } catch (err) {
-      console.error("Logout failed", err);
-    } finally {
+
+      if (!res.ok) throw new Error("Logout failed");
+    },
+    onSettled: () => {
       setAuth({});
       navigate("/login", { replace: true });
-    }
-  };
+    },
+    onError: (err) => {
+      console.error("Logout error:", err.message);
+    },
+  });
 
-  return logout;
+  return mutation;
 }

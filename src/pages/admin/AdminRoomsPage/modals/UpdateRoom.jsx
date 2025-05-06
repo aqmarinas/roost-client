@@ -30,6 +30,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({
+    shouldFocusError: true,
     mode: "onChange",
   });
 
@@ -139,8 +140,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
     }
 
     await onSuccess(formData);
-    reset();
-    onClose();
+    handleClose();
   };
 
   const handleClose = () => {
@@ -237,12 +237,12 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
             />
             <div className={`flex items-center justify-between p-2 ${errors?.image ? "bg-red-50" : ""}`}>
               <span className={`text-sm ${imageFile ? "text-indigo-700 font-medium" : errors?.image ? "text-red-600" : "text-gray-500"}`}>{imageFile ? imageFile.name : imageName || "Choose an image..."}</span>
-              <button
+              <Button
                 type="button"
                 className="px-3 py-1.5 rounded-md bg-indigo-50 text-indigo-700 text-sm font-semibold"
               >
                 Browse
-              </button>
+              </Button>
             </div>
           </div>
           <p className="text-sm text-gray-500 mt-1">Supported formats: JPG, PNG. Max size: 2MB.</p>
@@ -270,7 +270,6 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
         </div>
 
         <Button
-          variant="default"
           fullWidth
           className="mt-4"
           disabled={isSubmitting}

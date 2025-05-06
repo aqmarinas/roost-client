@@ -11,7 +11,7 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
     reset,
     formState: { errors, isSubmitting },
     setValue,
-  } = useForm({ mode: "onChange" });
+  } = useForm({ shouldFocusError: true, mode: "onChange" });
 
   useEffect(() => {
     if (facility && isOpen) {
@@ -21,8 +21,7 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
 
   const onSubmit = async (data) => {
     onSuccess(data);
-    reset();
-    onClose();
+    handleClose();
   };
 
   const handleClose = () => {
@@ -46,10 +45,8 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
           {...register("name", { required: "Name is required" })}
           error={errors.name?.message}
           required
-          autofocus
         />
         <Button
-          variant="default"
           fullWidth
           className="mt-4"
           disabled={isSubmitting}

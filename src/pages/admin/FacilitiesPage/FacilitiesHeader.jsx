@@ -10,10 +10,7 @@ export default function FacilitiesHeader({ onAdd, isLoading }) {
           <p className="text-sm text-gray-500">Manage facilities available in meeting rooms.</p>
         </div>
         {!isLoading && (
-          <Button
-            variant="default"
-            onClick={onAdd}
-          >
+          <Button onClick={onAdd}>
             <PlusIcon className="size-5" />
             Add Facility
           </Button>

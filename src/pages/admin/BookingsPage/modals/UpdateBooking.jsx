@@ -7,7 +7,6 @@ import Select from "@/components/form/select";
 import { useRooms } from "@/hooks/useRooms";
 
 export default function UpdateModal({ isOpen, onClose, booking, onSuccess, existBooking }) {
-  // for select
   const { data: rooms, error: roomsError } = useRooms();
 
   const {
@@ -20,7 +19,10 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
     watch,
     control,
     formState: { errors, isSubmitting },
-  } = useForm({ mode: "onChange" });
+  } = useForm({
+    shouldFocusError: true,
+    mode: "onChange",
+  });
 
   useEffect(() => {
     if (booking && isOpen) {
@@ -53,7 +55,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
   const checkConflict = useCallback(() => {
     if (!room || !date || !startTime || !endTime || !existBooking || !Array.isArray(existBooking)) {
       clearErrors("startTime");
-      return;
+      return false;
     }
 
     const newStart = new Date(`${date}T${startTime}:00`);
@@ -78,28 +80,39 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
         type: "manual",
         message: "Room already booked.",
       });
+      return true;
     } else {
       clearErrors("startTime");
+      return false;
     }
-  }, [room, date, startTime, endTime, existBooking, setError, clearErrors]);
+  }, [room, date, startTime, endTime, existBooking]);
 
+  // time validation
   useEffect(() => {
-    console.log("fields changed");
     if (startTime && endTime && endTime <= startTime) {
       setError("endTime", {
         type: "manual",
         message: "End time must be after start time",
       });
-    } else {
-      clearErrors("endTime");
     }
+    return;
+  }, [startTime, endTime]);
 
+  // trigger check conflict
+  useEffect(() => {
     if (room && date && startTime && endTime && startTime !== "" && endTime !== "") {
       checkConflict();
     }
-  }, [room, date, startTime, endTime, checkConflict, setError, clearErrors]);
+  }, [room, date, startTime, endTime, checkConflict]);
 
   const onSubmit = async (data) => {
+    // re-check conflict cz handleSubmit clear setError
+    const conflict = checkConflict(data);
+    if (conflict) {
+      setError("startTime", { type: "manual", message: "Room already booked." });
+      return;
+    }
+
     const formatters = {
       date: (value) => value.split("T")[0],
       startTime: (value) => new Date(value).toTimeString().substring(0, 5),
@@ -124,8 +137,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
     }, {});
 
     await onSuccess(updatedFields);
-    reset();
-    onClose();
+    handleClose();
   };
 
   const handleClose = () => {
@@ -158,7 +170,6 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
           })}
           error={errors.eventTitle?.message}
           required
-          autofocus
         />
 
         <Input

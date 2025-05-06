@@ -17,6 +17,20 @@ export function useRooms(auth) {
     },
   });
 
+  const getRoomByIdQuery = (roomId) =>
+    useQuery({
+      queryKey: ["room", roomId],
+      queryFn: async () => {
+        const res = await fetch(`${API_URL}/rooms/${roomId}`);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to fetch room");
+        }
+        return data.data;
+      },
+      enabled: !!roomId,
+    });
+
   const createRoomMutation = useMutation({
     mutationFn: async (newRoom) => {
       const response = await fetch(`${API_URL}/rooms`, {
@@ -90,6 +104,7 @@ export function useRooms(auth) {
 
   return {
     ...getAllRoomsQuery,
+    getRoomByIdQuery,
     createRoomMutation,
     updateRoomMutation,
     deleteRoomMutation,

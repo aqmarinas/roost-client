@@ -12,10 +12,7 @@ export default function RoomsHeader({ onAdd, isLoading }) {
           </div>
 
           {!isLoading && (
-            <Button
-              variant="default"
-              onClick={onAdd}
-            >
+            <Button onClick={onAdd}>
               <PlusIcon className="size-5" />
               Add Room
             </Button>

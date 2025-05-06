@@ -52,35 +52,40 @@ export default function Filter({ id, options = [], columnFilters = [], setColumn
       </PopoverTrigger>
       <PopoverContent className="w-64 p-4 space-y-2">
         <div className="max-h-48 overflow-auto space-y-2">
-          {options.map((opt) => (
-            <label
-              key={opt.value}
-              className="flex items-center gap-2 text-sm cursor-pointer"
+          {!options || options.length === 0 ? (
+            <p className="text-sm text-gray-500 italic">{options === undefined ? "Failed to load options." : "No options available."}</p>
+          ) : (
+            options.map((opt) => (
+              <label
+                key={opt.value}
+                className="flex items-center gap-2 text-sm cursor-pointer"
+              >
+                <Checkbox
+                  checked={selected.includes(opt.value)}
+                  onCheckedChange={() => toggleValue(opt.value)}
+                />
+                {opt.label}
+              </label>
+            ))
+          )}
+        </div>
+        {!options || options.length === 0 || options === undefined ? null : (
+          <div className="flex justify-between pt-3 border-t border-gray-200">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReset}
             >
-              <Checkbox
-                checked={selected.includes(opt.value)}
-                onCheckedChange={() => toggleValue(opt.value)}
-              />
-              {opt.label}
-            </label>
-          ))}
-        </div>
-        <div className="flex justify-between pt-3 border-t border-gray-200">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-          >
-            Reset
-          </Button>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={handleApply}
-          >
-            Apply
-          </Button>
-        </div>
+              Reset
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleApply}
+            >
+              Apply
+            </Button>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );

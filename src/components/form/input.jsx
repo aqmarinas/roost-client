@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export default function Input({ id, name, type, placeholder, label, required = false, autofocus = false, register, className, error, ...props }) {
+export default function Input({ id, name, type, placeholder, label, required = false, register, className, error, ...props }) {
   return (
     <>
       <div className="px-1">
@@ -18,7 +18,6 @@ export default function Input({ id, name, type, placeholder, label, required = f
               name={name}
               type={type}
               placeholder={placeholder ?? ""}
-              autoFocus={autofocus}
               {...register}
               {...props}
               className={cn(

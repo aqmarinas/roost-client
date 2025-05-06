@@ -11,7 +11,8 @@ export default function ProtectedRoutes() {
   ) : (
     <Navigate
       to="/admin/login"
-      state={{ from: location, error: "You must be logged in" }}
+      state={{ from: location }}
+      // state={{ from: location, error: "You must be logged in" }}
       replace
     />
   );

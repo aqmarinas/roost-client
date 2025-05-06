@@ -22,7 +22,6 @@ export default function NotFoundContent() {
         <p className="mt-4 text-xl ">Page Not Found</p>
         <p className="mt-2 text-sm text-gray-500">The page you're looking for doesn't exist or has been moved.</p>
         <Button
-          variant="default"
           onClick={handleGoHome}
           size="lg"
           className="mt-4"

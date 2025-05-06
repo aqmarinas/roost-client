@@ -11,10 +11,7 @@ export default function BookingsHeader({ onAdd, isLoading }) {
             <p className="text-sm text-gray-500">Manage all meeting room bookings.</p>
           </div>
           {!isLoading && (
-            <Button
-              variant="default"
-              onClick={onAdd}
-            >
+            <Button onClick={onAdd}>
               <PlusIcon className="size-5" />
               Add Booking
             </Button>

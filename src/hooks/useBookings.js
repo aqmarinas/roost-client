@@ -23,7 +23,7 @@ export function useBookings(auth) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.accessToken}`,
+          // Authorization: `Bearer ${auth.accessToken}`,
         },
         body: JSON.stringify(newBooking),
       });
@@ -32,8 +32,11 @@ export function useBookings(auth) {
       return result.data;
     },
     onSuccess: (newBooking) => {
-      toast.success("Booking added!");
-      queryClient.setQueryData(["bookings"], (old = []) => [newBooking, ...old].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+      // only appears in admin
+      if (auth?.accessToken) {
+        toast.success("Booking added!");
+        queryClient.setQueryData(["bookings"], (old = []) => [newBooking, ...old].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+      }
     },
     onError: (err) => toast.error(err.message),
   });

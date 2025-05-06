@@ -26,6 +26,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     formState: { errors, isSubmitting },
   } = useForm({
     mode: "onChange",
+    shouldFocusError: true,
     defaultValues: {
       facilities: [],
       image: null,
@@ -85,10 +86,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     formData.append("image", imageFile);
 
     await onCreate(formData);
-    reset();
-    setImageFile(null);
-    setImagePreview(null);
-    onClose();
+    handleClose();
   };
 
   const handleImageChange = (e) => {
@@ -161,7 +159,6 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
           label="Name"
           {...register("name", { required: "Name is required" })}
           error={errors.name?.message}
-          autofocus
           required
         />
 
@@ -230,12 +227,12 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
             />
             <div className={`flex items-center justify-between p-2 ${errors?.image ? "bg-red-50" : ""}`}>
               <span className={`text-sm ${imageFile ? "text-indigo-700 font-medium" : errors?.image ? "text-red-600" : "text-gray-500"}`}>{imageFile ? imageFile.name : "Choose an image..."}</span>
-              <button
-                role="button"
+              <Button
+                type="button"
                 className="px-3 py-1.5 rounded-md bg-indigo-50 text-indigo-700 text-sm font-semibold"
               >
                 Browse
-              </button>
+              </Button>
             </div>
           </div>
           <p className="text-sm text-gray-500 mt-1">Supported formats: JPG, JPEG, PNG. Max size: 5MB.</p>
@@ -263,7 +260,6 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
         </div>
 
         <Button
-          variant="default"
           fullWidth
           className="mt-4"
           disabled={isSubmitting}

@@ -58,7 +58,6 @@ export default function ModalDialog({ isOpen, onClose, title = "Confirm", messag
           </Button>
           <Button
             className={`${button}`}
-            autoFocus
             onClick={onConfirm}
           >
             {confirmText}

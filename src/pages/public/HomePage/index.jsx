@@ -1,7 +1,7 @@
 import PublicLayout from "@/components/layout/PublicLayout";
 import Hero from "./Hero";
 import Rooms from "./Rooms";
-import Calendar from "./Calendar";
+import BookingCalendar from "./Calendar";
 import FAQ from "./FAQ";
 import Tutorial from "./Tutorial";
 
@@ -10,7 +10,7 @@ export default function RoomsPage() {
     <>
       <PublicLayout>
         <Hero />
-        <Calendar />
+        <BookingCalendar />
         <Tutorial />
         <Rooms />
         <FAQ />

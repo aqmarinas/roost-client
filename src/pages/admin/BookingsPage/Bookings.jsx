@@ -6,6 +6,7 @@ import BookingsTable from "./table/BookingsTable";
 import DataTableSkeleton from "@/components/data-table/data-table-skeleton";
 import { useBookings } from "@/hooks/useBookings";
 
+// const CreateModal = lazy(() => import("./modals/CreateBooking"));
 const CreateModal = lazy(() => import("@/pages/public/HomePage/BookModal"));
 const UpdateModal = lazy(() => import("./modals/UpdateBooking"));
 const DeleteModal = lazy(() => import("./modals/DeleteBooking"));

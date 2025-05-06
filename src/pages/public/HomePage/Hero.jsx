@@ -1,11 +1,9 @@
-import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-import { useState } from "react";
-import BookModal from "./BookModal";
+import { Suspense, lazy, useState } from "react";
+const CreateModal = lazy(() => import("@/pages/public/HomePage/BookModal"));
 
 export default function Hero() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
 
   return (
     <>
@@ -21,18 +19,20 @@ export default function Hero() {
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 <Button
-                  variant="default"
                   size="lg"
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => setOpenCreate(true)}
                 >
                   Book a Room
                 </Button>
               </div>
-
-              <BookModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-              />
+              <Suspense fallback={<p>Load modal...</p>}>
+                {openCreate && (
+                  <CreateModal
+                    isOpen={openCreate}
+                    onClose={() => setOpenCreate(false)}
+                  />
+                )}
+              </Suspense>
             </div>
           </div>
         </div>
