@@ -2,14 +2,8 @@ import { Check, MapPinIcon, X } from "lucide-react";
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { API_URL } from "@/config/config";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useParams } from "react-router-dom";
-import { useRooms } from "@/hooks/useRooms";
 
-export default function RoomDetail() {
-  const { id } = useParams();
-  const { getRoomByIdQuery } = useRooms();
-  const { data: room, isLoading, error } = getRoomByIdQuery(id);
-
+export default function RoomDetail({ room, isLoading, error }) {
   if (isLoading) {
     return (
       <div className="space-y-4">

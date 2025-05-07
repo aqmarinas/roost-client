@@ -1,10 +1,11 @@
 import { useBookings } from "@/hooks/useBookings";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import { Clock, MapPin, User } from "lucide-react";
+import { Clock, MapPin, User, X } from "lucide-react";
 import { startOfMonth, subMonths, addMonths, format, eachDayOfInterval, endOfWeek, startOfWeek, endOfMonth, isToday, isSameMonth, parseISO } from "date-fns";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const dayNames = ["M", "T", "W", "T", "F", "S", "S"];
 
@@ -32,10 +33,19 @@ export default function Calendar() {
   }, [currentMonth, selectedDate]);
 
   const filteredBookings = useMemo(() => {
-    if (!selectedDate) return bookings;
+    if (!bookings || bookings.length === 0) return [];
+
+    const todayStr = format(new Date(), "yyyy-MM-dd");
+
+    // default: today
+    if (!selectedDate) {
+      return bookings.filter((booking) => {
+        const bookingDateStr = format(parseISO(booking.date), "yyyy-MM-dd");
+        return bookingDateStr === todayStr;
+      });
+    }
 
     const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
-
     return bookings.filter((booking) => {
       const bookingDateStr = format(parseISO(booking.date), "yyyy-MM-dd");
       return bookingDateStr === selectedDateStr;
@@ -124,58 +134,71 @@ export default function Calendar() {
           </div>
         </div>
 
-        {isLoading && <p>Loading bookings...</p>}
-        {error && <p className="text-red-500">Failed to load bookings</p>}
-
-        {/* bookings list */}
-        <div className="mt-4 text-sm/6 lg:col-span-7 h-[60vh] lg:h-full overflow-y-auto">
-          {filteredBookings.length > 0 ? (
-            filteredBookings.map((booking) => (
-              <div
-                key={booking.id}
-                className="border rounded-xl m-2 p-4 hover:bg-gray-50"
-              >
-                <div className="flex items-center justify-between">
-                  <h2 className="font-semibold mb-2 text-base">{booking.eventTitle}</h2>
-                  <Badge>{booking.status}</Badge>
-                </div>
-
-                <div className="space-y-2 text-gray-600">
-                  <div className="grid grid-cols-2">
-                    <div className="flex items-center gap-2">
-                      <CalendarIcon className="h-5 w-5 text-gray-500" />
-                      <span>{format(parseISO(booking.date), "EEEE, dd MMMM yyyy")}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-gray-500" />
-                      <span>{booking.room.name}</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-gray-500" />
-                      <span>
-                        {format(parseISO(booking.startTime), "HH:mm")} - {format(parseISO(booking.endTime), "HH:mm")}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-gray-500" />
-                      <span>{booking.bookerName}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="flex h-full items-center justify-center text-center">
-              <div className="text-center">
-                <CalendarIcon className="size-12 mx-auto mb-2 text-gray-400" />
-                <p className="text-gray-500">No bookings on this day.</p>
-              </div>
+        {isLoading ? (
+          <div className="mt-4 space-y-2 lg:col-span-7 h-[30vh] lg:h-full">
+            <Skeleton className="w-full rounded-lg h-24" />
+            <Skeleton className="w-full rounded-lg h-24" />
+            <Skeleton className="w-full rounded-lg h-24 hidden lg:block" />
+            <Skeleton className="w-full rounded-lg h-24 hidden lg:block" />
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center text-sm/6 lg:col-span-7 h-[60vh] lg:h-full">
+            <div className="text-center space-y-2">
+              <X className="size-12 mx-auto mb-4 text-gray-500" />
+              <p className="text-xl text-gray-500 font-semibold">Oops! Something went wrong.</p>
+              <p className="text-gray-500 text-sm">Sorry, we couldn’t load the booking schedule. Please refresh the page or try again later.</p>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="mt-4 text-sm/6 lg:col-span-7 h-[50vh] lg:h-full overflow-y-auto">
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking) => (
+                <div
+                  key={booking.id}
+                  className="border rounded-xl m-2 p-4 hover:bg-gray-50"
+                >
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-semibold mb-2 text-base">{booking.eventTitle}</h2>
+                    <Badge>{booking.status}</Badge>
+                  </div>
+
+                  <div className="space-y-2 text-gray-600">
+                    <div className="grid grid-cols-2">
+                      <div className="flex items-center gap-2">
+                        <CalendarIcon className="h-5 w-5 text-gray-500" />
+                        <span>{format(parseISO(booking.date), "EEEE, dd MMMM yyyy")}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-gray-500" />
+                        <span>{booking.room.name}</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-5 w-5 text-gray-500" />
+                        <span>
+                          {format(parseISO(booking.startTime), "HH:mm")} - {format(parseISO(booking.endTime), "HH:mm")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <User className="h-5 w-5 text-gray-500" />
+                        <span>{booking.bookerName}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex h-full items-center justify-center text-center">
+                <div className="text-center">
+                  <CalendarIcon className="size-12 mx-auto mb-2 text-gray-400" />
+                  <p className="text-gray-500">No bookings on this day.</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

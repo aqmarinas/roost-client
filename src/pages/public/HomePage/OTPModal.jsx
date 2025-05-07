@@ -2,8 +2,9 @@ import Input from "@/components/form/input";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 
-export default function OTPModal({ onSubmit, onBack, onResend }) {
+export default function OTPModal({ onSubmit, onResend }) {
   const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
   const [countdown, setCountdown] = useState(60);
 
   useEffect(() => {
@@ -18,9 +19,21 @@ export default function OTPModal({ onSubmit, onBack, onResend }) {
 
   const handleResend = () => {
     if (countdown === 0) {
-      // onResend?.();
       setCountdown(60);
+      setError("");
+      onResend();
+      console.log("resend success");
     }
+  };
+
+  const handleVerify = () => {
+    if (!otp.trim()) {
+      setError("OTP is required");
+      return;
+    }
+
+    setError("");
+    onSubmit(otp);
   };
 
   return (
@@ -36,6 +49,7 @@ export default function OTPModal({ onSubmit, onBack, onResend }) {
         maxLength={6}
         required
         onChange={(e) => setOtp(e.target.value)}
+        error={error}
       />
       <div className="mt-6 text-sm text-gray-500 text-center">
         Didn't receive the OTP?{" "}
@@ -59,7 +73,7 @@ export default function OTPModal({ onSubmit, onBack, onResend }) {
         </Button> */}
         <Button
           fullWidth
-          onClick={onSubmit}
+          onClick={handleVerify}
         >
           Verify & Book
         </Button>

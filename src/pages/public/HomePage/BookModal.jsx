@@ -10,11 +10,13 @@ import useAuth from "@/hooks/useAuth";
 import SuccessModal from "./modals/SuccessModal";
 import { ArrowRight } from "lucide-react";
 import { useBookings } from "@/hooks/useBookings";
+import { useOtp } from "@/hooks/useOtp";
 
 export default function BookModal({ isOpen, onClose }) {
   const { data: bookings = [], isLoading, error, createBookingMutation } = useBookings();
   const { data: rooms, isLoading: roomsLoading, error: roomsError } = useRooms();
   const { auth } = useAuth();
+  const { sendOtpMutation, verifyOtpMutation } = useOtp();
 
   const [step, setStep] = useState(1);
   const [successData, setSuccessData] = useState(null);
@@ -40,7 +42,7 @@ export default function BookModal({ isOpen, onClose }) {
       room: "7a73c005-8cc7-4de0-8991-8a4edcf20eac",
       eventTitle: "ibadah amba",
       bookerName: "amba",
-      bookerEmail: "amba@gmail.com",
+      bookerEmail: "rainfluenza@gmail.com",
       bookerPhone: "081234567890",
     },
   });
@@ -112,8 +114,10 @@ export default function BookModal({ isOpen, onClose }) {
     }
   }, [room, date, startTime, endTime, checkConflict]);
 
-  const onSubmit = async (data) => {
+  // onSubmit
+  const createBooking = async (data) => {
     const result = await createBookingMutation.mutateAsync(data);
+
     if (result) {
       if (!auth?.accessToken) {
         setSuccessData(result);
@@ -128,6 +132,31 @@ export default function BookModal({ isOpen, onClose }) {
     setStep(1);
     setSuccessData(null);
     onClose();
+  };
+
+  const handleFormSubmit = async (data) => {
+    const conflict = checkConflict(data);
+    if (conflict) return;
+
+    if (auth?.accessToken) {
+      await createBooking(data);
+    } else {
+      await handleOtpSend();
+      setStep(2);
+    }
+  };
+
+  const handleOtpSend = async () => {
+    const { bookerEmail, bookerName } = getValues();
+    await sendOtpMutation.mutateAsync({ email: bookerEmail, name: bookerName });
+  };
+
+  const handleOtpVerify = async (otp) => {
+    const email = getValues().bookerEmail;
+    await verifyOtpMutation.mutateAsync({ email, otp });
+
+    const data = getValues();
+    await createBooking(data);
   };
 
   useEffect(() => {
@@ -182,21 +211,7 @@ export default function BookModal({ isOpen, onClose }) {
             {/* step 1 */}
             <div className="w-full">
               {step === 1 && (
-                <form
-                  onSubmit={handleSubmit((data) => {
-                    const conflict = checkConflict(data);
-                    if (conflict) {
-                      setError("startTime", { type: "manual", message: "Room already booked." });
-                      return;
-                    }
-                    if (auth?.accessToken) {
-                      onSubmit(data);
-                    } else {
-                      setStep(2);
-                    }
-                  })}
-                >
-                  {" "}
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <Input
                     id="eventTitle"
                     label="Title"
@@ -344,31 +359,22 @@ export default function BookModal({ isOpen, onClose }) {
               )}
             </div>
 
-            {/* 2 */}
+            {/* step 2 */}
             {!auth?.accessToken && (
               <div className="w-full">
                 {step === 2 && (
                   <div className="transition-transform duration-300">
                     <OTPModal
-                      onSubmit={async (otp) => {
-                        // const isValid = await validateOTP(otp);
-                        // if (isValid) {
-                        const data = getValues();
-                        await onSubmit(data);
-
-                        // } else {
-                        // tampilkan error
-                        // }
-                      }}
+                      onSubmit={handleOtpVerify}
+                      onResend={handleOtpSend}
                     />
                   </div>
                 )}
+                {/* success modal */}
                 {step === 3 && (
                   <SuccessModal
                     data={successData}
-                    onClose={() => {
-                      handleModalClose();
-                    }}
+                    onClose={handleModalClose}
                   />
                 )}
               </div>
