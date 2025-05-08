@@ -68,7 +68,7 @@ export default function Bookings() {
             existBooking={bookings}
             isOpen={openCreate}
             onClose={() => setOpenCreate(false)}
-            onCreate={(data) => createBookingMutation.mutateAsync(data).then(() => setOpenCreate(false))}
+            onCreate={(data) => createBookingMutation.mutateAsync(data)}
           />
         )}
         {openUpdate && (

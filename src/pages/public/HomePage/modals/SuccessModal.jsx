@@ -40,6 +40,20 @@ export default function SuccessModal({ data, onClose }) {
             <span>
               : {format(parseISO(data?.startTime), "HH:mm")} - {format(parseISO(data?.endTime), "HH:mm")}
             </span>
+
+            {data.participants && (
+              <>
+                <span className="font-semibold text-gray-900">Participants</span>
+                <span>: {data?.participants}</span>
+              </>
+            )}
+
+            {data.notes && (
+              <>
+                <span className="font-semibold text-gray-900">Notes</span>
+                <span>: {data?.notes}</span>
+              </>
+            )}
           </div>
         </section>
 

@@ -4,11 +4,11 @@ import toast from "react-hot-toast";
 
 export function useOtp() {
   const sendOtpMutation = useMutation({
-    mutationFn: async ({ email, name }) => {
+    mutationFn: async ({ bookerEmail, bookerName }) => {
       const response = await fetch(`${API_URL}/otp/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookerEmail: email, bookerName: name }),
+        body: JSON.stringify({ bookerEmail, bookerName }),
       });
 
       const result = await response.json();
@@ -24,11 +24,11 @@ export function useOtp() {
   });
 
   const verifyOtpMutation = useMutation({
-    mutationFn: async ({ email, otp }) => {
+    mutationFn: async ({ bookerEmail, otp }) => {
       const response = await fetch(`${API_URL}/otp/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookerEmail: email, otp }),
+        body: JSON.stringify({ bookerEmail, otp }),
       });
 
       const result = await response.json();

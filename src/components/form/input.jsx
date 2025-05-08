@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-export default function Input({ id, name, type, placeholder, label, required = false, register, className, error, ...props }) {
+export default function Input({ id, name, type = "text", placeholder, label, required = false, register, className, error, ...props }) {
   return (
     <>
       <div className="px-1">

@@ -175,7 +175,7 @@ export default function BookingsList() {
 
                 <div className="space-y-2 text-gray-600">
                   <div className="grid grid-cols-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 pr-2">
                       <CalendarIcon className="h-5 w-5 text-gray-500" />
                       <span>{format(parseISO(booking.date), "EEEE, dd MMMM yyyy")}</span>
                     </div>

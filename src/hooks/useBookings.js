@@ -32,11 +32,7 @@ export function useBookings(auth) {
       return result.data;
     },
     onSuccess: (newBooking) => {
-      // only appears in admin
-      if (auth?.accessToken) {
-        toast.success("Booking added!");
-        queryClient.setQueryData(["bookings"], (old = []) => [newBooking, ...old].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
-      }
+      queryClient.setQueryData(["bookings"], (old = []) => [newBooking, ...old].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
     },
     onError: (err) => toast.error(err.message),
   });

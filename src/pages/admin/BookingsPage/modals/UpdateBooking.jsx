@@ -2,12 +2,15 @@ import Input from "@/components/form/input";
 import { Button } from "@/components/ui/button";
 import { Controller, useForm } from "react-hook-form";
 import Modal from "@/components/ui/Modal";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Select from "@/components/form/select";
 import { useRooms } from "@/hooks/useRooms";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function UpdateModal({ isOpen, onClose, booking, onSuccess, existBooking }) {
   const { data: rooms, error: roomsError } = useRooms();
+
+  const [isChecked, setIsChecked] = useState(false);
 
   const {
     register,
@@ -44,6 +47,8 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
       setValue("bookerName", booking.bookerName);
       setValue("bookerEmail", booking.bookerEmail);
       setValue("bookerPhone", booking.bookerPhone);
+      setValue("participants", booking.participants);
+      setValue("notes", booking.notes);
     }
   }, [booking, isOpen, setValue]);
 
@@ -228,6 +233,25 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
           required
         />
 
+        {/* participants  */}
+        <div className="mt-2 flex items-center gap-2 mx-1">
+          <Checkbox
+            onCheckedChange={() => {
+              setIsChecked((prev) => !prev);
+            }}
+          />
+          <p className="text-sm text-gray-500">Book for someone else?</p>
+        </div>
+        {isChecked && (
+          <Input
+            id="participants"
+            label="Participants (Optional)"
+            placeholder="Head of X"
+            {...register("participants")}
+            error={errors.participants?.message}
+          />
+        )}
+
         <Controller
           name="room"
           control={control}
@@ -293,6 +317,14 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
             />
           </div>
         </div>
+
+        <Input
+          id="notes"
+          label="Notes (Optional)"
+          placeholder="Notes"
+          {...register("notes")}
+          error={errors.notes?.message}
+        />
 
         <Button
           fullWidth

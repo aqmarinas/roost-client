@@ -29,7 +29,6 @@
 //       // date: "2025-05-03",
 //       // startTime: "00:00",
 //       // endTime: "01:00",
-//       // todo: testing only
 //       room: "7a73c005-8cc7-4de0-8991-8a4edcf20eac",
 //       eventTitle: "ibadah amba",
 //       bookerName: "amba",

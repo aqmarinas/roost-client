@@ -44,7 +44,7 @@ export function BookingsTableColumnDef(onAction) {
     {
       header: "Title",
       accessorKey: "eventTitle",
-      cell: (row) => <span className="font-semibold text-gray-900">{row.getValue()}</span>,
+      cell: (row) => <span className="font-semibold text-gray-900 block min-w-[200px] max-w-[250px] break-words whitespace-normal">{row.getValue()}</span>,
       enableSorting: true,
       enableHiding: true,
     },
@@ -52,7 +52,7 @@ export function BookingsTableColumnDef(onAction) {
       id: "room",
       header: "Room",
       accessorKey: "room.name",
-      cell: (row) => <span className="text-gray-900 font-semibold">{row.getValue() ?? "undefined (need refresh)"}</span>, //"named" in deeply nested key "room.name" returned undefined while reject/accepte
+      cell: (row) => <span className="text-gray-900 font-semibold">{row.getValue() ?? "undefined (need refresh)"}</span>, //todo: "named" in deeply nested key "room.name" returned undefined while reject/accepted (sometimes)
       enableSorting: true,
       enableHiding: true,
       filterFn: (row, columnId, filterValue) => {
@@ -73,7 +73,7 @@ export function BookingsTableColumnDef(onAction) {
       enableSorting: true,
       enableHiding: true,
       enableFilter: true,
-      sortingFn: (rowA, rowB, columnId) => {
+      sortingFn: (rowA, rowB) => {
         const a = new Date(rowA.original.startTime).getTime();
         const b = new Date(rowB.original.startTime).getTime();
         return a - b;
@@ -95,7 +95,7 @@ export function BookingsTableColumnDef(onAction) {
       header: "Booker",
       accessorKey: "bookerName",
       cell: ({ row }) => (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 max-w-[200px] break-words whitespace-normal">
           <span className="text-gray-900">{row.original.bookerName}</span>
           <span className="text-gray-500">{row.original.bookerPhone}</span>
           <span className="text-gray-500">{row.original.bookerEmail}</span>
@@ -118,6 +118,26 @@ export function BookingsTableColumnDef(onAction) {
       },
     },
     {
+      header: "Participants",
+      accessorKey: "participants",
+      cell: (row) => {
+        const participants = row.getValue();
+        return <span className={`block min-w-[200px] max-w-[250px] break-words whitespace-normal text-gray-500 ${!participants?.toString().trim() ? "text-center" : ""}`}>{participants?.toString().trim() ? participants : "-"}</span>;
+      },
+      enableSorting: false,
+      enableHiding: true,
+    },
+    {
+      header: "Notes",
+      accessorKey: "notes",
+      cell: (row) => {
+        const notes = row.getValue();
+        return <span className={`block min-w-[200px] max-w-[250px] break-words whitespace-normal text-gray-500 ${!notes?.toString().trim() ? "text-center" : ""}`}>{notes?.toString().trim() ? notes : "-"}</span>;
+      },
+      enableSorting: false,
+      enableHiding: true,
+    },
+    {
       id: "actions",
       header: "Actions",
       cell: ({ row }) => (
@@ -128,9 +148,6 @@ export function BookingsTableColumnDef(onAction) {
       ),
       enableSorting: false,
       enableHiding: false,
-      meta: {
-        className: "text-center",
-      },
     },
   ];
 }
@@ -141,7 +158,7 @@ function ActionsCell({ row, onAction }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 text-center"
         >
           <MoreHorizontal />
         </Button>

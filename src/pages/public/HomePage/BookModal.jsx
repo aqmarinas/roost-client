@@ -11,6 +11,9 @@ import SuccessModal from "./modals/SuccessModal";
 import { ArrowRight } from "lucide-react";
 import { useBookings } from "@/hooks/useBookings";
 import { useOtp } from "@/hooks/useOtp";
+import { Checkbox } from "@/components/ui/checkbox";
+import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
 
 export default function BookModal({ isOpen, onClose }) {
   const { data: bookings = [], isLoading, error, createBookingMutation } = useBookings();
@@ -18,6 +21,9 @@ export default function BookModal({ isOpen, onClose }) {
   const { auth } = useAuth();
   const { sendOtpMutation, verifyOtpMutation } = useOtp();
 
+  const { id } = useParams();
+
+  const [isChecked, setIsChecked] = useState(false);
   const [step, setStep] = useState(1);
   const [successData, setSuccessData] = useState(null);
 
@@ -30,16 +36,18 @@ export default function BookModal({ isOpen, onClose }) {
     watch,
     getValues,
     control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     mode: "onChange",
     shouldFocusError: true,
     defaultValues: {
-      // date: "2025-05-03",
+      participants: "", // donot delete this
+      room: "7a73c005-8cc7-4de0-8991-8a4edcf20eac",
+      // todo: testing only
+      // date: "2025-06-01",
       startTime: "00:00",
       endTime: "01:00",
-      // todo: testing only
-      room: "7a73c005-8cc7-4de0-8991-8a4edcf20eac",
       eventTitle: "ibadah amba",
       bookerName: "amba",
       bookerEmail: "rainfluenza@gmail.com",
@@ -64,14 +72,14 @@ export default function BookModal({ isOpen, onClose }) {
         return false;
       }
 
-      const newStart = new Date(`${date}T${startTime}:00`);
-      const newEnd = new Date(`${date}T${endTime}:00`);
+      const newStart = new Date(`${d}T${s}:00`);
+      const newEnd = new Date(`${d}T${e}:00`);
 
       const hasConflict = bookings.some((booking) => {
         if (booking.room_id !== room) return false;
         // if (booking.date !== date) return false; // beda tz
 
-        const inputDateUTC = new Date(date);
+        const inputDateUTC = new Date(d);
         const bookingDateUTC = new Date(booking.date);
         if (inputDateUTC.toISOString().split("T")[0] !== bookingDateUTC.toISOString().split("T")[0]) return false;
 
@@ -136,10 +144,20 @@ export default function BookModal({ isOpen, onClose }) {
 
   const handleFormSubmit = async (data) => {
     const conflict = checkConflict(data);
-    if (conflict) return;
+    console.log("is conflict", conflict);
+    if (conflict) {
+      // setError("startTime", {
+      //   type: "manual",
+      //   message: "Room already booked.",
+      // });
+      return;
+    }
+    console.log("pass conflict");
 
     if (auth?.accessToken) {
       await createBooking(data);
+      toast.success("Booking added!");
+      handleModalClose();
     } else {
       await handleOtpSend();
       setStep(2);
@@ -148,20 +166,21 @@ export default function BookModal({ isOpen, onClose }) {
 
   const handleOtpSend = async () => {
     const { bookerEmail, bookerName } = getValues();
-    await sendOtpMutation.mutateAsync({ email: bookerEmail, name: bookerName });
+    await sendOtpMutation.mutateAsync({ bookerEmail, bookerName });
   };
 
   const handleOtpVerify = async (otp) => {
-    const email = getValues().bookerEmail;
-    await verifyOtpMutation.mutateAsync({ email, otp });
+    const bookerEmail = getValues().bookerEmail;
+    console.log(otp);
+    await verifyOtpMutation.mutateAsync({ bookerEmail, otp });
 
     const data = getValues();
     await createBooking(data);
   };
 
+  // delay close
   useEffect(() => {
     if (!isOpen) {
-      // delay reset
       const timeout = setTimeout(() => {
         setStep(1);
       }, 500);
@@ -169,6 +188,13 @@ export default function BookModal({ isOpen, onClose }) {
       return () => clearTimeout(timeout);
     }
   }, [isOpen]);
+
+  // get default value room
+  useEffect(() => {
+    if (id) {
+      setValue("room", id);
+    }
+  }, [id, setValue]);
 
   return (
     <>
@@ -232,7 +258,7 @@ export default function BookModal({ isOpen, onClose }) {
                   />
                   <Input
                     id="bookerName"
-                    label="Name"
+                    label="Booker Name"
                     placeholder="John Doe"
                     {...register("bookerName", {
                       required: "Name is required",
@@ -250,7 +276,7 @@ export default function BookModal({ isOpen, onClose }) {
                   />
                   <Input
                     id="bookerEmail"
-                    label="Email"
+                    label="Booker Email"
                     type="email"
                     placeholder="johndoe@xyz.co.id"
                     {...register("bookerEmail", {
@@ -263,10 +289,10 @@ export default function BookModal({ isOpen, onClose }) {
                     error={errors.bookerEmail?.message}
                     required
                   />
-                  <p className="px-1 text-sm text-gray-500 ">Use your company email (@xyz.co.id)</p>
+                  <p className="px-1 text-sm text-gray-500">Use your company email (@xyz.co.id)</p>
                   <Input
                     id="bookerPhone"
-                    label="Phone Number"
+                    label="Booker WhatsApp Number"
                     placeholder="0812345678910"
                     type="tel"
                     minLength={8}
@@ -281,6 +307,27 @@ export default function BookModal({ isOpen, onClose }) {
                     error={errors.bookerPhone?.message}
                     required
                   />
+
+                  {/* participants  */}
+                  <div className="mt-2 flex items-center gap-2 mx-1">
+                    <Checkbox
+                      onCheckedChange={() => {
+                        setIsChecked((prev) => !prev);
+                      }}
+                    />
+                    <p className="text-sm text-gray-500">Book for someone else?</p>
+                  </div>
+
+                  {isChecked && (
+                    <Input
+                      id="participants"
+                      label="Participants (Optional)"
+                      placeholder="Head of X"
+                      {...register("participants")}
+                      error={errors.participants?.message}
+                    />
+                  )}
+
                   <Controller
                     name="room"
                     control={control}
@@ -301,6 +348,7 @@ export default function BookModal({ isOpen, onClose }) {
                       />
                     )}
                   />
+
                   <Input
                     id="date"
                     label="Date"
@@ -319,6 +367,8 @@ export default function BookModal({ isOpen, onClose }) {
                     error={errors.date?.message}
                     required
                   />
+
+                  {/* time */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Input
@@ -347,6 +397,15 @@ export default function BookModal({ isOpen, onClose }) {
                     {isLoading && <p className="text-sm text-gray-500">Loading booking data...</p>}
                     {error && <p className="text-sm text-red-500">Failed to check availability of bookings</p>}
                   </div>
+
+                  <Input
+                    id="notes"
+                    label="Notes (Optional)"
+                    placeholder="Notes"
+                    {...register("notes")}
+                    error={errors.notes?.message}
+                  />
+
                   <Button
                     fullWidth
                     className="mt-4"
