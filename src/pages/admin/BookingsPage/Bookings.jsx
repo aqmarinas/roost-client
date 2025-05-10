@@ -21,8 +21,7 @@ export default function Bookings() {
   const [openReject, setOpenReject] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  const { auth } = useAuth();
-  const { data: bookings = [], isLoading, error, createBookingMutation, updateBookingMutation, deleteBookingMutation, approveBookingMutation, rejectBookingMutation } = useBookings(auth);
+  const { data: bookings = [], isLoading, error, createBookingMutation, updateBookingMutation, deleteBookingMutation, approveBookingMutation, rejectBookingMutation } = useBookings();
 
   const handleActionClick = (booking, actionType) => {
     setSelectedBooking(booking);
@@ -65,10 +64,10 @@ export default function Bookings() {
       <Suspense fallback={<p>Load modal...</p>}>
         {openCreate && (
           <CreateModal
-            existBooking={bookings}
             isOpen={openCreate}
             onClose={() => setOpenCreate(false)}
-            onCreate={(data) => createBookingMutation.mutateAsync(data)}
+            // existBooking={bookings}
+            // onCreate={(data) => createBookingMutation.mutateAsync(data)}
           />
         )}
         {openUpdate && (

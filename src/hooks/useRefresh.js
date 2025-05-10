@@ -1,22 +1,26 @@
 import useAuth from "./useAuth";
+import axios from "@/lib/axios";
 
 export default function useRefresh() {
   const { setAuth } = useAuth();
 
   const refresh = async () => {
-    const response = await fetch(`${import.meta.env.VITE_LOCAL_API}/auth/refresh`, {
-      method: "GET",
-      credentials: "include",
-    });
+    try {
+      const response = await axios.get("/auth/refresh", {
+        withCredentials: true,
+      });
 
-    const result = await response.json();
+      const accessToken = response?.data?.data?.accessToken;
 
-    if (!response.ok) {
-      throw new Error(result.message || "Failed to refresh");
+      setAuth((prev) => ({
+        ...prev,
+        accessToken,
+      }));
+
+      return accessToken;
+    } catch (err) {
+      throw new Error(err.response?.data?.message || "Failed to refresh");
     }
-
-    setAuth((prev) => ({ ...prev, accessToken: result?.data?.accessToken }));
-    return result.data.accessToken;
   };
 
   return refresh;

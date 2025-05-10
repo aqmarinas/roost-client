@@ -57,7 +57,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
     if (!allowedTypes.includes(file.type)) {
       setError("image", {
         type: "manual",
-        message: "Invalid file type.",
+        message: "Invalid file type",
       });
       return false;
     }
@@ -65,7 +65,7 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
     if (file && file.size > maxSize) {
       setError("image", {
         type: "manual",
-        message: "File size exceeds 5MB. Please select a smaller image.",
+        message: "File size exceeds 5MB. Please select a smaller image",
       });
       return false;
     }

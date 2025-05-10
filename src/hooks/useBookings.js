@@ -1,122 +1,84 @@
-import { API_URL } from "@/config/config";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import useAxiosPrivate from "./useAxiosPrivate";
+import axios from "@/lib/axios";
 
-export function useBookings(auth) {
+export function useBookings() {
   const queryClient = useQueryClient();
+  const axiosPrivate = useAxiosPrivate();
 
   const getAllBookingsQuery = useQuery({
     queryKey: ["bookings"],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/bookings`);
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch bookings");
-      }
-      return data.data;
+      const res = await axios.get("/bookings");
+      return res.data.data;
     },
   });
 
   const createBookingMutation = useMutation({
-    mutationFn: async (newBooking) => {
-      const res = await fetch(`${API_URL}/bookings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Authorization: `Bearer ${auth.accessToken}`,
-        },
-        body: JSON.stringify(newBooking),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to add booking");
-      return result.data;
+    mutationFn: async ({ newBooking }) => {
+      const res = await axios.post("/bookings", newBooking);
+      return res.data.data;
     },
-    onSuccess: (newBooking) => {
-      queryClient.setQueryData(["bookings"], (old = []) => [newBooking, ...old].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+    onSuccess: (newBooking, variables) => {
+      const { auth } = variables;
+
+      // queryClient.setQueryData(["bookings"], (old = []) => [newBooking, ...old].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+      queryClient.invalidateQueries(["bookings"]);
+
+      if (auth?.accessToken) {
+        toast.success("Booking created successfully");
+      }
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to create booking"),
   });
 
   const updateBookingMutation = useMutation({
     mutationFn: async ({ id, updatedData }) => {
-      const res = await fetch(`${API_URL}/bookings/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-        body: JSON.stringify(updatedData),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to update booking");
-      return result.data;
+      const res = await axiosPrivate.patch(`/bookings/${id}`, updatedData);
+      return res.data.data;
     },
     onSuccess: (updatedBooking) => {
-      toast.success("Booking updated!");
+      toast.success("Booking updated successfully");
       queryClient.setQueryData(["bookings"], (old = []) => old.map((b) => (b.id === updatedBooking.id ? updatedBooking : b)));
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to update booking"),
   });
 
   const deleteBookingMutation = useMutation({
     mutationFn: async (ids) => {
-      const res = await fetch(`${API_URL}/bookings`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-        body: JSON.stringify({ ids }),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to delete booking");
-      return result;
+      const res = await axiosPrivate.delete("/bookings", { data: { ids } });
+      return res.data;
     },
     onSuccess: () => {
-      toast.success("Booking deleted");
+      toast.success("Booking(s) deleted successfully");
       queryClient.invalidateQueries(["bookings"]);
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to delete booking(s)"),
   });
 
   const approveBookingMutation = useMutation({
     mutationFn: async ({ id }) => {
-      const res = await fetch(`${API_URL}/bookings/${id}/approve`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to approve");
-      return result.data;
+      const res = await axiosPrivate.patch(`/bookings/${id}/approve`);
+      return res.data.data;
     },
     onSuccess: (updatedBooking) => {
-      toast.success("Approved");
+      toast.success("Booking approved");
       queryClient.setQueryData(["bookings"], (old = []) => old.map((b) => (b.id === updatedBooking.id ? updatedBooking : b)));
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to approve booking"),
   });
 
   const rejectBookingMutation = useMutation({
     mutationFn: async ({ id }) => {
-      const res = await fetch(`${API_URL}/bookings/${id}/reject`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || "Failed to reject");
-      return result.data;
+      const res = await axiosPrivate.patch(`/bookings/${id}/reject`);
+      return res.data.data;
     },
     onSuccess: (updatedBooking) => {
-      toast.success("Rejected");
+      toast.success("Booking rejected");
       queryClient.setQueryData(["bookings"], (old = []) => old.map((b) => (b.id === updatedBooking.id ? updatedBooking : b)));
     },
-    onError: (err) => toast.error(err.message),
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to reject booking"),
   });
 
   return {

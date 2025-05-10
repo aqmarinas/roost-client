@@ -1,4 +1,4 @@
-import AdminSidebar from "../Sidebar/new";
+import AdminSidebar from "@/components/layout/Sidebar/new";
 import { Toaster } from "react-hot-toast";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 

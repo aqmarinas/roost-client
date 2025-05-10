@@ -20,7 +20,7 @@ export default function UpdateModal({ isOpen, onClose, facility, onSuccess }) {
   }, [facility, isOpen, setValue]);
 
   const onSubmit = async (data) => {
-    onSuccess(data);
+    await onSuccess(data);
     handleClose();
   };
 

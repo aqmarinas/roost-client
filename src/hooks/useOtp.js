@@ -1,50 +1,57 @@
-import { useMutation } from "@tanstack/react-query";
-import { API_URL } from "@/config/config";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import axios from "@/lib/axios";
 
 export function useOtp() {
   const sendOtpMutation = useMutation({
     mutationFn: async ({ bookerEmail, bookerName }) => {
-      const response = await fetch(`${API_URL}/otp/send`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookerEmail, bookerName }),
+      const response = await axios.post("/otp/send", {
+        bookerEmail,
+        bookerName,
       });
-
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to send OTP");
-      }
-
-      return result;
+      return response.data;
     },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Failed to send OTP");
     },
   });
 
   const verifyOtpMutation = useMutation({
     mutationFn: async ({ bookerEmail, otp }) => {
-      const response = await fetch(`${API_URL}/otp/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookerEmail, otp }),
+      const response = await axios.post("/otp/verify", {
+        bookerEmail,
+        otp,
       });
-
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || "OTP verification failed");
-      }
-
-      return result;
+      return response.data;
     },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Failed to verify OTP");
     },
   });
+
+  // const isVerifiedQuery = (bookerEmail) =>
+  //   useQuery({
+  //     queryKey: ["isVerified", bookerEmail],
+  //     queryFn: async () => {
+  //       const response = await axios.get(`/otp/is-verified`, {
+  //         params: { bookerEmail },
+  //       });
+  //       return response.data.verified;
+  //     },
+  //     enabled: !!bookerEmail,
+  //   });
+
+  const checkIsVerified = async (bookerEmail) => {
+    const response = await axios.get("/otp/is-verified", {
+      params: { bookerEmail },
+    });
+    return response.data.verified;
+  };
 
   return {
     sendOtpMutation,
     verifyOtpMutation,
+    // isVerifiedQuery,
+    checkIsVerified,
   };
 }

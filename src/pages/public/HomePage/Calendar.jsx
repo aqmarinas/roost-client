@@ -40,7 +40,9 @@ export default function Calendar() {
     // default: today
     if (!selectedDate) {
       return bookings.filter((booking) => {
-        const bookingDateStr = format(parseISO(booking.date), "yyyy-MM-dd");
+        if (!booking.date) return false;
+
+        const bookingDateStr = format(parseISO(booking.date), "yyyy-MM-dd"); // todo: error kalo abis book
         return bookingDateStr === todayStr;
       });
     }

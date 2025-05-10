@@ -6,6 +6,6 @@ export default axios.create({
 
 export const axiosPrivate = axios.create({
   baseURL: `${import.meta.env.VITE_LOCAL_API}`,
-  headers: { "Content-Type": "application/json" },
+  // headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });

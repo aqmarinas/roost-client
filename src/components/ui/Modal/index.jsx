@@ -1,8 +1,6 @@
-"use client";
-
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Button } from "../button";
+import { Button } from "@/components/ui/button";
 
 const modalSizes = {
   sm: "sm:max-w-sm",

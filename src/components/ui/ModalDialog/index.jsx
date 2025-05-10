@@ -1,8 +1,8 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import Modal from "../Modal";
-import { Button } from "../button";
+import Modal from "@/components/ui/Modal";
+import { Button } from "@/components/ui/button";
 
-export default function ModalDialog({ isOpen, onClose, title = "Confirm", message = "Are you sure you want to proceed? This action cannot be undone.", confirmText = "Confirm", cancelText = "Cancel", onConfirm, type = "danger" }) {
+export default function ModalDialog({ isOpen, onClose, title = "Confirm", message = "Are you sure you want to proceed? This action cannot be undone", confirmText = "Confirm", cancelText = "Cancel", onConfirm, type = "danger" }) {
   // Color configurations based on type
   const colorConfig = {
     danger: {
@@ -44,7 +44,7 @@ export default function ModalDialog({ isOpen, onClose, title = "Confirm", messag
           </div>
 
           <div>
-            <h3 className="text-lg font-   text-gray-900">{title}</h3>
+            <h3 className="text-lg font-medium text-gray-900">{title}</h3>
             <p className="mt-1 text-sm text-gray-500">{message}</p>
           </div>
         </div>

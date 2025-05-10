@@ -52,14 +52,14 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     if (!allowedTypes.includes(file.type)) {
       setError("image", {
         type: "manual",
-        message: "Invalid file type.",
+        message: "Invalid file type",
       });
       return false;
     }
     if (file && file.size > maxSize) {
       setError("image", {
         type: "manual",
-        message: "File size exceeds 5MB. Please select a smaller image.",
+        message: "File size exceeds 5MB. Please select a smaller image",
       });
       return false;
     }

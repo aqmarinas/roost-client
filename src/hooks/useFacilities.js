@@ -1,58 +1,42 @@
-import { API_URL } from "@/config/config";
+import axios from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import useAxiosPrivate from "./useAxiosPrivate";
 
-export function useFacilities(auth) {
+export function useFacilities() {
   const queryClient = useQueryClient();
+  const axiosPrivate = useAxiosPrivate();
 
   const getAllFacilitiesQuery = useQuery({
     queryKey: ["facilities"],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/facilities`);
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to fetch facilities");
-      }
-      return data.data;
+      const res = await axios.get("/facilities");
+      return res.data.data;
     },
   });
 
   const createFacilityMutation = useMutation({
     mutationFn: async (newFacility) => {
-      const response = await fetch(`${API_URL}/facilities`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${auth.accessToken}` },
-        body: JSON.stringify(newFacility),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Failed to add facility");
-      return result.data;
+      const res = await axiosPrivate.post("/facilities", newFacility);
+      console.log(res);
+      return res.data.data;
     },
     onSuccess: (newFacility) => {
-      toast.success("Successfully added facility");
+      toast.success("Facility added successfully");
       queryClient.setQueryData(["facilities"], (oldData) => {
         const updated = [newFacility, ...(oldData || [])];
         return updated.sort((a, b) => a.name.localeCompare(b.name));
       });
     },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Failed to create facility");
     },
   });
 
   const updateFacilityMutation = useMutation({
     mutationFn: async ({ id, updatedData }) => {
-      const response = await fetch(`${API_URL}/facilities/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-        body: JSON.stringify(updatedData),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Failed to update facility");
-      return result.data;
+      const res = await axiosPrivate.patch(`/facilities/${id}`, updatedData);
+      return res.data.data;
     },
     onSuccess: (updatedFacility) => {
       toast.success("Facility updated successfully");
@@ -62,31 +46,23 @@ export function useFacilities(auth) {
       });
     },
     onError: (error) => {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Failed to update facility");
     },
   });
 
   const deleteFacilityMutation = useMutation({
     mutationFn: async (ids) => {
-      // delete many
-      const response = await fetch(`${API_URL}/facilities`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-        body: JSON.stringify({ ids }),
+      const res = await axiosPrivate.delete("/facilities", {
+        data: { ids },
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || "Failed to delete facility");
-      return result;
+      return res.data;
     },
     onSuccess: () => {
       toast.success("Facility deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["facilities"] });
     },
     onError: (error) => {
-      toast.error(error.message || "Failed to delete facility");
+      toast.error(error.response?.data?.message || "Failed to delete facility");
     },
   });
 

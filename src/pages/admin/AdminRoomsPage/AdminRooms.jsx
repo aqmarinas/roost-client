@@ -1,5 +1,4 @@
 import { Suspense, lazy, useState } from "react";
-import useAuth from "@/hooks/useAuth";
 import RoomsHeader from "./RoomsHeader";
 import RoomsTable from "./table/RoomsTable";
 import { useRooms } from "@/hooks/useRooms";
@@ -15,8 +14,7 @@ export default function AdminRooms() {
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
-  const { auth } = useAuth();
-  const { data: rooms = [], isLoading, error, createRoomMutation, updateRoomMutation, deleteRoomMutation } = useRooms(auth);
+  const { data: rooms = [], isLoading, error, createRoomMutation, updateRoomMutation, deleteRoomMutation } = useRooms();
 
   const handleActionClick = (room, actionType) => {
     setSelectedRoom(room);

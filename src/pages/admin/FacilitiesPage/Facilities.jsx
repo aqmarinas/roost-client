@@ -1,5 +1,4 @@
 import { Suspense, lazy, useState } from "react";
-import useAuth from "@/hooks/useAuth";
 import FacilitiesTable from "./table/FacilitiesTable";
 import FacilitiesHeader from "./FacilitiesHeader";
 import { useFacilities } from "@/hooks/useFacilities";
@@ -15,8 +14,7 @@ export default function Facilities() {
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedFacility, setSelectedFacility] = useState(null);
 
-  const { auth } = useAuth();
-  const { data: facilities = [], isLoading, error, createFacilityMutation, updateFacilityMutation, deleteFacilityMutation } = useFacilities(auth);
+  const { data: facilities = [], isLoading, error, createFacilityMutation, updateFacilityMutation, deleteFacilityMutation } = useFacilities();
 
   const handleActionClick = (facility, actionType) => {
     setSelectedFacility(facility);

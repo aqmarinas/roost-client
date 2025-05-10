@@ -83,7 +83,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
     if (hasConflict) {
       setError("startTime", {
         type: "manual",
-        message: "Room already booked.",
+        message: "Room already booked",
       });
       return true;
     } else {
@@ -92,31 +92,35 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
     }
   }, [room, date, startTime, endTime, existBooking]);
 
-  // time validation
-  useEffect(() => {
-    if (startTime && endTime && endTime <= startTime) {
-      setError("endTime", {
-        type: "manual",
-        message: "End time must be after start time",
-      });
-    }
-    return;
-  }, [startTime, endTime]);
-
   // trigger check conflict
   useEffect(() => {
     if (room && date && startTime && endTime && startTime !== "" && endTime !== "") {
       checkConflict();
     }
-  }, [room, date, startTime, endTime, checkConflict]);
+  }, [room, date, startTime, endTime, checkConflict, setError, clearErrors]);
 
   const onSubmit = async (data) => {
     // re-check conflict cz handleSubmit clear setError
+    let hasError = false;
+
+    if (data.endTime <= data.startTime) {
+      setError("endTime", {
+        type: "manual",
+        message: "End time must be after start time",
+      });
+      hasError = true;
+    }
+
     const conflict = checkConflict(data);
     if (conflict) {
-      setError("startTime", { type: "manual", message: "Room already booked." });
-      return;
+      setError("startTime", {
+        type: "manual",
+        message: "Room already booked",
+      });
+      hasError = true;
     }
+
+    if (hasError) return;
 
     const formatters = {
       date: (value) => value.split("T")[0],

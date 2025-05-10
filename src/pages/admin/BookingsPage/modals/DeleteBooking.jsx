@@ -12,7 +12,7 @@ export default function DeleteModal({ isOpen, onClose, onSuccess }) {
       onClose={onClose}
       onConfirm={handleConfirm}
       title="Confirm Delete"
-      message="Are you sure you want to delete this booking? This action can't be undone."
+      message="Are you sure you want to delete this booking? This action can't be undone"
     />
   );
 }

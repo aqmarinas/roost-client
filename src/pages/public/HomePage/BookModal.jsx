@@ -8,24 +8,24 @@ import Select from "@/components/form/select";
 import { useRooms } from "@/hooks/useRooms";
 import useAuth from "@/hooks/useAuth";
 import SuccessModal from "./modals/SuccessModal";
-import { ArrowRight } from "lucide-react";
+import { AlertCircle, ArrowRight, Trash } from "lucide-react";
 import { useBookings } from "@/hooks/useBookings";
 import { useOtp } from "@/hooks/useOtp";
 import { Checkbox } from "@/components/ui/checkbox";
-import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function BookModal({ isOpen, onClose }) {
+  const { id } = useParams();
+  const { auth } = useAuth();
   const { data: bookings = [], isLoading, error, createBookingMutation } = useBookings();
   const { data: rooms, isLoading: roomsLoading, error: roomsError } = useRooms();
-  const { auth } = useAuth();
-  const { sendOtpMutation, verifyOtpMutation } = useOtp();
-
-  const { id } = useParams();
+  const { sendOtpMutation, verifyOtpMutation, checkIsVerified } = useOtp();
 
   const [isChecked, setIsChecked] = useState(false);
   const [step, setStep] = useState(1);
   const [successData, setSuccessData] = useState(null);
+  const [schedules, setSchedules] = useState([{ date: "", startTime: "", endTime: "" }]);
 
   const {
     register,
@@ -42,12 +42,10 @@ export default function BookModal({ isOpen, onClose }) {
     mode: "onChange",
     shouldFocusError: true,
     defaultValues: {
-      participants: "", // donot delete this
+      participants: "", // do not delete this
       room: "7a73c005-8cc7-4de0-8991-8a4edcf20eac",
       // todo: testing only
       // date: "2025-06-01",
-      startTime: "00:00",
-      endTime: "01:00",
       eventTitle: "ibadah amba",
       bookerName: "amba",
       bookerEmail: "rainfluenza@gmail.com",
@@ -56,32 +54,52 @@ export default function BookModal({ isOpen, onClose }) {
   });
 
   const room = watch("room");
-  const date = watch("date");
-  const startTime = watch("startTime");
-  const endTime = watch("endTime");
 
   const checkConflict = useCallback(
-    (data) => {
+    (data, index) => {
       const r = data?.room ?? room;
       const d = data?.date ?? date;
-      const s = data?.startTime ?? startTime;
-      const e = data?.endTime ?? endTime;
+      const s = data?.startTime ?? schedules[index].startTime;
+      const e = data?.endTime ?? schedules[index].endTime;
 
-      if (!r || !d || !s || !e || !bookings || !Array.isArray(bookings)) {
+      if (!r || !d || !s || !e || !schedules || !Array.isArray(schedules)) {
         clearErrors("startTime");
         return false;
+      }
+
+      // cek biar ga masukin jadwal yang sama
+      const hasSameSchedule = schedules.some((schedule, idx) => {
+        if (idx === index) return false;
+
+        const { startTime, endTime, date } = schedule;
+
+        const existingStart = `${date} ${startTime}`;
+        const existingEnd = `${date} ${endTime}`;
+
+        const newStart = `${data.date} ${data.startTime}`;
+        const newEnd = `${data.date} ${data.endTime}`;
+
+        return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+      });
+
+      if (hasSameSchedule) {
+        setError(`schedules.${index}.startTime`, {
+          type: "manual",
+          message: "Cannot select the same time slot as another schedule",
+        });
+        return true;
       }
 
       const newStart = new Date(`${d}T${s}:00`);
       const newEnd = new Date(`${d}T${e}:00`);
 
       const hasConflict = bookings.some((booking) => {
-        if (booking.room_id !== room) return false;
-        // if (booking.date !== date) return false; // beda tz
+        if (booking.room_id !== r) return false;
 
-        const inputDateUTC = new Date(d);
-        const bookingDateUTC = new Date(booking.date);
-        if (inputDateUTC.toISOString().split("T")[0] !== bookingDateUTC.toISOString().split("T")[0]) return false;
+        const bookingDateUTC = new Date(booking.date).toISOString().split("T")[0];
+        const inputDateUTC = new Date(d).toISOString().split("T")[0];
+
+        if (bookingDateUTC !== inputDateUTC) return false;
 
         const existingStart = new Date(booking.startTime);
         const existingEnd = new Date(booking.endTime);
@@ -90,77 +108,91 @@ export default function BookModal({ isOpen, onClose }) {
       });
 
       if (hasConflict) {
-        console.log("CONFLICT");
-        setError("startTime", {
+        setError(`schedules.${index}.startTime`, {
           type: "manual",
-          message: "Room already booked.",
+          message: "The room is already booked at this time.",
         });
         return true;
-      } else {
-        clearErrors("startTime");
-        return false;
       }
+
+      clearErrors(`schedules.${index}.startTime`);
+      return false;
     },
-    [room, date, startTime, endTime, bookings]
+    [room, bookings, schedules, setError, clearErrors]
   );
 
-  // time validation
   useEffect(() => {
-    if (startTime && endTime && endTime <= startTime) {
-      setError("endTime", {
-        type: "manual",
-        message: "End time must be after start time",
-      });
-    }
-    return;
-  }, [startTime, endTime]);
+    schedules.forEach((schedule, index) => {
+      const { startTime, endTime, date } = schedule;
 
-  // trigger check conflict
-  useEffect(() => {
-    if (room && date && startTime && endTime && startTime !== "" && endTime !== "") {
-      checkConflict();
-    }
-  }, [room, date, startTime, endTime, checkConflict]);
+      // endTime must be after startTime
+      if (startTime && endTime && endTime <= startTime) {
+        setError(`schedules.${index}.endTime`, {
+          type: "manual",
+          message: "End time must be after start time",
+        });
+      } else {
+        clearErrors(`schedules.${index}.endTime`);
+      }
+
+      // check for conflicts
+      console.log("trigger check conflict");
+      if (room && date && startTime && endTime) {
+        checkConflict({ date, startTime, endTime, room }, index);
+      }
+    });
+  }, [schedules, room, checkConflict]);
 
   // onSubmit
   const createBooking = async (data) => {
-    const result = await createBookingMutation.mutateAsync(data);
+    const result = await createBookingMutation.mutateAsync({ newBooking: data, auth });
 
     if (result) {
+      // success modal
       if (!auth?.accessToken) {
         setSuccessData(result);
         setStep(3);
       }
-      return;
     }
-  };
-
-  const handleModalClose = () => {
-    reset();
-    setStep(1);
-    setSuccessData(null);
-    onClose();
   };
 
   const handleFormSubmit = async (data) => {
-    const conflict = checkConflict(data);
-    console.log("is conflict", conflict);
-    if (conflict) {
-      // setError("startTime", {
-      //   type: "manual",
-      //   message: "Room already booked.",
-      // });
-      return;
-    }
-    console.log("pass conflict");
+    // validate lagi karena RHF delete setError
+    const values = getValues();
+    let hasError = false;
+
+    values.schedules.forEach((schedule, index) => {
+      const { startTime, endTime } = schedule;
+
+      if (startTime && endTime && endTime <= startTime) {
+        setError(`schedules.${index}.endTime`, {
+          type: "manual",
+          message: "End time must be after start time",
+        });
+        hasError = true;
+      } else {
+        clearErrors(`schedules.${index}.endTime`);
+      }
+
+      const conflict = checkConflict({ ...schedule, room: values.room }, index);
+      if (conflict) hasError = true;
+    });
+
+    if (hasError) return;
 
     if (auth?.accessToken) {
       await createBooking(data);
-      toast.success("Booking added!");
       handleModalClose();
     } else {
-      await handleOtpSend();
-      setStep(2);
+      const isVerified = await checkIsVerified(data.bookerEmail);
+      if (isVerified) {
+        // skip OTP
+        await createBooking(data);
+        setStep(3);
+      } else {
+        await handleOtpSend();
+        setStep(2);
+      }
     }
   };
 
@@ -170,8 +202,7 @@ export default function BookModal({ isOpen, onClose }) {
   };
 
   const handleOtpVerify = async (otp) => {
-    const bookerEmail = getValues().bookerEmail;
-    console.log(otp);
+    const { bookerEmail } = getValues();
     await verifyOtpMutation.mutateAsync({ bookerEmail, otp });
 
     const data = getValues();
@@ -189,12 +220,34 @@ export default function BookModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  // get default value room
+  // set default value room
   useEffect(() => {
     if (id) {
       setValue("room", id);
     }
   }, [id, setValue]);
+
+  const handleModalClose = () => {
+    reset();
+    setStep(1);
+    setSuccessData(null);
+    onClose();
+  };
+
+  const addSchedule = () => {
+    if (schedules.length >= 3) return; // max 3
+    setSchedules([...schedules, { date: "", startTime: "", endTime: "" }]);
+  };
+
+  const updateSchedule = (index, field, value) => {
+    const newSchedules = [...schedules];
+    newSchedules[index][field] = value;
+    setSchedules(newSchedules);
+  };
+
+  const removeSchedule = (indexToRemove) => {
+    setSchedules((prev) => prev.filter((_, index) => index !== indexToRemove));
+  };
 
   return (
     <>
@@ -236,6 +289,12 @@ export default function BookModal({ isOpen, onClose }) {
           >
             {/* step 1 */}
             <div className="w-full">
+              {!auth?.accessToken && (
+                <Alert className="my-2 border-indigo-200 bg-indigo-50">
+                  <AlertCircle className="size-4 text-indigo-700" />
+                  <AlertDescription className="text-indigo-700">You do not need to verify OTP if you have made a booking within the last 30 minutes.</AlertDescription>
+                </Alert>
+              )}
               {step === 1 && (
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <Input
@@ -349,54 +408,90 @@ export default function BookModal({ isOpen, onClose }) {
                     )}
                   />
 
-                  <Input
-                    id="date"
-                    label="Date"
-                    type="date"
-                    min="1950-01-01"
-                    max="2099-12-31"
-                    {...register("date", {
-                      required: "Date is required",
-                      validate: (value) => {
-                        const selected = new Date(value);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        return selected >= today || "Date cannot be in the past";
-                      },
-                    })}
-                    error={errors.date?.message}
-                    required
-                  />
+                  {schedules.map((_, index) => (
+                    <div
+                      key={index}
+                      className="relative border p-2 rounded-md mt-4 bg-gray-50"
+                    >
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-sm font-semibold">Schedule {index + 1}</p>
+                        {schedules.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => removeSchedule(index)}
+                          >
+                            <Trash className="size-4 text-indigo-700" />
+                          </Button>
+                        )}
+                      </div>
+                      <Input
+                        id={`schedules.${index}.date`}
+                        label="Date"
+                        type="date"
+                        min="1950-01-01"
+                        max="2099-12-31"
+                        {...register(`schedules.${index}.date`, {
+                          required: "Date is required",
+                          validate: (value) => {
+                            const selected = new Date(value);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return selected >= today || "Date cannot be in the past";
+                          },
+                        })}
+                        error={errors?.schedules?.[index]?.date?.message}
+                        required
+                        onChange={(e) => updateSchedule(index, "date", e.target.value)}
+                      />
 
-                  {/* time */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Input
-                        id="startTime"
-                        label="Start Time"
-                        type="time"
-                        {...register("startTime", {
-                          required: "Start time is required",
-                        })}
-                        error={errors.startTime?.message}
-                        required
-                      />
+                      {/* time */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Input
+                            id={`schedules.${index}.startTime`}
+                            label="Start Time"
+                            type="time"
+                            {...register(`schedules.${index}.startTime`, {
+                              required: "Start time is required",
+                            })}
+                            error={errors?.schedules?.[index]?.startTime?.message}
+                            required
+                            onChange={(e) => updateSchedule(index, "startTime", e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Input
+                            id={`schedules.${index}.endTime`}
+                            label="End Time"
+                            type="time"
+                            {...register(`schedules.${index}.endTime`, {
+                              required: "End time is required",
+                            })}
+                            error={errors?.schedules?.[index]?.endTime?.message}
+                            required
+                            onChange={(e) => updateSchedule(index, "endTime", e.target.value)}
+                          />
+                        </div>
+                        {isLoading && <p className="text-sm text-gray-500">Loading booking data...</p>}
+                        {error && <p className="text-sm text-red-500">Failed to check availability of bookings</p>}
+                      </div>
                     </div>
-                    <div>
-                      <Input
-                        id="endTime"
-                        label="End Time"
-                        type="time"
-                        {...register("endTime", {
-                          required: "End time is required",
-                        })}
-                        error={errors.endTime?.message}
-                        required
-                      />
-                    </div>
-                    {isLoading && <p className="text-sm text-gray-500">Loading booking data...</p>}
-                    {error && <p className="text-sm text-red-500">Failed to check availability of bookings</p>}
-                  </div>
+                  ))}
+
+                  {schedules.length < 3 && (
+                    <Button
+                      type="button"
+                      fullWidth
+                      onClick={addSchedule}
+                      variant="outline"
+                      className="my-2 text-indigo-700"
+                    >
+                      + Add Another Schedule
+                    </Button>
+                  )}
+
+                  {schedules.length >= 3 && <p className="text-sm mt-2 text-gray-500 text-center">Maximum 3 schedules allowed</p>}
 
                   <Input
                     id="notes"

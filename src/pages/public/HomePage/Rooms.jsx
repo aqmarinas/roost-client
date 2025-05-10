@@ -1,4 +1,4 @@
-import Card from "../../../components/ui/Card/index";
+import Card from "@/components/ui/Card/index.jsx";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { API_URL } from "@/config/config";

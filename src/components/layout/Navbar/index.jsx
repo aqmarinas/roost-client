@@ -22,7 +22,7 @@ export default function Navbar() {
         <nav className="flex items-center justify-between p-6 lg:px-8">
           <div className="flex lg:flex-1">
             <a
-              href="#"
+              href="/"
               className="-m-1.5 p-1.5 text-indigo-600 font-bold text-2xl"
             >
               Roost

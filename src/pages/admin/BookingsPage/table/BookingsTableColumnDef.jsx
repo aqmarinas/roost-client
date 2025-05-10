@@ -122,7 +122,7 @@ export function BookingsTableColumnDef(onAction) {
       accessorKey: "participants",
       cell: (row) => {
         const participants = row.getValue();
-        return <span className={`block min-w-[200px] max-w-[250px] break-words whitespace-normal text-gray-500 ${!participants?.toString().trim() ? "text-center" : ""}`}>{participants?.toString().trim() ? participants : "-"}</span>;
+        return <span className={`block min-w-[50px] max-w-[250px] break-words whitespace-normal text-gray-500 ${!participants?.toString().trim() ? "text-center" : ""}`}>{participants?.toString().trim() ? participants : "-"}</span>;
       },
       enableSorting: false,
       enableHiding: true,
@@ -132,7 +132,7 @@ export function BookingsTableColumnDef(onAction) {
       accessorKey: "notes",
       cell: (row) => {
         const notes = row.getValue();
-        return <span className={`block min-w-[200px] max-w-[250px] break-words whitespace-normal text-gray-500 ${!notes?.toString().trim() ? "text-center" : ""}`}>{notes?.toString().trim() ? notes : "-"}</span>;
+        return <span className={`block min-w-[50px] max-w-[250px] break-words whitespace-normal text-gray-500 ${!notes?.toString().trim() ? "text-center" : ""}`}>{notes?.toString().trim() ? notes : "-"}</span>;
       },
       enableSorting: false,
       enableHiding: true,

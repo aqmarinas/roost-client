@@ -6,7 +6,6 @@ export default function BookingsPage() {
     <div>
       <AdminLayout>
         <Bookings />
-        {/* <DataTableDemo /> */}
       </AdminLayout>
     </div>
   );

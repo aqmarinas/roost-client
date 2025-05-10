@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Sidebar from "../Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 import { Toaster } from "react-hot-toast";
 
 export default function AdminLayout({ children }) {

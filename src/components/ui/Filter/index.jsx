@@ -53,7 +53,7 @@ export default function Filter({ id, options = [], columnFilters = [], setColumn
       <PopoverContent className="w-64 p-4 space-y-2">
         <div className="max-h-48 overflow-auto space-y-2">
           {!options || options.length === 0 ? (
-            <p className="text-sm text-gray-500 italic">{options === undefined ? "Failed to load options." : "No options available."}</p>
+            <p className="text-sm text-gray-500 italic">{options === undefined ? "Failed to load options" : "No options available"}</p>
           ) : (
             options.map((opt) => (
               <label
