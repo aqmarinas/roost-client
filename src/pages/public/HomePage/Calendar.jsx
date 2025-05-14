@@ -161,7 +161,7 @@ export default function Calendar() {
                 >
                   <div className="flex items-center justify-between">
                     <h2 className="font-semibold mb-2 text-base">{booking.eventTitle}</h2>
-                    <Badge>{booking.status}</Badge>
+                    <Badge variant={booking.status}>{booking.status}</Badge>
                   </div>
 
                   <div className="space-y-2 text-gray-600">

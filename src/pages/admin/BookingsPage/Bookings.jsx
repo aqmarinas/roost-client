@@ -1,6 +1,5 @@
 import { Suspense, lazy, useState } from "react";
 import { toast } from "react-hot-toast";
-import useAuth from "@/hooks/useAuth";
 import BookingsHeader from "./BookingsHeader";
 import BookingsTable from "./table/BookingsTable";
 import DataTableSkeleton from "@/components/data-table/data-table-skeleton";
@@ -21,7 +20,7 @@ export default function Bookings() {
   const [openReject, setOpenReject] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  const { data: bookings = [], isLoading, error, createBookingMutation, updateBookingMutation, deleteBookingMutation, approveBookingMutation, rejectBookingMutation } = useBookings();
+  const { data: bookings = [], isLoading, error, updateBookingMutation, deleteBookingMutation, approveBookingMutation, rejectBookingMutation } = useBookings();
 
   const handleActionClick = (booking, actionType) => {
     setSelectedBooking(booking);
@@ -67,7 +66,7 @@ export default function Bookings() {
             isOpen={openCreate}
             onClose={() => setOpenCreate(false)}
             // existBooking={bookings}
-            // onCreate={(data) => createBookingMutation.mutateAsync(data)}
+            // onCreate={(data) => createBookingMutation.mutateAsync({newBooking: data, auth})}
           />
         )}
         {openUpdate && (

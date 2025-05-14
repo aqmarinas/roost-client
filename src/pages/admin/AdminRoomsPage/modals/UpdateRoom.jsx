@@ -122,10 +122,6 @@ export default function UpdateModal({ isOpen, onClose, room, onSuccess }) {
     if (Array.isArray(data.facilities)) {
       const existingFacilityIds = room.facilities.map((f) => f.id);
       const updatedFacilityIds = data.facilities;
-      console.log({
-        existingFacilityIds,
-        updatedFacilityIds,
-      });
 
       // compare updated and exist data
       if (!arraysEqual(existingFacilityIds, updatedFacilityIds)) {

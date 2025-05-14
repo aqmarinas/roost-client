@@ -18,7 +18,6 @@ export function useFacilities() {
   const createFacilityMutation = useMutation({
     mutationFn: async (newFacility) => {
       const res = await axiosPrivate.post("/facilities", newFacility);
-      console.log(res);
       return res.data.data;
     },
     onSuccess: (newFacility) => {

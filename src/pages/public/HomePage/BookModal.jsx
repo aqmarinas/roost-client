@@ -136,7 +136,6 @@ export default function BookModal({ isOpen, onClose }) {
       }
 
       // check for conflicts
-      console.log("trigger check conflict");
       if (room && date && startTime && endTime) {
         checkConflict({ date, startTime, endTime, room }, index);
       }

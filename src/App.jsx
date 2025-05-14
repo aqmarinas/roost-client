@@ -10,6 +10,7 @@ import FacilitesPage from "./pages/admin/FacilitiesPage";
 import { AuthProvider } from "./context/AuthProvider";
 import ProtectedRoutes from "./components/auth/ProtectedRoutes.jsx";
 import PersistLogin from "./components/auth/PersistLogin.jsx";
+import CancelPage from "./pages/public/ActionPage/Cancel";
 
 function App() {
   return (
@@ -28,6 +29,10 @@ function App() {
           <Route
             path="/rooms/:id"
             element={<DetailPage />}
+          />
+          <Route
+            path="/bookings/cancel/:token"
+            element={<CancelPage />}
           />
 
           {/* Admin */}

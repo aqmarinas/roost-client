@@ -1,8 +1,20 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 import Modal from "@/components/ui/Modal";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export default function ModalDialog({ isOpen, onClose, title = "Confirm", message = "Are you sure you want to proceed? This action cannot be undone", confirmText = "Confirm", cancelText = "Cancel", onConfirm, type = "danger" }) {
+  const [loading, setLoading] = useState(false);
+
+  const handleConfirm = async () => {
+    setLoading(true);
+    try {
+      await onConfirm();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Color configurations based on type
   const colorConfig = {
     danger: {
@@ -49,7 +61,7 @@ export default function ModalDialog({ isOpen, onClose, title = "Confirm", messag
           </div>
         </div>
 
-        <div className="my-4 mx-2 flex justify-end space-x-3">
+        <div className="mb-1.5 mr-1 flex justify-end space-x-3">
           <Button
             variant="outline"
             onClick={onClose}
@@ -58,9 +70,10 @@ export default function ModalDialog({ isOpen, onClose, title = "Confirm", messag
           </Button>
           <Button
             className={`${button}`}
-            onClick={onConfirm}
+            onClick={handleConfirm}
+            disabled={loading}
           >
-            {confirmText}
+            {loading ? "Processing..." : confirmText}
           </Button>
         </div>
       </div>

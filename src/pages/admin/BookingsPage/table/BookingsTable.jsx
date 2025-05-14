@@ -17,7 +17,6 @@ export default function BookingsTable({ data, onAction }) {
     { value: "Approved", label: "Approved" },
     { value: "Rejected", label: "Rejected" },
     { value: "Canceled", label: "Canceled" },
-    // todo: tambah rescheduled tapi jangan rescheduled karena ambigu
   ];
 
   const filterableColumns = [

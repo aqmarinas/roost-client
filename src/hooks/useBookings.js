@@ -15,6 +15,16 @@ export function useBookings() {
     },
   });
 
+  const getBookingByTokenQuery = (token) =>
+    useQuery({
+      queryKey: ["booking", token],
+      queryFn: async () => {
+        const res = await axios.get(`/bookings/token/${token}`);
+        return res.data.data;
+      },
+      enabled: !!token,
+    });
+
   const createBookingMutation = useMutation({
     mutationFn: async ({ newBooking }) => {
       const res = await axios.post("/bookings", newBooking);
@@ -81,12 +91,26 @@ export function useBookings() {
     onError: (err) => toast.error(err.response?.data?.message || "Failed to reject booking"),
   });
 
+  const cancelBookingMutation = useMutation({
+    mutationFn: async ({ id }) => {
+      const res = await axios.patch(`/bookings/${id}/cancel`);
+      return res.data.data;
+    },
+    onSuccess: (updatedBooking) => {
+      toast.success("Booking cancelled");
+      queryClient.setQueryData(["bookings"], (old = []) => old.map((b) => (b.id === updatedBooking.id ? updatedBooking : b)));
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to cancel booking"),
+  });
+
   return {
     ...getAllBookingsQuery,
+    getBookingByTokenQuery,
     createBookingMutation,
     updateBookingMutation,
     deleteBookingMutation,
     approveBookingMutation,
     rejectBookingMutation,
+    cancelBookingMutation,
   };
 }
