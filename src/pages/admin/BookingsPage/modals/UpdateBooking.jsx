@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import Select from "@/components/form/select";
 import { useRooms } from "@/hooks/useRooms";
 import { Checkbox } from "@/components/ui/checkbox";
+import { emailValidation, nameValidation, phoneValidation, titleValidation, validateDate, validateEndTime, validateStartTime } from "@/validations/validationBookings";
 
 export default function UpdateModal({ isOpen, onClose, booking, onSuccess, existBooking }) {
   const { data: rooms, error: roomsError } = useRooms();
@@ -103,14 +104,6 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
     // re-check conflict cz handleSubmit clear setError
     let hasError = false;
 
-    if (data.endTime <= data.startTime) {
-      setError("endTime", {
-        type: "manual",
-        message: "End time must be after start time",
-      });
-      hasError = true;
-    }
-
     const conflict = checkConflict(data);
     if (conflict) {
       setError("startTime", {
@@ -166,17 +159,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
           label="Title"
           type="text"
           placeholder="Weekly Meeting (Project X)"
-          {...register("eventTitle", {
-            required: "Title is required",
-            minLength: {
-              value: 5,
-              message: "Title must be at least 5 characters",
-            },
-            pattern: {
-              value: /^[A-Za-z0-9À-ÿ.,()\-_'"/# ]+$/,
-              message: "Title contains invalid characters",
-            },
-          })}
+          {...register("eventTitle", titleValidation)}
           error={errors.eventTitle?.message}
           required
         />
@@ -187,17 +170,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
           type="text"
           label="Name"
           placeholder="John Doe"
-          {...register("bookerName", {
-            required: "Name is required",
-            minLength: {
-              value: 3,
-              message: "Name must be at least 3 characters",
-            },
-            pattern: {
-              value: /^[A-Za-zÀ-ÿ.'\-() ]+$/,
-              message: "Name contains invalid characters",
-            },
-          })}
+          {...register("bookerName", nameValidation)}
           error={errors.bookerName?.message}
           required
         />
@@ -207,13 +180,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
           label="Email"
           type="email"
           placeholder="johndoe@xyz.co.id"
-          {...register("bookerEmail", {
-            required: "Email is required",
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid email address",
-            },
-          })}
+          {...register("bookerEmail", emailValidation)}
           error={errors.bookerEmail?.message}
           required
         />
@@ -226,13 +193,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
           type="tel"
           minLength={8}
           maxLength={15}
-          {...register("bookerPhone", {
-            required: "Phone number is required",
-            pattern: {
-              value: /^(628|08)[0-9]{8,13}$/,
-              message: "Phone number must start with '628' or '08' and contain 10 to 15 digits",
-            },
-          })}
+          {...register("bookerPhone", phoneValidation)}
           error={errors.bookerPhone?.message}
           required
         />
@@ -284,12 +245,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
           max="2099-12-31"
           {...register("date", {
             required: "Date is required",
-            // validate: (value) => {
-            //   const selected = new Date(value);
-            //   const today = new Date();
-            //   today.setHours(0, 0, 0, 0);
-            //   return selected >= today || "Date cannot be in the past";
-            // },
+            validate: validateDate,
           })}
           error={errors.date?.message}
           required
@@ -303,6 +259,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
               type="time"
               {...register("startTime", {
                 required: "Start time is required",
+                validate: (value) => validateStartTime(value, date),
               })}
               error={errors.startTime?.message}
               required
@@ -315,6 +272,7 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
               type="time"
               {...register("endTime", {
                 required: "End time is required",
+                validate: (value) => validateEndTime(value, date, startTime),
               })}
               error={errors.endTime?.message}
               required

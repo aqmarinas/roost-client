@@ -1,14 +1,13 @@
-import { useBookings } from "@/hooks/useBookings";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Clock, MapPin, User, X } from "lucide-react";
 import { startOfMonth, subMonths, addMonths, format, eachDayOfInterval, endOfWeek, startOfWeek, endOfMonth, isToday, isSameMonth, parseISO } from "date-fns";
-import { Suspense, lazy, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRooms } from "@/hooks/useRooms";
 import { useParams } from "react-router-dom";
-const CreateModal = lazy(() => import("@/pages/public/HomePage/BookModal"));
+import CreateModal from "@/pages/public/HomePage/BookModal";
 
 const dayNames = ["M", "T", "W", "T", "F", "S", "S"];
 
@@ -19,7 +18,17 @@ function classNames(...classes) {
 export default function BookingsList() {
   const { id } = useParams();
   const { getBookingsByRoomId } = useRooms();
-  const { data: bookings, isLoading, error } = getBookingsByRoomId(id);
+  const { data: bookingsRaw = [], isLoading, error } = getBookingsByRoomId(id);
+
+  const bookings = useMemo(() => {
+    return bookingsRaw
+      .filter((b) => b.status === "Pending" || b.status === "Approved")
+      .sort((a, b) => new Date(b.startTime) - new Date(a.startTime))
+      .map((b) => ({
+        ...b,
+        status: b.status === "Pending" ? "Pending Approval" : b.status,
+      }));
+  }, [bookingsRaw]);
 
   const [openCreate, setOpenCreate] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -163,43 +172,47 @@ export default function BookingsList() {
       ) : (
         <div className="text-sm/6 h-fit max-h-[40vh] overflow-y-auto">
           {filteredBookings.length > 0 ? (
-            filteredBookings.map((booking) => (
-              <div
-                key={booking.id}
-                className="border rounded-xl my-4 p-4 hover:bg-gray-50"
-              >
-                <div className="flex items-center justify-between">
-                  <h2 className="font-semibold mb-2 text-base">{booking.eventTitle}</h2>
-                  <Badge>{booking.status}</Badge>
-                </div>
+            filteredBookings.map((booking) => {
+              const isEndTimePassed = parseISO(booking.endTime) < new Date();
 
-                <div className="space-y-2 text-gray-600">
-                  <div className="grid grid-cols-2">
-                    <div className="flex items-center gap-2 pr-2">
-                      <CalendarIcon className="h-5 w-5 text-gray-500" />
-                      <span>{format(parseISO(booking.date), "EEEE, dd MMMM yyyy")}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-gray-500" />
-                      <span>{booking.room.name}</span>
-                    </div>
+              return (
+                <div
+                  key={booking.id}
+                  className={`border rounded-xl my-4 p-4 ${isEndTimePassed ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-semibold mb-2 text-base">{booking.eventTitle}</h2>
+                    <Badge variant={isEndTimePassed ? "outline" : booking.status}>{isEndTimePassed ? "Ended" : booking.status}</Badge>
                   </div>
 
-                  <div className="grid grid-cols-2">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-gray-500" />
-                      <span>
-                        {format(parseISO(booking.startTime), "HH:mm")} - {format(parseISO(booking.endTime), "HH:mm")}
-                      </span>
+                  <div className="space-y-2 text-gray-600">
+                    <div className="grid grid-cols-2">
+                      <div className="flex items-center gap-2 pr-2">
+                        <CalendarIcon className="h-5 w-5 text-gray-500" />
+                        <span>{format(parseISO(booking.date), "EEEE, dd MMMM yyyy")}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-gray-500" />
+                        <span>{booking.room.name}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-gray-500" />
-                      <span>{booking.bookerName}</span>
+
+                    <div className="grid grid-cols-2">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-5 w-5 text-gray-500" />
+                        <span>
+                          {format(parseISO(booking.startTime), "HH:mm")} - {format(parseISO(booking.endTime), "HH:mm")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <User className="h-5 w-5 text-gray-500" />
+                        <span>{booking.bookerName}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="flex h-full items-center justify-center text-center">
               <div className="text-center py-12">
@@ -212,14 +225,12 @@ export default function BookingsList() {
       )}
 
       {/* book modal */}
-      <Suspense fallback={<p>Load modal...</p>}>
-        {openCreate && (
-          <CreateModal
-            isOpen={openCreate}
-            onClose={() => setOpenCreate(false)}
-          />
-        )}
-      </Suspense>
+      {openCreate && (
+        <CreateModal
+          isOpen={openCreate}
+          onClose={() => setOpenCreate(false)}
+        />
+      )}
     </>
   );
 }

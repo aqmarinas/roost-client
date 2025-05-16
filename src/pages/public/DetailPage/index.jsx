@@ -54,14 +54,14 @@ export default function DetailPage() {
       )}
 
       <div className="flex flex-col lg:flex-row space-x-4 space-y-8 lg:space-y-0">
-        <div className="w-full lg:w-[50%]">
+        <div className="w-full lg:w-[55%]">
           <RoomDetail
             room={room}
             isLoading={isLoading}
             error={error}
           />
         </div>
-        <div className="w-full lg:w-[50%]">
+        <div className="w-full lg:w-[45%]">
           <div className="border rounded-lg p-4">
             <BookingsList />
           </div>

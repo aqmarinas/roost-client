@@ -42,12 +42,17 @@ export function useOtp() {
   //   });
 
   const checkIsVerified = async (bookerEmail) => {
-    const response = await axios.get("/otp/is-verified", {
-      params: { bookerEmail },
-    });
-    return response.data.verified;
-  };
+    try {
+      const response = await axios.get("/otp/is-verified", {
+        params: { bookerEmail },
+      });
 
+      return response.data.verified;
+    } catch (error) {
+      toast.error("Failed to check email verification");
+      return false;
+    }
+  };
   return {
     sendOtpMutation,
     verifyOtpMutation,

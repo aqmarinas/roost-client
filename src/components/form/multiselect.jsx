@@ -55,7 +55,7 @@ export default function MultiSelect({ items = [], selectedItems = [], onChange =
             </Button>
           </PopoverTrigger>
           <PopoverContent
-            className="w-full md:w-[400px] h-60 overflow-y-auto p-0 z-50"
+            className="w-full md:w-[400px] max-h-60 overflow-y-auto p-0 z-50"
             sideOffset={8}
             align="start"
           >

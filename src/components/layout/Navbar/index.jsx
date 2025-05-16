@@ -2,8 +2,8 @@ import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Suspense, lazy, useState } from "react";
-const CreateModal = lazy(() => import("@/pages/public/HomePage/BookModal"));
+import { useState } from "react";
+import CreateModal from "@/pages/public/HomePage/BookModal";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -104,14 +104,12 @@ export default function Navbar() {
           </DialogPanel>
         </Dialog>
       </header>
-      <Suspense fallback={<p>Load modal...</p>}>
-        {openCreate && (
-          <CreateModal
-            isOpen={openCreate}
-            onClose={() => setOpenCreate(false)}
-          />
-        )}
-      </Suspense>
+      {openCreate && (
+        <CreateModal
+          isOpen={openCreate}
+          onClose={() => setOpenCreate(false)}
+        />
+      )}
     </>
   );
 }

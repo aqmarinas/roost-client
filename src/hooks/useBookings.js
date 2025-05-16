@@ -96,9 +96,9 @@ export function useBookings() {
       const res = await axios.patch(`/bookings/${id}/cancel`);
       return res.data.data;
     },
-    onSuccess: (updatedBooking) => {
-      toast.success("Booking cancelled");
-      queryClient.setQueryData(["bookings"], (old = []) => old.map((b) => (b.id === updatedBooking.id ? updatedBooking : b)));
+    onSuccess: () => {
+      toast.success("Booking canceled");
+      queryClient.invalidateQueries(["bookings"]);
     },
     onError: (err) => toast.error(err.response?.data?.message || "Failed to cancel booking"),
   });

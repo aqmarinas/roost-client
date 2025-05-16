@@ -1,7 +1,9 @@
 {
   "name": "roost-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "A meeting room reservation application for PT XYZ, developed as part of a thesis project",
+  "author": "Aqmarina Shabihah",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +16,7 @@
     "@emotion/styled": "^11.14.0",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
-    "@radix-ui/react-accordion": "^1.2.8",
+    "@radix-ui/react-accordion": "^1.2.10",
     "@radix-ui/react-checkbox": "^1.2.3",
     "@radix-ui/react-collapsible": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.11",

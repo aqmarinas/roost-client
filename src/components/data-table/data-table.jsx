@@ -1,13 +1,13 @@
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown } from "lucide-react";
-import { lazy, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/data-table/table";
 import Pagination from "@/components/data-table/pagination";
 import Search from "@/components/form/search";
 import Filter from "@/components/ui/Filter";
-const DateRangePicker = lazy(() => import("@/components/ui/date-range-picker"));
+import DateRangePicker from "../ui/date-range-picker";
 
 export function DataTable({ columns, data, onAction, enableDatePicker = false, search = "", filters }) {
   const [sorting, setSorting] = useState([]);

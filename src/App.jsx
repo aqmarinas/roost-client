@@ -10,7 +10,7 @@ import FacilitesPage from "./pages/admin/FacilitiesPage";
 import { AuthProvider } from "./context/AuthProvider";
 import ProtectedRoutes from "./components/auth/ProtectedRoutes.jsx";
 import PersistLogin from "./components/auth/PersistLogin.jsx";
-import CancelPage from "./pages/public/ActionPage/Cancel";
+import CancelPage from "./pages/public/CancelationPage";
 
 function App() {
   return (

@@ -6,7 +6,7 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 export default function OTPModal({ onSubmit, onResend }) {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const [isVerifying, setIsVerifying] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
   const [countdown, setCountdown] = useState(60);
 
   useEffect(() => {
@@ -34,7 +34,16 @@ export default function OTPModal({ onSubmit, onResend }) {
     }
 
     setError("");
-    onSubmit(otp);
+    setIsVerifying(true);
+
+    onSubmit(otp)
+      .then(() => {
+        setIsVerifying(false);
+      })
+      .catch((err) => {
+        setError("Failed to verify OTP");
+        setIsVerifying(false);
+      });
   };
 
   return (
@@ -89,19 +98,3 @@ export default function OTPModal({ onSubmit, onResend }) {
     </>
   );
 }
-
-/* <Input
-        id="otp"
-        label="Enter OTP"
-        value={otp}
-        maxLength={6}
-        required
-        onChange={(e) => setOtp(e.target.value)}
-        error={error}
-      /> */
-/* <Button
-          variant="outline"
-          onClick={onBack}
-        >
-          Back
-        </Button> */

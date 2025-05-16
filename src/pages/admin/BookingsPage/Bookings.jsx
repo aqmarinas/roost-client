@@ -1,16 +1,14 @@
-import { Suspense, lazy, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 import BookingsHeader from "./BookingsHeader";
 import BookingsTable from "./table/BookingsTable";
 import DataTableSkeleton from "@/components/data-table/data-table-skeleton";
 import { useBookings } from "@/hooks/useBookings";
-
-// const CreateModal = lazy(() => import("./modals/CreateBooking"));
-const CreateModal = lazy(() => import("@/pages/public/HomePage/BookModal"));
-const UpdateModal = lazy(() => import("./modals/UpdateBooking"));
-const DeleteModal = lazy(() => import("./modals/DeleteBooking"));
-const ApproveModal = lazy(() => import("./modals/ApproveBooking"));
-const RejectModal = lazy(() => import("./modals/RejectBooking"));
+import UpdateModal from "./modals/UpdateBooking";
+import DeleteModal from "./modals/DeleteBooking";
+import ApproveModal from "./modals/ApproveBooking";
+import RejectModal from "./modals/RejectBooking";
+import CreateModal from "@/pages/public/HomePage/BookModal";
 
 export default function Bookings() {
   const [openCreate, setOpenCreate] = useState(false);
@@ -60,48 +58,48 @@ export default function Bookings() {
         />
       )}
 
-      <Suspense fallback={<p>Load modal...</p>}>
-        {openCreate && (
-          <CreateModal
-            isOpen={openCreate}
-            onClose={() => setOpenCreate(false)}
-            // existBooking={bookings}
-            // onCreate={(data) => createBookingMutation.mutateAsync({newBooking: data, auth})}
-          />
-        )}
-        {openUpdate && (
-          <UpdateModal
-            existBooking={bookings}
-            isOpen={openUpdate}
-            booking={selectedBooking}
-            onClose={() => setOpenUpdate(false)}
-            onSuccess={(data) => updateBookingMutation.mutateAsync({ id: selectedBooking?.id, updatedData: data })}
-          />
-        )}
-        {openDelete && (
-          <DeleteModal
-            isOpen={openDelete}
-            onClose={() => setOpenDelete(false)}
-            onSuccess={() => {
-              deleteBookingMutation.mutateAsync(Array.isArray(selectedBooking) ? selectedBooking : [selectedBooking?.id]);
-            }}
-          />
-        )}
-        {openApprove && (
-          <ApproveModal
-            isOpen={openApprove}
-            onClose={() => setOpenApprove(false)}
-            onSuccess={() => approveBookingMutation.mutateAsync({ id: selectedBooking?.id })}
-          />
-        )}
-        {openReject && (
-          <RejectModal
-            isOpen={openReject}
-            onClose={() => setOpenReject(false)}
-            onSuccess={() => rejectBookingMutation.mutateAsync({ id: selectedBooking?.id })}
-          />
-        )}
-      </Suspense>
+      {openCreate && (
+        <CreateModal
+          isOpen={openCreate}
+          onClose={() => setOpenCreate(false)}
+          // existBooking={bookings}
+          // onCreate={(data) => createBookingMutation.mutateAsync({newBooking: data, auth})}
+        />
+      )}
+
+      {openUpdate && (
+        <UpdateModal
+          existBooking={bookings}
+          isOpen={openUpdate}
+          booking={selectedBooking}
+          onClose={() => setOpenUpdate(false)}
+          onSuccess={(data) => updateBookingMutation.mutateAsync({ id: selectedBooking?.id, updatedData: data })}
+        />
+      )}
+
+      {openDelete && (
+        <DeleteModal
+          isOpen={openDelete}
+          onClose={() => setOpenDelete(false)}
+          onSuccess={() => {
+            deleteBookingMutation.mutateAsync(Array.isArray(selectedBooking) ? selectedBooking : [selectedBooking?.id]);
+          }}
+        />
+      )}
+      {openApprove && (
+        <ApproveModal
+          isOpen={openApprove}
+          onClose={() => setOpenApprove(false)}
+          onSuccess={() => approveBookingMutation.mutateAsync({ id: selectedBooking?.id })}
+        />
+      )}
+      {openReject && (
+        <RejectModal
+          isOpen={openReject}
+          onClose={() => setOpenReject(false)}
+          onSuccess={() => rejectBookingMutation.mutateAsync({ id: selectedBooking?.id })}
+        />
+      )}
     </>
   );
 }

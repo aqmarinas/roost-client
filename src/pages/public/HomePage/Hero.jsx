@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Suspense, lazy, useState } from "react";
-const CreateModal = lazy(() => import("@/pages/public/HomePage/BookModal"));
+import { useState } from "react";
+import CreateModal from "@/pages/public/HomePage/BookModal";
 
 export default function Hero() {
   const [openCreate, setOpenCreate] = useState(false);
@@ -25,14 +25,12 @@ export default function Hero() {
                   Book a Room
                 </Button>
               </div>
-              <Suspense fallback={<p>Load modal...</p>}>
-                {openCreate && (
-                  <CreateModal
-                    isOpen={openCreate}
-                    onClose={() => setOpenCreate(false)}
-                  />
-                )}
-              </Suspense>
+              {openCreate && (
+                <CreateModal
+                  isOpen={openCreate}
+                  onClose={() => setOpenCreate(false)}
+                />
+              )}
             </div>
           </div>
         </div>

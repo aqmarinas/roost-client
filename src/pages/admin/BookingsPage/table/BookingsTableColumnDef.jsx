@@ -172,6 +172,7 @@ function ActionsCell({ row, onAction }) {
           </>
         )}
         <DropdownMenuSeparator />
+        {row.original.status === "Pending" || row.original.status === "Approved"}
         <DropdownMenuItem onClick={() => onAction(row.original, "edit")}>Edit</DropdownMenuItem>
         <DropdownMenuItem onClick={() => onAction(row.original, "delete")}>Delete</DropdownMenuItem>
       </DropdownMenuContent>

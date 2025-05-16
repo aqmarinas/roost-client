@@ -14,7 +14,17 @@ function classNames(...classes) {
 }
 
 export default function Calendar() {
-  const { data: bookings = [], isLoading, error } = useBookings();
+  const { data: bookingsRaw = [], isLoading, error } = useBookings();
+
+  const bookings = useMemo(() => {
+    return bookingsRaw
+      .filter((b) => b.status === "Pending" || b.status === "Approved")
+      .sort((a, b) => new Date(b.startTime) - new Date(a.startTime))
+      .map((b) => ({
+        ...b,
+        status: b.status === "Pending" ? "Pending Approval" : b.status,
+      }));
+  }, [bookingsRaw]);
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(new Date()));
@@ -42,7 +52,7 @@ export default function Calendar() {
       return bookings.filter((booking) => {
         if (!booking.date) return false;
 
-        const bookingDateStr = format(parseISO(booking.date), "yyyy-MM-dd"); // todo: error kalo abis book
+        const bookingDateStr = format(parseISO(booking.date), "yyyy-MM-dd");
         return bookingDateStr === todayStr;
       });
     }
@@ -154,43 +164,47 @@ export default function Calendar() {
         ) : (
           <div className="mt-4 text-sm/6 lg:col-span-7 h-[50vh] lg:h-full overflow-y-auto">
             {filteredBookings.length > 0 ? (
-              filteredBookings.map((booking) => (
-                <div
-                  key={booking.id}
-                  className="border rounded-xl m-2 p-4 hover:bg-gray-50"
-                >
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-semibold mb-2 text-base">{booking.eventTitle}</h2>
-                    <Badge variant={booking.status}>{booking.status}</Badge>
-                  </div>
+              filteredBookings.map((booking) => {
+                const isEndTimePassed = parseISO(booking.endTime) < new Date();
 
-                  <div className="space-y-2 text-gray-600">
-                    <div className="grid grid-cols-2">
-                      <div className="flex items-center gap-2">
-                        <CalendarIcon className="h-5 w-5 text-gray-500" />
-                        <span>{format(parseISO(booking.date), "EEEE, dd MMMM yyyy")}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-5 w-5 text-gray-500" />
-                        <span>{booking.room.name}</span>
-                      </div>
+                return (
+                  <div
+                    key={booking.id}
+                    className={`border rounded-xl m-2 p-4  ${isEndTimePassed ? "bg-gray-100" : "hover:bg-gray-50"}`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <h2 className="font-semibold mb-2 text-base">{booking.eventTitle}</h2>
+                      <Badge variant={isEndTimePassed ? "outline" : booking.status}>{isEndTimePassed ? "Ended" : booking.status}</Badge>
                     </div>
 
-                    <div className="grid grid-cols-2">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-5 w-5 text-gray-500" />
-                        <span>
-                          {format(parseISO(booking.startTime), "HH:mm")} - {format(parseISO(booking.endTime), "HH:mm")}
-                        </span>
+                    <div className="space-y-2 text-gray-600">
+                      <div className="grid grid-cols-2">
+                        <div className="flex items-center gap-2">
+                          <CalendarIcon className="h-5 w-5 text-gray-500" />
+                          <span>{format(parseISO(booking.date), "EEEE, dd MMMM yyyy")}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-5 w-5 text-gray-500" />
+                          <span>{booking.room.name}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <User className="h-5 w-5 text-gray-500" />
-                        <span>{booking.bookerName}</span>
+
+                      <div className="grid grid-cols-2">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-5 w-5 text-gray-500" />
+                          <span>
+                            {format(parseISO(booking.startTime), "HH:mm")} - {format(parseISO(booking.endTime), "HH:mm")}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <User className="h-5 w-5 text-gray-500" />
+                          <span>{booking.bookerName}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="flex h-full items-center justify-center text-center">
                 <div className="text-center">

@@ -1,12 +1,9 @@
-import { Suspense, lazy, useState } from "react";
+import { useState } from "react";
 import RoomsHeader from "./RoomsHeader";
 import RoomsTable from "./table/RoomsTable";
 import { useRooms } from "@/hooks/useRooms";
 import DataTableSkeleton from "@/components/data-table/data-table-skeleton";
-
-const CreateModal = lazy(() => import("./modals/CreateRoom"));
-const UpdateModal = lazy(() => import("./modals/UpdateRoom"));
-const DeleteModal = lazy(() => import("./modals/DeleteRoom"));
+import CreateModal from "./modals/CreateRoom";
 
 export default function AdminRooms() {
   const [openCreate, setOpenCreate] = useState(false);
@@ -38,32 +35,30 @@ export default function AdminRooms() {
         />
       )}
 
-      <Suspense fallback={<div>Load modal...</div>}>
-        {openCreate && (
-          <CreateModal
-            isOpen={openCreate}
-            onClose={() => setOpenCreate(false)}
-            onCreate={(data) => createRoomMutation.mutateAsync(data)}
-          />
-        )}
-        {openUpdate && (
-          <UpdateModal
-            room={selectedRoom}
-            isOpen={openUpdate}
-            onClose={() => setOpenUpdate(false)}
-            onSuccess={(data) => updateRoomMutation.mutateAsync({ id: selectedRoom?.id, updatedData: data })}
-          />
-        )}
-        {openDelete && (
-          <DeleteModal
-            isOpen={openDelete}
-            onClose={() => setOpenDelete(false)}
-            onSuccess={() => {
-              deleteRoomMutation.mutateAsync(Array.isArray(selectedRoom) ? selectedRoom : [selectedRoom?.id]);
-            }}
-          />
-        )}
-      </Suspense>
+      {openCreate && (
+        <CreateModal
+          isOpen={openCreate}
+          onClose={() => setOpenCreate(false)}
+          onCreate={(data) => createRoomMutation.mutateAsync(data)}
+        />
+      )}
+      {openUpdate && (
+        <UpdateModal
+          room={selectedRoom}
+          isOpen={openUpdate}
+          onClose={() => setOpenUpdate(false)}
+          onSuccess={(data) => updateRoomMutation.mutateAsync({ id: selectedRoom?.id, updatedData: data })}
+        />
+      )}
+      {openDelete && (
+        <DeleteModal
+          isOpen={openDelete}
+          onClose={() => setOpenDelete(false)}
+          onSuccess={() => {
+            deleteRoomMutation.mutateAsync(Array.isArray(selectedRoom) ? selectedRoom : [selectedRoom?.id]);
+          }}
+        />
+      )}
     </>
   );
 }

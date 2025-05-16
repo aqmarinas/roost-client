@@ -1,11 +1,12 @@
+import { API_URL } from "@/config/config";
 import axios from "axios";
 
 export default axios.create({
-  baseURL: `${import.meta.env.VITE_LOCAL_API}`,
+  baseURL: `${API_URL}`,
 });
 
 export const axiosPrivate = axios.create({
-  baseURL: `${import.meta.env.VITE_LOCAL_API}`,
+  baseURL: `${API_URL}`,
   // headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });

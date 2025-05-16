@@ -16,10 +16,12 @@ export default function SuccessModal({ data, onClose }) {
       <h2 className="text-center text-2xl font-semibold text-gray-900">Booking Successful!</h2>
       <p className="text-center text-sm text-gray-600 mb-4">Here are your booking details:</p>
 
-      <Alert className="mb-4 border-yellow-200 bg-yellow-50 text-yellow-800">
-        <AlertCircle className="h-4 w-4 mr-2" />
-        <AlertDescription className="text-gray-800">This booking requires approval from admin. You will receive an email once approved.</AlertDescription>
-      </Alert>
+      {data.status === "Pending" && (
+        <Alert className="mb-4 border-yellow-200 bg-yellow-50 text-yellow-800">
+          <AlertCircle className="h-4 w-4 mr-2" />
+          <AlertDescription className="text-yellow-800 space-y-1 text-sm">This booking is pending approval. A confirmation email with a cancel link has been sent. You'll be notified once it's approved.</AlertDescription>
+        </Alert>
+      )}
 
       <Collapsible
         open={meetingDetailsOpen}
@@ -33,7 +35,7 @@ export default function SuccessModal({ data, onClose }) {
                 <Calendar className="h-4 w-4 text-slate-600" />
                 <span>MEETING DETAILS</span>
               </div>
-              <Badge variant={data?.status}>Dummy</Badge>
+              <Badge variant={data.status}>{data.status}</Badge>
             </div>
             {meetingDetailsOpen ? <ChevronUp className="h-4 w-4 text-slate-600" /> : <ChevronDown className="h-4 w-4 text-slate-600" />}
           </div>
@@ -64,17 +66,20 @@ export default function SuccessModal({ data, onClose }) {
 
           <div className="space-y-4">
             {data?.schedules?.map((schedule, i) => (
-              <div className="space-y-2">
+              <div
+                className="space-y-2"
+                key={i}
+              >
                 <div className="text-sm font-medium text-slate-800">Schedule {i + 1}</div>
                 <div className="grid grid-cols-[80px_1fr] gap-1 items-center">
-                  <div className="flex items-center gap-1 text-xs text-slate-600">
+                  <div className="flex items-center gap-1 text-sm text-slate-600">
                     <Calendar className="h-3 w-3" />
                     <span>Date</span>
                   </div>
                   <span className="text-sm">{format(parseISO(schedule?.date), "EEEE, dd MMMM yyyy")}</span>
                 </div>
                 <div className="grid grid-cols-[80px_1fr] gap-1 items-center">
-                  <div className="flex items-center gap-1 text-xs text-slate-600">
+                  <div className="flex items-center gap-1 text-sm text-slate-600">
                     <Clock className="h-3 w-3" />
                     <span>Time</span>
                   </div>

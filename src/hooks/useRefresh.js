@@ -11,10 +11,12 @@ export default function useRefresh() {
       });
 
       const accessToken = response?.data?.data?.accessToken;
+      const role = response?.data?.data?.role;
 
       setAuth((prev) => ({
         ...prev,
         accessToken,
+        role,
       }));
 
       return accessToken;
