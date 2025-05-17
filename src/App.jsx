@@ -11,6 +11,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import ProtectedRoutes from "./components/auth/ProtectedRoutes.jsx";
 import PersistLogin from "./components/auth/PersistLogin.jsx";
 import CancelPage from "./pages/public/CancelationPage";
+import ReschedulePage from "./pages/public/ReschedulePage";
 
 function App() {
   return (
@@ -33,6 +34,10 @@ function App() {
           <Route
             path="/bookings/cancel/:token"
             element={<CancelPage />}
+          />
+          <Route
+            path="/bookings/reschedule/:token"
+            element={<ReschedulePage />}
           />
 
           {/* Admin */}

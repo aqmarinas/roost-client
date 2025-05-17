@@ -84,68 +84,70 @@ export const validateEndTime = (value, date, startTime) => {
  * @param {String} room - room id yang dipilih
  */
 
-export const checkConflict = (schedules, bookings, room, setError, clearErrors) => {
-  let hasError = false;
+// export const checkConflict = (schedules, bookings, room, setError, clearErrors) => {
+//   if (!Array.isArray(schedules)) return false;
 
-  schedules.forEach((schedule, index) => {
-    const { date, startTime, endTime } = schedule;
+//   let hasError = false;
 
-    if (!room || !date || !startTime || !endTime) {
-      clearErrors(`schedules.${index}.startTime`);
-      return;
-    }
+//   schedules.forEach((schedule, index) => {
+//     const { date, startTime, endTime } = schedule;
 
-    // cek jadwal duplikat di schedules sendiri
-    const hasSameSchedule = schedules.some((sch, idx) => {
-      if (idx === index) return false;
+//     if (!room || !date || !startTime || !endTime) {
+//       clearErrors(`schedules.${index}.startTime`);
+//       return;
+//     }
 
-      const existingStart = `${sch.date} ${sch.startTime}`;
-      const existingEnd = `${sch.date} ${sch.endTime}`;
+//     // cek jadwal duplikat di schedules sendiri
+//     const hasSameSchedule = schedules.some((sch, idx) => {
+//       if (idx === index) return false;
 
-      const newStart = `${date} ${startTime}`;
-      const newEnd = `${date} ${endTime}`;
+//       const existingStart = `${sch.date} ${sch.startTime}`;
+//       const existingEnd = `${sch.date} ${sch.endTime}`;
 
-      return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
-    });
+//       const newStart = `${date} ${startTime}`;
+//       const newEnd = `${date} ${endTime}`;
 
-    if (hasSameSchedule) {
-      setError(`schedules.${index}.startTime`, {
-        type: "manual",
-        message: "Cannot select the same time slot as another schedule",
-      });
-      hasError = true;
-      return;
-    }
+//       return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+//     });
 
-    const newStart = new Date(`${date}T${startTime}:00`);
-    const newEnd = new Date(`${date}T${endTime}:00`);
+//     if (hasSameSchedule) {
+//       setError(`schedules.${index}.startTime`, {
+//         type: "manual",
+//         message: "Cannot select the same time slot as another schedule",
+//       });
+//       hasError = true;
+//       return;
+//     }
 
-    // cek konflik dengan booking di backend
-    const hasConflict = bookings.some((booking) => {
-      if (booking.room_id !== room) return false;
+//     const newStart = new Date(`${date}T${startTime}:00`);
+//     const newEnd = new Date(`${date}T${endTime}:00`);
 
-      const bookingDateUTC = new Date(booking.date).toISOString().split("T")[0];
-      const inputDateUTC = new Date(date).toISOString().split("T")[0];
+//     // cek konflik dengan booking di backend
+//     const hasConflict = bookings.some((booking) => {
+//       if (booking.room_id !== room) return false;
 
-      if (bookingDateUTC !== inputDateUTC) return false;
+//       const bookingDateUTC = new Date(booking.date).toISOString().split("T")[0];
+//       const inputDateUTC = new Date(date).toISOString().split("T")[0];
 
-      const existingStart = new Date(booking.startTime);
-      const existingEnd = new Date(booking.endTime);
+//       if (bookingDateUTC !== inputDateUTC) return false;
 
-      return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
-    });
+//       const existingStart = new Date(booking.startTime);
+//       const existingEnd = new Date(booking.endTime);
 
-    if (hasConflict) {
-      setError(`schedules.${index}.startTime`, {
-        type: "manual",
-        message: "The room is already booked at this time.",
-      });
-      hasError = true;
-      return;
-    }
+//       return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+//     });
 
-    clearErrors(`schedules.${index}.startTime`);
-  });
+//     if (hasConflict) {
+//       setError(`schedules.${index}.startTime`, {
+//         type: "manual",
+//         message: "The room is already booked at this time.",
+//       });
+//       hasError = true;
+//       return;
+//     }
 
-  return hasError;
-};
+//     clearErrors(`schedules.${index}.startTime`);
+//   });
+
+//   return hasError;
+// };

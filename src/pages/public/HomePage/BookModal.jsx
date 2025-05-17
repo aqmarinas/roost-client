@@ -3,7 +3,7 @@ import Input from "@/components/form/input";
 import OTPModal from "./OTPModal";
 import Modal from "@/components/ui/Modal";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Select from "@/components/form/select";
 import { useRooms } from "@/hooks/useRooms";
 import useAuth from "@/hooks/useAuth";
@@ -14,7 +14,7 @@ import { useOtp } from "@/hooks/useOtp";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useParams } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { checkConflict, emailValidation, nameValidation, phoneValidation, titleValidation, validateDate, validateEndTime, validateStartTime } from "@/validations/validationBookings";
+import { emailValidation, nameValidation, phoneValidation, titleValidation, validateDate, validateEndTime, validateStartTime } from "@/validations/validationBookings";
 
 export default function BookModal({ isOpen, onClose }) {
   const { id } = useParams();
@@ -45,7 +45,7 @@ export default function BookModal({ isOpen, onClose }) {
     defaultValues: {
       participants: "", // do not delete this
       // todo: testing only
-      room: "96f62917-5dda-4859-ae13-04c4561dc383",
+      room: "23cd8d7c-ddf6-4d89-b08e-05a50f3f70e9",
       eventTitle: "Meeting A",
       bookerName: "Amba",
       bookerEmail: "rainfluenza@gmail.com",
@@ -55,9 +55,82 @@ export default function BookModal({ isOpen, onClose }) {
 
   const room = watch("room");
 
+  const checkConflict = useCallback(
+    (data, index) => {
+      const r = data?.room ?? room;
+      const d = data?.date ?? date;
+      const s = data?.startTime ?? schedules[index].startTime;
+      const e = data?.endTime ?? schedules[index].endTime;
+
+      if (!r || !d || !s || !e || !schedules || !Array.isArray(schedules)) {
+        clearErrors("startTime");
+        return false;
+      }
+
+      // cek biar ga masukin jadwal yang sama
+      const hasSameSchedule = schedules.some((schedule, idx) => {
+        if (idx === index) return false;
+
+        const { startTime, endTime, date } = schedule;
+
+        const existingStart = `${date} ${startTime}`;
+        const existingEnd = `${date} ${endTime}`;
+
+        const newStart = `${data.date} ${data.startTime}`;
+        const newEnd = `${data.date} ${data.endTime}`;
+
+        return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+      });
+
+      if (hasSameSchedule) {
+        setError(`schedules.${index}.startTime`, {
+          type: "manual",
+          message: "Cannot select the same time slot as another schedule",
+        });
+        return true;
+      }
+
+      const newStart = new Date(`${d}T${s}:00`);
+      const newEnd = new Date(`${d}T${e}:00`);
+
+      const hasConflict = bookings.some((booking) => {
+        if (booking.room_id !== r) return false;
+
+        const bookingDateUTC = new Date(booking.date).toISOString().split("T")[0];
+        const inputDateUTC = new Date(d).toISOString().split("T")[0];
+
+        if (bookingDateUTC !== inputDateUTC) return false;
+
+        const existingStart = new Date(booking.startTime);
+        const existingEnd = new Date(booking.endTime);
+
+        return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+      });
+
+      if (hasConflict) {
+        setError(`schedules.${index}.startTime`, {
+          type: "manual",
+          message: "The room is already booked at this time.",
+        });
+        return true;
+      }
+
+      clearErrors(`schedules.${index}.startTime`);
+      return false;
+    },
+    [room, bookings, schedules, setError, clearErrors]
+  );
+
   useEffect(() => {
-    checkConflict(schedules, bookings, room, setError, clearErrors);
-  }, [schedules, bookings, room, setError, clearErrors]);
+    schedules.forEach((schedule, index) => {
+      const { startTime, endTime, date } = schedule;
+
+      // check for conflicts
+      if (room && date && startTime && endTime) {
+        checkConflict({ date, startTime, endTime, room }, index);
+      }
+    });
+  }, [schedules, room, checkConflict]);
 
   // onSubmit
   const createBooking = async (data) => {

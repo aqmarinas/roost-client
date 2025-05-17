@@ -103,6 +103,18 @@ export function useBookings() {
     onError: (err) => toast.error(err.response?.data?.message || "Failed to cancel booking"),
   });
 
+  const rescheduleBookingMutation = useMutation({
+    mutationFn: async ({ id, updatedData }) => {
+      const res = await axios.patch(`/bookings/${id}/reschedule`, updatedData);
+      return res.data.data;
+    },
+    onSuccess: (updatedBooking) => {
+      toast.success("Booking reschedule successfully");
+      queryClient.setQueryData(["bookings"], (old = []) => old.map((b) => (b.id === updatedBooking.id ? updatedBooking : b)));
+    },
+    onError: (err) => toast.error(err.response?.data?.message || "Failed to reschedule booking"),
+  });
+
   return {
     ...getAllBookingsQuery,
     getBookingByTokenQuery,
@@ -112,5 +124,6 @@ export function useBookings() {
     approveBookingMutation,
     rejectBookingMutation,
     cancelBookingMutation,
+    rescheduleBookingMutation,
   };
 }

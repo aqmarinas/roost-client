@@ -65,7 +65,7 @@ export default function CancelationPage() {
         <div className="max-w-xl mx-auto text-center mt-12">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-semibold mb-2">Booking Expired</h1>
-          <p className="text-muted-foreground">This booking has already passed and can no longer be cancelled. If you have any issues, please contact support.</p>
+          <p className="text-muted-foreground">This booking has already passed and can no longer be canceled. If you have any issues, please contact support.</p>
           <div className="mt-6">
             <Button asChild>
               <Link to="/">Return to Home</Link>
