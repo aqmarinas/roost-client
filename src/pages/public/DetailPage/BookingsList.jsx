@@ -22,7 +22,7 @@ export default function BookingsList() {
 
   const bookings = useMemo(() => {
     return bookingsRaw
-      .filter((b) => b.status === "Pending" || b.status === "Approved")
+      .filter((b) => b.status === "Pending" || b.status === "Approved" || b.status === "Updated")
       .sort((a, b) => new Date(b.startTime) - new Date(a.startTime))
       .map((b) => ({
         ...b,
@@ -206,7 +206,7 @@ export default function BookingsList() {
                       </div>
                       <div className="flex items-center gap-2">
                         <User className="h-5 w-5 text-gray-500" />
-                        <span>{booking.bookerName}</span>
+                        <span>{booking.participants ? booking.participants : booking.bookerName}</span>
                       </div>
                     </div>
                   </div>

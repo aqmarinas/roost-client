@@ -67,19 +67,21 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
     const newStart = new Date(`${date}T${startTime}:00`);
     const newEnd = new Date(`${date}T${endTime}:00`);
 
-    const hasConflict = existBooking.some((b) => {
-      if (b.id === booking?.id) return false;
-      if (b.room_id !== room) return false;
+    const hasConflict = existBooking
+      .filter((b) => !["Canceled", "Rejected"].includes(b.status))
+      .some((b) => {
+        if (b.id === booking?.id) return false;
+        if (b.room_id !== room) return false;
 
-      const inputDateUTC = new Date(date);
-      const bookingDateUTC = new Date(b.date);
-      if (inputDateUTC.toISOString().split("T")[0] !== bookingDateUTC.toISOString().split("T")[0]) return false;
+        const inputDateUTC = new Date(date);
+        const bookingDateUTC = new Date(b.date);
+        if (inputDateUTC.toISOString().split("T")[0] !== bookingDateUTC.toISOString().split("T")[0]) return false;
 
-      const existingStart = new Date(b.startTime);
-      const existingEnd = new Date(b.endTime);
+        const existingStart = new Date(b.startTime);
+        const existingEnd = new Date(b.endTime);
 
-      return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
-    });
+        return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+      });
 
     if (hasConflict) {
       setError("startTime", {
@@ -156,46 +158,39 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
       <form onSubmit={handleSubmit(onSubmit)}>
         <Input
           id="eventTitle"
+          name="eventTitle"
           label="Title"
-          type="text"
-          placeholder="Weekly Meeting (Project X)"
-          {...register("eventTitle", titleValidation)}
+          {...register("eventTitle")}
           error={errors.eventTitle?.message}
-          required
+          disabled
         />
 
         <Input
           id="bookerName"
           name="bookerName"
-          type="text"
           label="Name"
-          placeholder="John Doe"
-          {...register("bookerName", nameValidation)}
+          {...register("bookerName")}
           error={errors.bookerName?.message}
-          required
+          disabled
         />
 
         <Input
           id="bookerEmail"
+          name="bookerEmail"
           label="Email"
-          type="email"
-          placeholder="johndoe@xyz.co.id"
-          {...register("bookerEmail", emailValidation)}
+          {...register("bookerEmail")}
           error={errors.bookerEmail?.message}
-          required
+          disabled
         />
         <p className="px-1 text-sm text-gray-500 ">Use your company email (@xyz.co.id)</p>
 
         <Input
           id="bookerPhone"
+          name="bookerPhone"
           label="Phone Number"
-          placeholder="0812345678910"
-          type="tel"
-          minLength={8}
-          maxLength={15}
-          {...register("bookerPhone", phoneValidation)}
+          {...register("bookerPhone")}
           error={errors.bookerPhone?.message}
-          required
+          disabled
         />
 
         {/* participants  */}

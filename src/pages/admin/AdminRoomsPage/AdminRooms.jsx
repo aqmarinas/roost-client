@@ -4,6 +4,8 @@ import RoomsTable from "./table/RoomsTable";
 import { useRooms } from "@/hooks/useRooms";
 import DataTableSkeleton from "@/components/data-table/data-table-skeleton";
 import CreateModal from "./modals/CreateRoom";
+import UpdateModal from "./modals/UpdateRoom";
+import DeleteModal from "./modals/DeleteRoom";
 
 export default function AdminRooms() {
   const [openCreate, setOpenCreate] = useState(false);

@@ -47,8 +47,8 @@ export default function BookModal({ isOpen, onClose }) {
       // todo: testing only
       room: "23cd8d7c-ddf6-4d89-b08e-05a50f3f70e9",
       eventTitle: "Meeting A",
-      bookerName: "Amba",
-      bookerEmail: "rainfluenza@gmail.com",
+      bookerName: "Aqmarina Shabihah",
+      bookerEmail: "aqmarinash@gmail.com",
       bookerPhone: "081234567890",
     },
   });
@@ -93,19 +93,21 @@ export default function BookModal({ isOpen, onClose }) {
       const newStart = new Date(`${d}T${s}:00`);
       const newEnd = new Date(`${d}T${e}:00`);
 
-      const hasConflict = bookings.some((booking) => {
-        if (booking.room_id !== r) return false;
+      const hasConflict = bookings
+        .filter((booking) => !["Canceled", "Rejected"].includes(booking.status))
+        .some((booking) => {
+          if (booking.room_id !== r) return false;
 
-        const bookingDateUTC = new Date(booking.date).toISOString().split("T")[0];
-        const inputDateUTC = new Date(d).toISOString().split("T")[0];
+          const bookingDateUTC = new Date(booking.date).toISOString().split("T")[0];
+          const inputDateUTC = new Date(d).toISOString().split("T")[0];
 
-        if (bookingDateUTC !== inputDateUTC) return false;
+          if (bookingDateUTC !== inputDateUTC) return false;
 
-        const existingStart = new Date(booking.startTime);
-        const existingEnd = new Date(booking.endTime);
+          const existingStart = new Date(booking.startTime);
+          const existingEnd = new Date(booking.endTime);
 
-        return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
-      });
+          return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+        });
 
       if (hasConflict) {
         setError(`schedules.${index}.startTime`, {

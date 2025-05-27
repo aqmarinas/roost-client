@@ -63,19 +63,21 @@ export default function ReschedulePage() {
     const newStart = new Date(`${date}T${startTime}:00`);
     const newEnd = new Date(`${date}T${endTime}:00`);
 
-    const hasConflict = bookings.some((b) => {
-      if (b.id === booking?.id) return false;
-      if (b.room_id !== booking?.room_id) return false;
+    const hasConflict = bookings
+      .filter((b) => !["Canceled", "Rejected"].includes(b.status))
+      .some((b) => {
+        if (b.id === booking?.id) return false;
+        if (b.room_id !== booking?.room_id) return false;
 
-      const inputDateUTC = new Date(date);
-      const bookingDateUTC = new Date(b.date);
-      if (inputDateUTC.toISOString().split("T")[0] !== bookingDateUTC.toISOString().split("T")[0]) return false;
+        const inputDateUTC = new Date(date);
+        const bookingDateUTC = new Date(b.date);
+        if (inputDateUTC.toISOString().split("T")[0] !== bookingDateUTC.toISOString().split("T")[0]) return false;
 
-      const existingStart = new Date(b.startTime);
-      const existingEnd = new Date(b.endTime);
+        const existingStart = new Date(b.startTime);
+        const existingEnd = new Date(b.endTime);
 
-      return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
-    });
+        return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+      });
 
     if (hasConflict) {
       setError("startTime", {
@@ -116,7 +118,7 @@ export default function ReschedulePage() {
     if (sameDate && sameStartTime && sameEndTime) {
       setError("startTime", {
         type: "manual",
-        message: "You must choose a different time",
+        message: "You must choose a different schedule",
       });
       hasError = true;
     }
@@ -135,6 +137,22 @@ export default function ReschedulePage() {
   if (isLoading) return <PageSpinner />;
 
   if (error)
+    return (
+      <PublicLayout>
+        <div className="max-w-xl mx-auto text-center mt-12">
+          <CircleCheck className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-semibold mb-2">Oops! Something went wrong</h1>
+          <p className="text-muted-foreground"> We couldn't load the booking information right now. Please try again later or contact support if the problem persists.</p>
+          <div className="mt-6">
+            <Button asChild>
+              <Link to="/">Return to Home</Link>
+            </Button>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+
+  if (error?.data?.message === "Booking not found")
     return (
       <PublicLayout>
         <div className="max-w-xl mx-auto text-center mt-12">

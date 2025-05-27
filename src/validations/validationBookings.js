@@ -6,7 +6,7 @@ export const titleValidation = {
     message: "Title must be at least 5 characters",
   },
   pattern: {
-    value: /^[A-Za-z0-9À-ÿ.,()\-_'"/# ]+$/,
+    value: /^[A-Za-z0-9À-ÿ.,()\-_'"/#\[\] ]+$/,
     message: "Title contains invalid characters",
   },
 };
@@ -18,7 +18,7 @@ export const nameValidation = {
     message: "Name must be at least 3 characters",
   },
   pattern: {
-    value: /^[A-Za-zÀ-ÿ.'\-() ]+$/,
+    value: /^[A-Za-z0-9À-ÿ.,()\-_'"/#\[\] ]+$/,
     message: "Name contains invalid characters",
   },
 };
@@ -56,7 +56,7 @@ export const validateStartTime = (value, date) => {
   if (selectedDateTime < now) return "Start time cannot be in the past";
 
   const hour = +value.split(":")[0];
-  if (hour < 8 || hour >= 18) return "Start time must be between 08:00 and 18:00";
+  if (hour < 8 || hour >= 18) return "Start time must be between 08:00 and 17:59";
 
   return true;
 };
@@ -72,7 +72,7 @@ export const validateEndTime = (value, date, startTime) => {
   if (selectedEnd < now) return "End time cannot be in the past";
 
   const hour = +value.split(":")[0];
-  if (hour < 8 || hour > 18) return "End time must be between 08:00 and 18:00";
+  if (hour < 8 || hour > 18) return "End time must be between 08:00 and 17:59";
 
   return true;
 };
@@ -123,7 +123,9 @@ export const validateEndTime = (value, date, startTime) => {
 //     const newEnd = new Date(`${date}T${endTime}:00`);
 
 //     // cek konflik dengan booking di backend
-//     const hasConflict = bookings.some((booking) => {
+//     const hasConflict = bookings
+//         .filter((booking) => !["Canceled", "Rejected"].includes(booking.status))
+// .some((booking) => {
 //       if (booking.room_id !== room) return false;
 
 //       const bookingDateUTC = new Date(booking.date).toISOString().split("T")[0];

@@ -29,6 +29,22 @@ export default function CancelationPage() {
     return (
       <PublicLayout>
         <div className="max-w-xl mx-auto text-center mt-12">
+          <CircleCheck className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-semibold mb-2">Oops! Something went wrong</h1>
+          <p className="text-muted-foreground"> We couldn't load the booking information right now. Please try again later or contact support if the problem persists.</p>
+          <div className="mt-6">
+            <Button asChild>
+              <Link to="/">Return to Home</Link>
+            </Button>
+          </div>
+        </div>
+      </PublicLayout>
+    );
+
+  if (error?.data?.message === "Booking not found")
+    return (
+      <PublicLayout>
+        <div className="max-w-xl mx-auto text-center mt-12">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-semibold mb-2">Invalid Link</h1>
           <p className="text-muted-foreground">The cancellation link you're trying to use has expired or is no longer valid. If you think this is a mistake, please contact support.</p>

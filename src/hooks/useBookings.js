@@ -27,7 +27,7 @@ export function useBookings() {
 
   const createBookingMutation = useMutation({
     mutationFn: async ({ newBooking }) => {
-      const res = await axios.post("/bookings", newBooking);
+      const res = await axiosPrivate.post("/bookings", newBooking);
       return res.data.data;
     },
     onSuccess: (newBooking, variables) => {

@@ -44,7 +44,7 @@ export default function Filter({ id, options = [], columnFilters = [], setColumn
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="w-full md:w-32 flex justify-between items-center"
+          className="w-full md:w-32 flex md:justify-between items-center"
         >
           <span className="capitalize">{id}</span>
           {activeCount > 0 ? <span className="text-xs bg-gray-200 text-gray-900 rounded-sm px-2 py-0.5">{activeCount}</span> : <ChevronDownIcon />}
