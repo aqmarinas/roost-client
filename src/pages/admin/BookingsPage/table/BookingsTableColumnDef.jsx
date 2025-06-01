@@ -52,7 +52,7 @@ export function BookingsTableColumnDef(onAction) {
       id: "room",
       header: "Room",
       accessorKey: "room.name",
-      cell: (row) => <span className="text-gray-900 font-semibold">{row.getValue() ?? "undefined (need refresh)"}</span>, //todo: "named" in deeply nested key "room.name" returned undefined while reject/accepted (sometimes)
+      cell: (row) => <span className="text-gray-900 font-semibold">{row.getValue() ?? "undefined (need refresh)"}</span>,
       enableSorting: true,
       enableHiding: true,
       filterFn: (row, columnId, filterValue) => {

@@ -44,12 +44,6 @@ export default function BookModal({ isOpen, onClose }) {
     shouldFocusError: true,
     defaultValues: {
       participants: "", // do not delete this
-      // todo: testing only
-      room: "23cd8d7c-ddf6-4d89-b08e-05a50f3f70e9",
-      eventTitle: "Meeting A",
-      bookerName: "Aqmarina Shabihah",
-      bookerEmail: "aqmarinash@gmail.com",
-      bookerPhone: "081234567890",
     },
   });
 

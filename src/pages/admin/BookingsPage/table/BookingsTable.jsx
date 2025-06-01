@@ -17,7 +17,7 @@ export default function BookingsTable({ data, onAction }) {
     { value: "Approved", label: "Approved" },
     { value: "Rejected", label: "Rejected" },
     { value: "Canceled", label: "Canceled" },
-    { value: "Updated", label: "Updated" },
+    // { value: "Updated", label: "Updated" },
   ];
 
   const filterableColumns = [
