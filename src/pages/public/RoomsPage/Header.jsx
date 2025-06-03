@@ -10,10 +10,10 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
   const isFilterActive = filters.capacity !== "" || filters.location !== "" || filters.facilities.length > 0;
 
   const [errMsg, setErrMsg] = useState("");
-  const [selected, setSelected] = useState(selectedFacilities || []);
+  const [selected, setSelected] = useState([...selectedFacilities] || []);
 
   useEffect(() => {
-    setSelected(selectedFacilities || []);
+    setSelected([...selectedFacilities] || []);
   }, [selectedFacilities]);
 
   const toggleValue = (val) => {
@@ -51,7 +51,8 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
     setFilters({ ...filters, capacity: value });
   };
 
-  const activeCount = selected.length;
+  // const activeCount = selected.length;
+  const activeCount = filters.facilities.length;
 
   return (
     <div>
