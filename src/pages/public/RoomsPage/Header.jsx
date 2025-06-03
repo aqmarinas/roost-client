@@ -97,22 +97,22 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
               ) : locationOptions.length === 0 ? (
                 <DropdownMenuItem disabled>No items found</DropdownMenuItem>
               ) : (
-                locationOptions.map((location) => (
-                  <>
-                    <DropdownMenuItem
-                      key="all"
-                      onClick={() => setFilters({ ...filters, location: "" })}
-                    >
-                      All
-                    </DropdownMenuItem>
+                <>
+                  <DropdownMenuItem
+                    key="all"
+                    onClick={() => setFilters({ ...filters, location: "" })}
+                  >
+                    All
+                  </DropdownMenuItem>
+                  {locationOptions.map((location) => (
                     <DropdownMenuItem
                       key={location}
                       onClick={() => setFilters({ ...filters, location })}
                     >
                       {location}
                     </DropdownMenuItem>
-                  </>
-                ))
+                  ))}
+                </>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -133,9 +133,9 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
               </Button>
             </PopoverTrigger>
             {facilitiesLoading ? (
-              <PopoverContent>Load facilities options...</PopoverContent>
+              <PopoverContent className="text-sm text-gray-500">Load facilities options...</PopoverContent>
             ) : facilitiesOptions.length === 0 ? (
-              <PopoverContent>No items found</PopoverContent>
+              <PopoverContent className="text-sm text-gray-500">No items found</PopoverContent>
             ) : (
               <PopoverContent className="w-64 p-4 space-y-2">
                 <div className="max-h-48 overflow-auto space-y-2">

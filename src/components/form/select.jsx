@@ -24,7 +24,7 @@ export default function Select({ label = "", options = [], selected, onChange, d
 
           <ListboxOptions className="absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg max-h-60 overflow-auto text-sm">
             {loading ? (
-              <span className="text-gray-500 text-sm p-2">Loading options...</span>
+              <ListboxOption className="text-gray-500 text-sm disabled">Loading options...</ListboxOption>
             ) : options.length > 0 ? (
               options.map((option) => (
                 <ListboxOption
