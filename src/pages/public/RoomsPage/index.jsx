@@ -7,7 +7,7 @@ import { useFacilities } from "@/hooks/useFacilities";
 
 export default function RoomsPage() {
   const { data: rooms = [], isLoading, error } = useRooms();
-  const { data: facilities = [] } = useFacilities();
+  const { data: facilities = [], facilitiesLoading } = useFacilities();
 
   const locationOptions = [...new Set(rooms.map((room) => room.location))];
   const facilitiesOptions = facilities.map((item) => ({
@@ -44,6 +44,8 @@ export default function RoomsPage() {
   return (
     <PublicLayout>
       <Header
+        isLoading={isLoading} // room location
+        facilitiesLoading={facilitiesLoading}
         filters={filters}
         setFilters={setFilters}
         locationOptions={locationOptions}

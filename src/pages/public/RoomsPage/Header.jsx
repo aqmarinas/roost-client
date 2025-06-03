@@ -6,7 +6,7 @@ import { ChevronDown, ChevronDownIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export default function Header({ filters, setFilters, locationOptions, facilitiesOptions, selectedFacilities, setSelectedFacilities }) {
+export default function Header({ filters, setFilters, locationOptions, facilitiesOptions, facilitiesLoading, isLoading, selectedFacilities, setSelectedFacilities }) {
   const isFilterActive = filters.capacity !== "" || filters.location !== "" || filters.facilities.length > 0;
 
   const [errMsg, setErrMsg] = useState("");
@@ -62,6 +62,7 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
 
       {/* filters */}
       <div className="p-4 pt-4 md:flex mx-auto justify-center gap-4 border shadow-md rounded-lg w-full md:w-fit md:h-[135px]">
+        {/* capacity */}
         <div>
           <p className="font-semibold text-sm">How many people?</p>
           <Input
@@ -77,6 +78,7 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
           {errMsg && <div className="text-red-500 mt-2 text-sm">{errMsg}</div>}
         </div>
 
+        {/* location */}
         <div>
           <p className="font-semibold mt-3 md:mt-0 mb-3 text-sm">Location</p>
           <DropdownMenu>
@@ -96,18 +98,26 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
               >
                 All
               </DropdownMenuItem>
-              {locationOptions.map((location) => (
-                <DropdownMenuItem
-                  key={location}
-                  onClick={() => setFilters({ ...filters, location })}
-                >
-                  {location}
-                </DropdownMenuItem>
-              ))}
+              {isLoading ? (
+                <DropdownMenuItem disabled>Loading...</DropdownMenuItem>
+              ) : locationOptions.length === 0 ? (
+                <DropdownMenuItem disabled>No items found</DropdownMenuItem>
+              ) : (
+                locationOptions.map((location) => (
+                  <DropdownMenuItem
+                    key={location}
+                    onClick={() => setFilters({ ...filters, location })}
+                  >
+                    {location}
+                  </DropdownMenuItem>
+                ))
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
+          {isLoading ? "Load location..." : ""}
         </div>
 
+        {/* facilities */}
         <div>
           <p className="font-semibold mt-3 md:mt-0 mb-3 text-sm">Facilities</p>
 
@@ -121,37 +131,43 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
                 {activeCount > 0 ? <span className="text-xs bg-gray-200 text-gray-900 rounded-sm px-2 py-0.5">{activeCount}</span> : <ChevronDownIcon className="ml-1 h-4 w-4" />}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 p-4 space-y-2">
-              <div className="max-h-48 overflow-auto space-y-2">
-                {facilitiesOptions.map((opt) => (
-                  <label
-                    key={opt.value}
-                    className="flex items-center gap-2 text-sm cursor-pointer"
+            {facilitiesLoading ? (
+              "Load facilities options..."
+            ) : facilitiesOptions.length === 0 ? (
+              "No items found"
+            ) : (
+              <PopoverContent className="w-64 p-4 space-y-2">
+                <div className="max-h-48 overflow-auto space-y-2">
+                  {facilitiesOptions.map((opt) => (
+                    <label
+                      key={opt.value}
+                      className="flex items-center gap-2 text-sm cursor-pointer"
+                    >
+                      <Checkbox
+                        checked={selected.includes(opt.value)}
+                        onCheckedChange={() => toggleValue(opt.value)}
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </div>
+                <div className="flex justify-between pt-3 border-t border-gray-200">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleResetFacilities}
                   >
-                    <Checkbox
-                      checked={selected.includes(opt.value)}
-                      onCheckedChange={() => toggleValue(opt.value)}
-                    />
-                    {opt.label}
-                  </label>
-                ))}
-              </div>
-              <div className="flex justify-between pt-3 border-t border-gray-200">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleResetFacilities}
-                >
-                  Reset
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={handleApplyFacilities}
-                >
-                  Apply
-                </Button>
-              </div>
-            </PopoverContent>
+                    Reset
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleApplyFacilities}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              </PopoverContent>
+            )}
           </Popover>
         </div>
 

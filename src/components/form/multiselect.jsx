@@ -41,16 +41,7 @@ export default function MultiSelect({ items = [], selectedItems = [], onChange =
               className={cn("w-full justify-between", error ? "border-red-500" : "")}
               disabled={isLoading}
             >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 className="animate-spin w-4 h-4" />
-                  Loading options...
-                </span>
-              ) : selectedItems.length > 0 ? (
-                `${selectedItems.length} selected`
-              ) : (
-                `Select ${label}`
-              )}
+              {isLoading ? <span className="flex items-center gap-2 p-2">Loading options...</span> : selectedItems.length > 0 ? `${selectedItems.length} selected` : `Select ${label}`}
               {!isLoading && <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
             </Button>
           </PopoverTrigger>

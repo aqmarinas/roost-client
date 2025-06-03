@@ -10,7 +10,7 @@ export default function LoginForm({ onSubmit, error }) {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   return (
@@ -57,7 +57,7 @@ export default function LoginForm({ onSubmit, error }) {
         fullWidth
         className="mt-4"
       >
-        Login
+        {isSubmitting ? "Loading..." : "Login"}
       </Button>
     </form>
   );
