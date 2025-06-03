@@ -92,29 +92,30 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
-              <DropdownMenuItem
-                key="all"
-                onClick={() => setFilters({ ...filters, location: "" })}
-              >
-                All
-              </DropdownMenuItem>
               {isLoading ? (
                 <DropdownMenuItem disabled>Loading...</DropdownMenuItem>
               ) : locationOptions.length === 0 ? (
                 <DropdownMenuItem disabled>No items found</DropdownMenuItem>
               ) : (
                 locationOptions.map((location) => (
-                  <DropdownMenuItem
-                    key={location}
-                    onClick={() => setFilters({ ...filters, location })}
-                  >
-                    {location}
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem
+                      key="all"
+                      onClick={() => setFilters({ ...filters, location: "" })}
+                    >
+                      All
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      key={location}
+                      onClick={() => setFilters({ ...filters, location })}
+                    >
+                      {location}
+                    </DropdownMenuItem>
+                  </>
                 ))
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-          {isLoading ? "Load location..." : ""}
         </div>
 
         {/* facilities */}
@@ -132,9 +133,9 @@ export default function Header({ filters, setFilters, locationOptions, facilitie
               </Button>
             </PopoverTrigger>
             {facilitiesLoading ? (
-              "Load facilities options..."
+              <PopoverContent>Load facilities options...</PopoverContent>
             ) : facilitiesOptions.length === 0 ? (
-              "No items found"
+              <PopoverContent>No items found</PopoverContent>
             ) : (
               <PopoverContent className="w-64 p-4 space-y-2">
                 <div className="max-h-48 overflow-auto space-y-2">
