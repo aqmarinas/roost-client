@@ -25,6 +25,16 @@ export default function SuccessModal({ data, onClose }) {
         </Alert>
       )}
 
+      {data.status === "Approved" && (
+        <Alert className="mb-4 border-green-200 bg-green-50 text-green-800">
+          <AlertCircle className="h-4 w-4 mr-2" />
+          <AlertDescription className="text-green-800 space-y-1 text-sm">
+            This booking was auto-approved. You may now use the room as scheduled. <br />
+            If you wish to cancel or reschedule, check your email in inbox or spam for the cancellation link.
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Collapsible
         open={meetingDetailsOpen}
         onOpenChange={setMeetingDetailsOpen}
@@ -131,7 +141,7 @@ export default function SuccessModal({ data, onClose }) {
               <Mail className="h-3 w-3" />
               <span>Email</span>
             </div>
-            <span className="text-sm break-all">{data?.bookerPhone}</span>
+            <span className="text-sm break-all">{data?.email}</span>
           </div>
         </CollapsibleContent>
       </Collapsible>
