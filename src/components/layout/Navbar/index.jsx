@@ -1,6 +1,6 @@
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import CreateModal from "@/pages/public/HomePage/BookModal";
@@ -13,7 +13,7 @@ const navigation = [
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
-
+  const navigate = useNavigate();
   const location = useLocation();
 
   return (
@@ -53,12 +53,13 @@ export default function Navbar() {
               );
             })}
           </div>
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end space-x-2">
+            <Button onClick={() => setOpenCreate(true)}>Book a Room</Button>
             <Button
-              size="lg"
-              onClick={() => setOpenCreate(true)}
+              variant="outline"
+              onClick={() => navigate("/admin/login")}
             >
-              Book a Room
+              Login (Admin)
             </Button>
           </div>
         </nav>
