@@ -10,7 +10,6 @@ import MultiSelect from "@/components/form/multiselect";
 export default function CreateModal({ isOpen, onClose, onCreate }) {
   const { data: facilities, isLoading: facilitiesLoading } = useFacilities();
 
-  const [selectedItems, setSelectedItems] = useState([]);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -23,6 +22,7 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     setValue,
     clearErrors,
     trigger,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     mode: "onChange",
@@ -33,6 +33,13 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     },
   });
 
+  const selectedFacilities = watch("facilities");
+
+  const handleFacilitiesChange = (val) => {
+    setValue("facilities", val, { shouldValidate: true });
+    clearErrors("facilities");
+  };
+
   const validateForm = async () => {
     const isFormValid = await trigger();
     if (!imageFile) {
@@ -41,8 +48,10 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
         message: "Image is required",
       });
       return false;
+    } else {
+      clearErrors("image");
     }
-    return isFormValid && !!imageFile;
+    return isFormValid;
   };
 
   const validateImage = (file) => {
@@ -91,13 +100,8 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      setError("image", {
-        type: "manual",
-        message: "Image is required",
-      });
-      return;
-    }
+    if (!file) return;
+
     if (file) {
       const isFileValid = validateImage(file);
       if (isFileValid) {
@@ -130,12 +134,6 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
     setImageFile(null);
     setImagePreview(null);
     onClose();
-  };
-
-  const handleSelectChange = (newSelected) => {
-    setSelectedItems(newSelected);
-    setValue("facilities", newSelected);
-    clearErrors("facilities");
   };
 
   return (
@@ -192,14 +190,14 @@ export default function CreateModal({ isOpen, onClose, onCreate }) {
         />
 
         <MultiSelect
-          items={facilities}
+          items={facilities || []}
           isLoading={facilitiesLoading}
           label="Facilities"
           id="facilities"
           required
           error={errors.facilities?.message}
-          selectedItems={selectedItems}
-          onChange={handleSelectChange}
+          selectedItems={selectedFacilities}
+          onChange={handleFacilitiesChange}
         />
         <input
           type="hidden"

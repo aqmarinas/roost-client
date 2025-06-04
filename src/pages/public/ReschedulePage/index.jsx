@@ -3,7 +3,7 @@ import PublicLayout from "@/components/layout/PublicLayout";
 import { useBookings } from "@/hooks/useBookings";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Phone, Mail, Users, NotepadText, MapPin, CircleCheck, CheckCircle } from "lucide-react";
+import { User, Phone, Mail, Users, NotepadText, MapPin, CircleCheck, AlertCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useForm } from "react-hook-form";
@@ -173,7 +173,7 @@ export default function ReschedulePage() {
     return (
       <PublicLayout>
         <div className="max-w-xl mx-auto text-center mt-12">
-          <CheckCircle className="w-12 h-12 text-indigo-700 mx-auto mb-4" />
+          <AlertCircle className="w-12 h-12 text-indigo-700 mx-auto mb-4" />
           <h1 className="text-2xl font-semibold mb-2">Booking Already {displayStatus}</h1>
           <p className="text-muted-foreground">If you think this is a mistake, please contact support.</p>
           <div className="mt-6">

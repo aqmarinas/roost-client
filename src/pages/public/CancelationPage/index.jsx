@@ -8,7 +8,7 @@ import { format, parseISO } from "date-fns";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, Calendar, Clock, MapPin, User, Phone, Mail, Users, NotepadText } from "lucide-react";
+import { AlertCircle, Calendar, Clock, MapPin, User, Phone, Mail, Users, NotepadText, CheckCircle } from "lucide-react";
 import PageSpinner from "@/components/ui/pagespinner";
 
 export default function CancelationPage() {
@@ -61,7 +61,7 @@ export default function CancelationPage() {
     return (
       <PublicLayout>
         <div className="max-w-xl mx-auto text-center mt-12">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <CheckCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-semibold mb-2">Booking Already Canceled </h1>
           <p className="text-muted-foreground">If you think this is a mistake, please contact support.</p>
           <div className="mt-6">

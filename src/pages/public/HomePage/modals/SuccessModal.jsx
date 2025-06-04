@@ -141,7 +141,7 @@ export default function SuccessModal({ data, onClose }) {
               <Mail className="h-3 w-3" />
               <span>Email</span>
             </div>
-            <span className="text-sm break-all">{data?.email}</span>
+            <span className="text-sm break-all">{data?.bookerEmail}</span>
           </div>
         </CollapsibleContent>
       </Collapsible>
