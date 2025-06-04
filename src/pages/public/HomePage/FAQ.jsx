@@ -2,12 +2,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqItems = [
   {
-    question: "Can I cancel my booking?",
-    answer: "Yes. You'll receive a confirmation email containing all booking details and a cancellation link.",
-  },
-  {
-    question: "Can I reschedule my booking?",
-    answer: "Currently, rescheduling is not supported directly. If you need to change the time or date, please cancel your existing booking using the cancellation link in your email, then make a new booking.",
+    question: "Can I cancel or reschedule my booking?",
+    answer: "Yes. You'll receive a confirmation email containing all booking details and a cancellation and reschedule link.",
   },
   {
     question: "Do all bookings require admin approval?",

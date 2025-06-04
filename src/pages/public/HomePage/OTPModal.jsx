@@ -50,9 +50,8 @@ export default function OTPModal({ onSubmit, onResend }) {
     <>
       <div className="text-center mt-6">
         <h2 className="text-xl font-bold text-gray-800">Verification Code</h2>
-        <p className="text-gray-500 mt-2 text-sm">
-          We've sent a 6-digit code to email. Please check your inbox and spam folder. If you don't see the email in spam, please wait a few moments for it to arrive. Enter the code below to verify.
-        </p>
+        <p className="text-gray-500 mt-2 text-sm">A 6-digit code was sent to your email. Check inbox/spam or wait a moment.</p>
+        <p className="text-gray-500 mt-2 text-sm">Enter the code below to verify.</p>
       </div>
       <div className="flex justify-center mt-6">
         <InputOTP

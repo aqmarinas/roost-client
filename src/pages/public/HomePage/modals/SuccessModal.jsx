@@ -20,8 +20,7 @@ export default function SuccessModal({ data, onClose }) {
         <Alert className="mb-4 border-yellow-200 bg-yellow-50 text-yellow-800">
           <AlertCircle className="h-4 w-4 mr-2" />
           <AlertDescription className="text-yellow-800 space-y-1 text-sm">
-            This booking is pending approval. A confirmation email with a cancel link has been sent. You might want to check your spam folder if you don’t see it in your inbox. If it’s not in spam, please wait a moment for it to arrive.
-            You'll be notified once it's approved.
+            This booking is pending approval. A confirmation email with a cancel link has been sent — check your inbox or spam. You'll be notified once it's approved.
           </AlertDescription>
         </Alert>
       )}
