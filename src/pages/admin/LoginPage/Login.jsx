@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import useAuth from "@/hooks/useAuth";
 import LoginForm from "./LoginForm";
 import { useLogin } from "@/hooks/useLogin";
+import { Toaster } from "react-hot-toast";
 
 export default function Login() {
   const { auth, setAuth } = useAuth();
@@ -50,6 +51,10 @@ export default function Login() {
           error={error}
         />
       </div>
+      <Toaster
+        position="top-center"
+        toastOptions={{ className: "text-sm" }}
+      />
     </div>
   );
 }
