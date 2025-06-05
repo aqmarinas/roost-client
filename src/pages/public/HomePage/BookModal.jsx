@@ -460,6 +460,7 @@ export default function BookModal({ isOpen, onClose }) {
                 {step === 2 && (
                   <div className="transition-transform duration-300 top-0">
                     <OTPModal
+                      email={getValues("bookerEmail")}
                       onSubmit={handleOtpVerify}
                       onResend={handleOtpSend}
                     />

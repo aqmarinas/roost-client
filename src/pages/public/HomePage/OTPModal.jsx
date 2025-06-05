@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 
-export default function OTPModal({ onSubmit, onResend }) {
+export default function OTPModal({ email, onSubmit, onResend }) {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
@@ -50,7 +50,7 @@ export default function OTPModal({ onSubmit, onResend }) {
     <>
       <div className="text-center mt-6">
         <h2 className="text-xl font-bold text-gray-800">Verification Code</h2>
-        <p className="text-gray-500 mt-2 text-sm">A 6-digit code was sent to your email. Check inbox/spam or wait a moment.</p>
+        <p className="text-gray-500 mt-2 text-sm">We just sent a code to {email}. Check your inbox or spam.</p>
         <p className="text-gray-500 mt-2 text-sm">Enter the code below to verify.</p>
       </div>
       <div className="flex justify-center mt-6">
