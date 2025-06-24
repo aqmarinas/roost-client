@@ -12,7 +12,7 @@ export default function SuccessModal({ data, onClose }) {
   const [bookerDetailsOpen, setBookerDetailsOpen] = useState(true);
 
   return (
-    <div className="space-y-2 p-0 md:px-4">
+    <div className="space-y-2 p-0 md:px-4 translate-x-[2px]">
       <h2 className="text-center text-2xl font-semibold text-gray-900">Booking Successful!</h2>
       <p className="text-center text-sm text-gray-600 mb-4">Here are your booking details:</p>
 
@@ -131,7 +131,7 @@ export default function SuccessModal({ data, onClose }) {
           <div className="grid grid-cols-[80px_1fr] gap-2 items-center">
             <div className="flex items-center gap-1 text-sm font-medium text-slate-600">
               <Phone className="h-3 w-3" />
-              <span>Phone</span>
+              <span>Contact</span>
             </div>
             <span className="text-sm">{data?.bookerPhone}</span>
           </div>

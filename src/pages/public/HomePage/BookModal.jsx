@@ -73,7 +73,12 @@ export default function BookModal({ isOpen, onClose }) {
         const newStart = `${data.date} ${data.startTime}`;
         const newEnd = `${data.date} ${data.endTime}`;
 
-        return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+        // return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+        // mulai di tengah-tengah
+        // booking baru berakhir ditengah booking lain
+        // booking baru menutupi booking lain
+
+        return !(newEnd <= existingStart || newStart >= existingEnd);
       });
 
       if (hasSameSchedule) {
@@ -100,7 +105,7 @@ export default function BookModal({ isOpen, onClose }) {
           const existingStart = new Date(booking.startTime);
           const existingEnd = new Date(booking.endTime);
 
-          return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+          return !(newEnd <= existingStart || newStart >= existingEnd);
         });
 
       if (hasConflict) {

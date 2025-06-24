@@ -80,7 +80,8 @@ export default function UpdateModal({ isOpen, onClose, booking, onSuccess, exist
         const existingStart = new Date(b.startTime);
         const existingEnd = new Date(b.endTime);
 
-        return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+        // return (newStart >= existingStart && newStart < existingEnd) || (newEnd > existingStart && newEnd <= existingEnd) || (newStart <= existingStart && newEnd >= existingEnd);
+        return !(newEnd <= existingStart || newStart >= existingEnd);
       });
 
     if (hasConflict) {
