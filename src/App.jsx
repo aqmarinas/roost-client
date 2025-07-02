@@ -69,6 +69,10 @@ function App() {
             element={<MaintenancePage />}
             // element={<NotFoundPage />}
           />
+          <Route
+            path="*"
+            element={<MaintenancePage />}
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
