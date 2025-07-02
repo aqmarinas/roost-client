@@ -4,17 +4,19 @@ import Rooms from "./Rooms";
 import BookingCalendar from "./Calendar";
 import FAQ from "./FAQ";
 import Tutorial from "./Tutorial";
+import MaintenancePage from "../MaintenancePage";
 
 export default function RoomsPage() {
   return (
     <>
-      <PublicLayout>
+      <MaintenancePage />
+      {/* <PublicLayout>
         <Hero />
         <BookingCalendar />
         <Tutorial />
         <Rooms />
         <FAQ />
-      </PublicLayout>
+      </PublicLayout> */}
     </>
   );
 }

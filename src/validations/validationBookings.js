@@ -26,8 +26,11 @@ export const nameValidation = {
 export const emailValidation = {
   required: "Email is required",
   pattern: {
-    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-    message: "Invalid email address",
+    value: /^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)*mii\.co\.id$/i,
+    // value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+    // value: /^[A-Z0-9._%+-]+@mii\.co\.id$/i,
+    // message: "Invalid email address",
+    message: "Email must use the MII domain",
   },
 };
 
