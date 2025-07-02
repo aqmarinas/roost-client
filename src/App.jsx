@@ -12,6 +12,7 @@ import ProtectedRoutes from "./components/auth/ProtectedRoutes.jsx";
 import PersistLogin from "./components/auth/PersistLogin.jsx";
 import CancelPage from "./pages/public/CancelationPage";
 import ReschedulePage from "./pages/public/ReschedulePage";
+import MaintenancePage from "./pages/public/MaintenancePage";
 
 function App() {
   return (
@@ -65,7 +66,8 @@ function App() {
 
           <Route
             path="/*"
-            element={<NotFoundPage />}
+            element={<MaintenancePage />}
+            // element={<NotFoundPage />}
           />
         </Routes>
       </AuthProvider>
