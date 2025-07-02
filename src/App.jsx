@@ -19,8 +19,13 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Public */}
           <Route
+            path="*"
+            element={<MaintenancePage />}
+          />
+          {/* Public */}
+
+          {/* <Route
             path="/"
             element={<HomePage />}
           />
@@ -39,11 +44,11 @@ function App() {
           <Route
             path="/bookings/reschedule/:token"
             element={<ReschedulePage />}
-          />
+          /> */}
 
           {/* Admin */}
 
-          <Route element={<PersistLogin />}>
+          {/* <Route element={<PersistLogin />}>
             <Route
               path="/admin/login"
               element={<LoginPage />}
@@ -63,16 +68,11 @@ function App() {
               />
             </Route>
           </Route>
-
           <Route
             path="/*"
             element={<MaintenancePage />}
             // element={<NotFoundPage />}
-          />
-          <Route
-            path="*"
-            element={<MaintenancePage />}
-          />
+          /> */}
         </Routes>
       </AuthProvider>
     </BrowserRouter>
